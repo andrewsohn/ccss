@@ -23,17 +23,13 @@
 	if(isset($_SESSION['token'])){	
 		try {
 			$session = new FacebookSession($_SESSION['token'] );
-	// 		$request = new FacebookRequest($session, 'GET', '/me');					
-	// 		http://hivelab.co.kr/layouts/hivelab_official/img/img_mainbanner3.png
 			$response = (new FacebookRequest(
 					$session, 'POST', '/me/photos', array(							
-							'source' => 'http://hivelab.co.kr/layouts/hivelab_official/img/img_mainbanner3.png',
-							'postname' => 'ahaha',
+							'source' => new CURLFile(realpath('./test2.png'), 'image/png', 'FDAFSDAFASDFSA.png'),
 							'message' => 'User provided message11'
 					)
 			))->execute()->getGraphObject();
 			
-			echo "Posted with id: " . $response->getProperty('id');
 		} catch(FacebookRequestException $e) {
 		
 			echo "Exception occured, code: " . $e->getCode();

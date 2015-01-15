@@ -143,8 +143,6 @@ class FacebookCurlHttpClient implements FacebookHttpable
    */
   public function send($url, $method = 'GET', $parameters = array())
   {
-  	print_r($parameters);
-  	
     $this->openConnection($url, $method, $parameters);
     $this->tryToSendRequest();
 
