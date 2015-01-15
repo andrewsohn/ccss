@@ -38,10 +38,8 @@
 |
 */
 
-$route['default_controller'] = "welcome";
+$route['default_controller'] = "preReserve";
 $route['404_override'] = '';
-
-$route['fb'] = "fb";
 
 
 /* End of file routes.php */

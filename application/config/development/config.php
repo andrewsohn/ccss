@@ -14,7 +14,7 @@
 | path to your installation.
 |
 */
-$config['site_title']	= '곰가족의 반란 CCSS';
+$config['site_title']	= '개발환경: 곰가족의 반란 CCSS';
 $config['base_url']	= '';
 
 /*
