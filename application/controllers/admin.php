@@ -3,13 +3,15 @@
 class Admin extends CI_Controller {
 	function __construct(){
 		parent::__construct();
-		$this->load->model('csMainMenu');
+		$this->load->library('common');
+		$this->load->library('user_agent');
+		$this->load->model('CsMainMenu');
 	}
 	
 	public function index(){
 		$data = $this->session->all_userdata();
-		print_r($data);
-		
+		$this->common->print_r2($data);
+		echo $this->agent->referrer();
 		$this->_header();
 		
 		if($this->session->userdata('ss_mb_id')){
@@ -26,22 +28,16 @@ class Admin extends CI_Controller {
 			echo $this->router->fetch_class()."<br>";
 			echo $this->router->fetch_method()."<br>";
 			
-			
-			$admin_url = urlencode($this->current_full_url());
+			$admin_url = $this->router->fetch_class().'/'.$this->router->fetch_method();
 			//$this->load->helper('url');
 			$this->load->helper('url');
 			$this->session->set_flashdata('rurl', $admin_url);
-			redirect('admin/login');
+			
+			redirect('/login/returnUrl/');
 		}
 		
 		$this->_footer();
 		
-	}
-	
-	function login(){
-		$rurl = $this->session->userdata('rurl');
-		$data = array('title' => $title);
-		$this->load->view('login',$data);
 	}
 	
 	function current_full_url()
@@ -56,7 +52,7 @@ class Admin extends CI_Controller {
 		$title = $this->config->item('site_title');
 		$data = array('title' => $title);
 		$this->load->view('head');
-		$menu_list = $this->csMainMenu->gets();
+		$menu_list = $this->CsMainMenu->gets();
 		$this->load->view('headSub', $data);
 	}
 	function _footer(){
