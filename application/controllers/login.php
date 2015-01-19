@@ -19,7 +19,6 @@ class Login extends CI_Controller {
 		}
 		
 		$data = $this->session->all_userdata();
-		$this->common->print_r2($data);
 		$rurl = 'admin/index';
 		if($this->session->flashdata('rurl')){
 			$rurl = $this->session->flashdata('rurl');

@@ -5,7 +5,10 @@ class Admin extends CI_Controller {
 		parent::__construct();
 		$this->load->library('common');
 		$this->load->library('user_agent');
+		$this->load->library('smarteditor');
 		$this->load->model('CsAdminMenu');
+		$this->load->model('CsAdminEventTeaser');
+		$this->load->helper('url');
 	}
 	
 	public function index(){
@@ -25,26 +28,34 @@ class Admin extends CI_Controller {
 		
 	}
 	
-	public function EventTeaser($id=''){
-		$this->load->model('CsAdminEventTeaser');
+	public function EventTeaser($et_id=''){
+		$this->_loginCheck();
 		
 		$data = array();
-		$this->_loginCheck();
 		
 		$mb_id = $this->session->userdata('ss_mb_id');
 		$member = $this->common->get_member($mb_id);
 		$data['member'] = $member;
 
 		$this->_header($member, $this->router->fetch_method());
-		if($id === ''){
+		if($et_id === ''){
 			$board_list = $this->CsAdminEventTeaser->gets();
+			$i=0;
+			while(isset($board_list[$i])){
+				$board_list[$i]->href = site_url("admin").'/'.$this->router->fetch_method().'/'.$board_list[$i]->et_id;
+				$i++;
+			}
+			
 			$data['blist'] = $board_list;
-			
-			$this->load->view('Admin'.$this->router->fetch_method().'List', array('member'=>$member));
+			$this->load->view('AdminEventTeaserList', $data);
 		}else{
-			$data['id'] = $id;
+			$data['view_mode'] = '';
+			if($et_id != 'new'){
+				$data['view_mode'] = 'u';
+				$data['view'] = $this->CsAdminEventTeaser->get($et_id);
+			}
 			
-			$this->load->view('Admin'.$this->router->fetch_method().'Write', $data);
+			$this->load->view('AdminEventTeaserWrite', $data);
 		}
 		
 		$this->_footer();
@@ -59,8 +70,6 @@ class Admin extends CI_Controller {
 	}
 	
 	function _header($member=array(),$am_code=''){
-		$this->load->helper('url');
-
 		$data = array();
 		$data['member'] = $member;
 		
@@ -70,13 +79,12 @@ class Admin extends CI_Controller {
 		$title = $this->config->item('site_title');
 		$data['title'] = $title;
 
+		$this->load->view('AdminHeadSub', array('title'=>$title));
 		$menu_list = $this->CsAdminMenu->gets();
 		$data['mlist'] = $menu_list;
 		
-		//$this->common->print_r2($data);
-		
 		$this->load->view('AdminHead', $data);
-		$this->load->view('AdminHeadSub', array('title'=>$title));
+		
 	}
 	function _footer(){
 		$this->load->view('AdminTail');
@@ -85,14 +93,7 @@ class Admin extends CI_Controller {
 	
 	function _loginCheck(){
 		if(!$this->session->userdata('ss_mb_id')){
-			echo "not logged in";
-			
-			echo $this->router->fetch_class()."<br>";
-			echo $this->router->fetch_method()."<br>";
-			
 			$admin_url = $this->router->fetch_class().'/'.$this->router->fetch_method();
-			//$this->load->helper('url');
-			$this->load->helper('url');
 			$this->session->set_flashdata('rurl', $admin_url);
 			
 			redirect('/login/returnUrl/');

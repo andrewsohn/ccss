@@ -1,14 +1,14 @@
 <?php
-class CsAdminMenu extends CI_Model{
+class CsAdminEventTeaser extends CI_Model{
 	function __construct(){
 		parent::__construct();
 	}
 	
 	public function gets(){
-		return $this->db->query('select * from cs_admin_menu')->result();
+		return $this->db->query('select * from cs_event_teaser')->result();
 	}
 	
-	public function get($menu_id){
-		return $this->db->get_where('cs_admin_menu', array('am_id'=>$menu_id))->row();
+	public function get($et_id){
+		return $this->db->get_where('cs_event_teaser', array('et_id'=>$et_id))->row();
 	}
 }

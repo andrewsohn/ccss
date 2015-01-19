@@ -9,7 +9,6 @@ class Teaser extends CI_Controller {
 	
 	public function index(){
 		$data = $this->session->all_userdata();
-		$this->common->print_r2($data);
 		$this->_header();
 		$this->load->view('teaser');
 		//$this->load->view('main');

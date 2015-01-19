@@ -76,6 +76,44 @@ class Common {
     	return $query->row();
     }
     
+    public function get_text($str, $html=0)
+    {
+    	/* 3.22 막음 (HTML 체크 줄바꿈시 출력 오류때문)
+    	 $source[] = "/  /";
+    	 $target[] = " &nbsp;";
+    	 */
+    
+    	// 3.31
+    	// TEXT 출력일 경우 &amp; &nbsp; 등의 코드를 정상으로 출력해 주기 위함
+    	if ($html == 0) {
+    		$str = $this->html_symbol($str);
+    	}
+    
+    	$source[] = "/</";
+    	$target[] = "&lt;";
+    	$source[] = "/>/";
+    	$target[] = "&gt;";
+    	//$source[] = "/\"/";
+    	//$target[] = "&#034;";
+    	$source[] = "/\'/";
+    	$target[] = "&#039;";
+    	//$source[] = "/}/"; $target[] = "&#125;";
+    	if ($html) {
+    		$source[] = "/\n/";
+    		$target[] = "<br/>";
+    	}
+    
+    	return preg_replace($source, $target, $str);
+    }
+    
+    // 3.31
+    // HTML SYMBOL 변환
+    // &nbsp; &amp; &middot; 등을 정상으로 출력
+    public function html_symbol($str)
+    {
+    	return preg_replace("/\&([a-z0-9]{1,20}|\#[0-9]{0,3});/i", "&#038;\\1;", $str);
+    }
+    
     public function test()
     {
     	echo 'test ok';
