@@ -15,7 +15,7 @@
 |
 */
 $config['site_title']	= '곰가족의 반란 CCSS';
-$config['base_url']	= '';
+$config['base_url']	= 'http://ccss.hivelab.co.kr/ccss/test.php/';
 
 /*
 |--------------------------------------------------------------------------

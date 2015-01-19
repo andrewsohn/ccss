@@ -4,14 +4,23 @@ class Login extends CI_Controller {
 	function __construct(){
 		parent::__construct();
 		$this->load->library('common');
-		//$this->load->model('Member');
-		//$this->load->library('member');
+		$this->load->library('user_agent');
 	}
 	
 	public function index(){
+		if($this->session->userdata('ss_mb_id')){
+			$this->load->helper('url');
+			$url = site_url("");
+			
+			if($this->agent->referrer())
+				$url = $this->agent->referrer();
+			
+			$this->common->goto_url($url);
+		}
+		
 		$data = $this->session->all_userdata();
-		print_r($data);
-		$rurl = '';
+		$this->common->print_r2($data);
+		$rurl = 'admin/index';
 		if($this->session->flashdata('rurl')){
 			$rurl = $this->session->flashdata('rurl');
 			$this->session->set_flashdata('rurl', $rurl);
@@ -24,11 +33,10 @@ class Login extends CI_Controller {
 		$this->load->view('login', $data);
 		
 		$this->_footer();
-		
 	}
 	
 	function returnUrl(){
-		$rurl = '';
+		$rurl = 'admin/index';
 		if($this->session->flashdata('rurl')){
 			$rurl = $this->session->flashdata('rurl');
 			$this->session->set_flashdata('rurl', $rurl);
@@ -96,9 +104,9 @@ class Login extends CI_Controller {
 	function _header(){
 		$title = $this->config->item('site_title');
 		$data = array('title' => $title);
-		$this->load->view('headSub', $data);
+		$this->load->view('MainHeadSub', $data);
 	}
 	function _footer(){
-		$this->load->view('tailSub');
+		$this->load->view('MainTailSub');
 	}
 }

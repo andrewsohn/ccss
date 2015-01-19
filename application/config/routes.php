@@ -38,7 +38,7 @@
 |
 */
 
-$route['default_controller'] = "preReserve";
+$route['default_controller'] = "teaser";
 $route['404_override'] = '';
 
 
