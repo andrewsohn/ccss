@@ -26,6 +26,8 @@ class Admin extends CI_Controller {
 	}
 	
 	public function EventTeaser($id=''){
+		$this->load->model('CsAdminEventTeaser');
+		
 		$data = array();
 		$this->_loginCheck();
 		
@@ -35,6 +37,9 @@ class Admin extends CI_Controller {
 
 		$this->_header($member, $this->router->fetch_method());
 		if($id === ''){
+			$board_list = $this->CsAdminEventTeaser->gets();
+			$data['blist'] = $board_list;
+			
 			$this->load->view('Admin'.$this->router->fetch_method().'List', array('member'=>$member));
 		}else{
 			$data['id'] = $id;
