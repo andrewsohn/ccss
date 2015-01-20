@@ -1,6 +1,6 @@
 <?php
 $colspan = 4;
-echo "티져 동영상관리 목록 페이지<br>";
+echo "이벤트 참여자 관리 목록 페이지<br>";
 ?>
 <form name="fboardlist" id="fboardlist" action="./board_list_update.php" onsubmit="return fboardlist_submit(this);" method="post">
 <input type="hidden" name="sst" value="a.gr_id, a.bo_table">
@@ -23,9 +23,11 @@ echo "티져 동영상관리 목록 페이지<br>";
     <thead>
     <tr>
         <th scope="col">고유번호</th>
-        <th scope="col"><?php //echo subject_sort_link('bo_subject') ?>제목</a></th>
-        <th scope="col">URL</th>
-        <th scope="col">오픈일(mm/dd)</th>
+        <th scope="col">SNS분류</a></th>
+        <th scope="col"><?php //echo subject_sort_link('bo_subject') ?>이름</a></th>
+        <th scope="col">사진</th>
+        <th scope="col">작성글</th>
+        <th scope="col">작성일(mm/dd)</th>
         <th scope="col">기능</th>
     </tr>
     </thead>
@@ -36,30 +38,26 @@ for($i=0; $i<count($blist); $i++){
 ?>
 		<tr class="<?php echo $bg; ?>">
 			<td class="td_chk">
-	        	<?php echo $blist[$i]->et_id?>
+	        	<?php echo $blist[$i]->ea_id?>
 	        </td>
 	        <td>
 	        	<a href="<?php echo $blist[$i]->href ?>">
-                    <?php echo $blist[$i]->et_subject ?>
+                    <?php echo $blist[$i]->ea_subject ?>
                 </a>
 
                 <?php
                 if (isset($blist[$i]->icon_new)) echo $blist[$i]->icon_new;
-                if (isset($blist[$i]->icon_hot)) echo $blist[$i]->icon_hot;
-                if (isset($blist[$i]->icon_file)) echo $blist[$i]->icon_file;
-                if (isset($blist[$i]->icon_link)) echo $blist[$i]->icon_link;
-                if (isset($blist[$i]->icon_secret)) echo $blist[$i]->icon_secret;
                 ?>
 	        </td>
 	        <td class="td_chk">
-	        	<?php echo $blist[$i]->et_link?>
+	        	<?php echo $blist[$i]->ea_link?>
 	        </td>
 	        <td class="td_chk">
-	            <?php echo $blist[$i]->et_opendate ?>
+	            <?php echo $blist[$i]->ea_datetime ?>
 	        </td>
 	        <td class="td_mngsmall">
 	        	<a href="<?php echo $blist[$i]->href ?>">수정</a>
-	        	<a href="<?php echo site_url("admin").'EventTeaserAction/'.$blist[$i]->et_id;?>?w=d" onclick="return delete_confirm();">삭제</a>
+	        	<a href="<?php echo site_url("admin").'EventApplicantAction/'.$blist[$i]->ea_id;?>?w=d" onclick="return delete_confirm();">삭제</a>
 	        </td>
 	    </tr>
 	<?php 

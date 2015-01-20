@@ -8,6 +8,7 @@ class Admin extends CI_Controller {
 		$this->load->library('smarteditor');
 		$this->load->model('CsAdminMenu');
 		$this->load->model('CsAdminEventTeaser');
+		$this->load->model('CsAdminEventApplicant');
 		$this->load->helper('url');
 	}
 	
@@ -61,6 +62,39 @@ class Admin extends CI_Controller {
 		$this->_footer();
 	}
 	
+	public function EventApplicant($ea_id=''){
+		$this->_loginCheck();
+		
+		$data = array();
+		
+		$mb_id = $this->session->userdata('ss_mb_id');
+		$member = $this->common->get_member($mb_id);
+		$data['member'] = $member;
+
+		$this->_header($member, $this->router->fetch_method());
+		if($ea_id === ''){
+			$board_list = $this->CsAdminEventApplicant->gets();
+			$i=0;
+			while(isset($board_list[$i])){
+				$board_list[$i]->href = site_url("admin").'/'.$this->router->fetch_method().'/'.$board_list[$i]->ea_id;
+				$i++;
+			}
+			
+			$data['blist'] = $board_list;
+			$this->load->view('AdminEventApplyList', $data);
+		}else{
+			$data['view_mode'] = '';
+			if($ea_id != 'new'){
+				$data['view_mode'] = 'u';
+				$data['view'] = $this->CsAdminEventApplicant->get($ea_id);
+			}
+			
+			$this->load->view('AdminEventApplyWrite', $data);
+		}
+		
+		$this->_footer();
+	}
+	
 	function current_full_url()
 	{
 		$CI =& get_instance();
@@ -81,6 +115,7 @@ class Admin extends CI_Controller {
 
 		$this->load->view('AdminHeadSub', array('title'=>$title));
 		$menu_list = $this->CsAdminMenu->gets();
+		//$this->common->print_r2($menu_list);
 		$data['mlist'] = $menu_list;
 		
 		$this->load->view('AdminHead', $data);
