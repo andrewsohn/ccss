@@ -5,7 +5,6 @@ class Admin extends CI_Controller {
 		parent::__construct();
 		$this->load->library('common');
 		$this->load->library('user_agent');
-		$this->load->library('smarteditor');
 		$this->load->model('CsAdminMenu');
 		$this->load->model('CsAdminEventTeaser');
 		$this->load->model('CsAdminEventApplicant');
@@ -54,6 +53,8 @@ class Admin extends CI_Controller {
 			if($et_id != 'new'){
 				$data['view_mode'] = 'u';
 				$data['view'] = $this->CsAdminEventTeaser->get($et_id);
+				$this->load->helper(array('form', 'url'));
+				$this->load->library('form_validation');
 			}
 			
 			$this->load->view('AdminEventTeaserWrite', $data);

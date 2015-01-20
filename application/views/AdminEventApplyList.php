@@ -1,5 +1,5 @@
 <?php
-$colspan = 4;
+$colspan = 7;
 echo "이벤트 참여자 관리 목록 페이지<br>";
 ?>
 <form name="fboardlist" id="fboardlist" action="./board_list_update.php" onsubmit="return fboardlist_submit(this);" method="post">
@@ -15,6 +15,7 @@ echo "이벤트 참여자 관리 목록 페이지<br>";
     <caption>게시판관리 목록</caption>
     <colgroup>
     	<col width="10%">
+    	<col width="10%">
     	<col width="*">
     	<col width="20%">
     	<col width="20%">
@@ -28,6 +29,7 @@ echo "이벤트 참여자 관리 목록 페이지<br>";
         <th scope="col">사진</th>
         <th scope="col">작성글</th>
         <th scope="col">작성일(mm/dd)</th>
+        <th scope="col">활성/비활성</th>
         <th scope="col">기능</th>
     </tr>
     </thead>

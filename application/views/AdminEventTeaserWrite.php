@@ -16,9 +16,7 @@ require_once './application/libraries/datepicker.php';
 ?>
 <?php echo validation_errors(); ?>
 
-<?php echo form_open('login/action'); ?>
-<!-- <form name="fboardform" id="fboardform" action="./board_form_update.php" onsubmit="return fboardform_submit(this)" method="post" enctype="multipart/form-data"> -->
-
+<?php echo form_open('admin/eventTeaserAction', 'onsubmit="return fboardform_submit(this)" method="post" enctype="multipart/form-data"'); ?>
 <input type="text" name="w" value="<?php echo $view_mode ?>">
 <input type="hidden" name="sfl" value="<?php //echo $sfl ?>">
 <input type="hidden" name="stx" value="<?php //echo $stx ?>">
@@ -44,21 +42,51 @@ require_once './application/libraries/datepicker.php';
             </td>
         </tr>
         <tr>
-            <th scope="row"><label for="et_opendate">오픈일<strong class="sound_only">필수</strong></label></th>
+            <th scope="row"><label for="et_visible">이벤트 상태<strong class="sound_only">필수</strong></label></th>
+            <td>
+            	<select name="et_visible" id="et_visible">
+            		<option value="0" <?php //if( ) echo ?>>비활성</option>
+            		<option value="1">활성</option>
+            		<option value="2">대기</option>
+            		<option value="3">취소</option>
+            	</select>
+            </td>
+        </tr>
+        <tr>
+            <th scope="row"><label for="et_opendate">시작일<strong class="sound_only">필수</strong></label></th>
             <td>
             	<input type="text" name="et_opendate" value="<?php echo $view->et_opendate ?>" id="et_opendate" readonly required class="opendate" size="11" maxlength="10"/>
+            	<select name="et_openhr" id="et_openhr">
+            		<option value="00" <?php //if( ) echo ?>>00시</option>
+            		<option value="01">1시</option>
+            		<option value="02">2시</option>
+            		<option value="03">3시</option>
+            	</select>
+            	
+            	<select name="et_openmin" id="et_openmin">
+            		<option value="00" <?php //if( ) echo ?>>00분</option>
+            		<option value="01">01분</option>
+            		<option value="02">02분</option>
+            		<option value="03">03분</option>
+            	</select>
             </td>
         </tr>
         <tr>
-            <th scope="row"><label for="et_link">티저 URL<strong class="sound_only">필수</strong></label></th>
+            <th scope="row"><label for="et_closedate">마감일<strong class="sound_only">필수</strong></label></th>
+            <td>
+            	<input type="text" name="et_closedate" value="<?php //echo $view->et_closedate ?>" id="et_closedate" readonly required class="opendate" size="11" maxlength="10"/>
+            	<select name="et_closehr" id="et_closehr">
+            		<option value="00" <?php //if( ) echo ?>>00시</option>
+            		<option value="01">01시</option>
+            		<option value="02">02시</option>
+            		<option value="03">03시</option>
+            	</select>
+            </td>
+        </tr>
+        <tr>
+            <th scope="row"><label for="et_link">티저 유튜브 URL<strong class="sound_only">필수</strong></label></th>
             <td>
             	<input type="text" name="et_link" value="<?php echo $view->et_link ?>" id="et_link" required class="required" size="80" maxlength="120">
-            </td>
-        </tr>
-        <tr>
-            <th scope="row"><label for="bo_subject">이벤트 내용<strong class="sound_only">필수</strong></label></th>
-            <td>
-                <?php echo $this->smarteditor->editor_html("bo_content_head", $this->common->get_text($view->et_content, 0)); ?>
             </td>
         </tr>
         </tbody>
@@ -75,8 +103,6 @@ $(function(){
 
 function fboardform_submit(f)
 {
-    <?php echo $this->smarteditor->get_editor_js("bo_content_head"); ?>
-
     if (parseInt(f.bo_count_modify.value) < 0) {
         alert("원글 수정 불가 댓글수는 0 이상 입력하셔야 합니다.");
         f.bo_count_modify.focus();
