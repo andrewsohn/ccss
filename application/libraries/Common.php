@@ -48,6 +48,7 @@ class Common {
     	
     	echo $str;
     }
+    // 경고메세지를 경고창으로
     
     public function print_r2($var)
     {

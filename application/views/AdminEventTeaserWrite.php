@@ -13,6 +13,16 @@ $ptitle .= ' 페이지';
 echo $ptitle.'<br>';
 
 require_once './application/libraries/datepicker.php';
+
+$et_opndate = substr($view->et_opendate,0,10);
+$et_opnhr = substr($view->et_opendate,11,2);
+$et_opnmin = substr($view->et_opendate,14,2);
+
+$et_clsdate = substr($view->et_closedate,0,10);
+$et_clshr = substr($view->et_closedate,11,2);
+$et_clsmin = substr($view->et_closedate,14,2);
+
+
 ?>
 <?php echo validation_errors(); ?>
 
@@ -42,44 +52,54 @@ require_once './application/libraries/datepicker.php';
             </td>
         </tr>
         <tr>
-            <th scope="row"><label for="et_visible">이벤트 상태<strong class="sound_only">필수</strong></label></th>
+            <th scope="row"><label for="et_mode">이벤트 상태<strong class="sound_only">필수</strong></label></th>
             <td>
-            	<select name="et_visible" id="et_visible">
-            		<option value="0" <?php //if( ) echo ?>>비활성</option>
-            		<option value="1">활성</option>
-            		<option value="2">대기</option>
-            		<option value="3">취소</option>
+            	<select name="et_mode" id="et_mode">
+            		<option value="">없음</option>
+            		<option value="0" <?php if($et_opnhr == '0') echo 'selected'; ?>>비활성</option>
+            		<option value="1" <?php if($et_opnhr == '1') echo 'selected'; ?>>활성</option>
+            		<option value="2" <?php if($et_opnhr == '2') echo 'selected'; ?>>대기</option>
+            		<option value="3" <?php if($et_opnhr == '3') echo 'selected'; ?>>취소</option>
             	</select>
             </td>
         </tr>
         <tr>
             <th scope="row"><label for="et_opendate">시작일<strong class="sound_only">필수</strong></label></th>
             <td>
-            	<input type="text" name="et_opendate" value="<?php echo $view->et_opendate ?>" id="et_opendate" readonly required class="opendate" size="11" maxlength="10"/>
+            	<input type="text" name="et_opendate" value="<?php echo $et_opndate ?>" id="et_opendate" readonly required class="opendate" size="11" maxlength="10"/>
             	<select name="et_openhr" id="et_openhr">
-            		<option value="00" <?php //if( ) echo ?>>00시</option>
-            		<option value="01">1시</option>
-            		<option value="02">2시</option>
-            		<option value="03">3시</option>
+            		<option value="00" <?php if($et_opnhr == '00') echo 'selected'; ?>>00시</option>
+            		<option value="01" <?php if($et_opnhr == '01') echo 'selected'; ?>>1시</option>
+            		<option value="02" <?php if($et_opnhr == '02') echo 'selected'; ?>>2시</option>
+            		<option value="03" <?php if($et_opnhr == '03') echo 'selected'; ?>>3시</option>
             	</select>
             	
             	<select name="et_openmin" id="et_openmin">
-            		<option value="00" <?php //if( ) echo ?>>00분</option>
-            		<option value="01">01분</option>
-            		<option value="02">02분</option>
-            		<option value="03">03분</option>
+            		<option value="00" <?php if($et_opnmin == '00') echo 'selected'; ?>>00분</option>
+            		<option value="01" <?php if($et_opnmin == '01') echo 'selected'; ?>>01분</option>
+            		<option value="02" <?php if($et_opnmin == '02') echo 'selected'; ?>>02분</option>
+            		<option value="03" <?php if($et_opnmin == '03') echo 'selected'; ?>>03분</option>
+            		<option value="23" <?php if($et_opnmin == '23') echo 'selected'; ?>>23분</option>
             	</select>
             </td>
         </tr>
         <tr>
             <th scope="row"><label for="et_closedate">마감일<strong class="sound_only">필수</strong></label></th>
             <td>
-            	<input type="text" name="et_closedate" value="<?php //echo $view->et_closedate ?>" id="et_closedate" readonly required class="opendate" size="11" maxlength="10"/>
-            	<select name="et_closehr" id="et_closehr">
-            		<option value="00" <?php //if( ) echo ?>>00시</option>
-            		<option value="01">01시</option>
-            		<option value="02">02시</option>
-            		<option value="03">03시</option>
+            	<input type="text" name="et_closedate" value="<?php echo $et_clsdate ?>" id="et_closedate" readonly required class="opendate" size="11" maxlength="10"/>
+            	<select name="et_clshr" id="et_clshr">
+            		<option value="00" <?php if($et_clshr == '00') echo 'selected'; ?>>00시</option>
+            		<option value="01" <?php if($et_clshr == '01') echo 'selected'; ?>>1시</option>
+            		<option value="02" <?php if($et_clshr == '02') echo 'selected'; ?>>2시</option>
+            		<option value="03" <?php if($et_clshr == '03') echo 'selected'; ?>>3시</option>
+            	</select>
+            	
+            	<select name="et_clsmin" id="et_clsmin">
+            		<option value="00" <?php if($et_clsmin == '00') echo 'selected'; ?>>00분</option>
+            		<option value="01" <?php if($et_clsmin == '01') echo 'selected'; ?>>01분</option>
+            		<option value="02" <?php if($et_clsmin == '02') echo 'selected'; ?>>02분</option>
+            		<option value="03" <?php if($et_clsmin == '03') echo 'selected'; ?>>03분</option>
+            		<option value="23" <?php if($et_clsmin == '23') echo 'selected'; ?>>23분</option>
             	</select>
             </td>
         </tr>
@@ -87,6 +107,12 @@ require_once './application/libraries/datepicker.php';
             <th scope="row"><label for="et_link">티저 유튜브 URL<strong class="sound_only">필수</strong></label></th>
             <td>
             	<input type="text" name="et_link" value="<?php echo $view->et_link ?>" id="et_link" required class="required" size="80" maxlength="120">
+            </td>
+        </tr>
+        <tr>
+            <th scope="row"><label for="et_content">티저 메모<strong class="sound_only">필수</strong></label></th>
+            <td>
+				<?php echo $this->smarteditor->editor_html("et_content", $this->common->get_text($view->et_content, 0)); ?>
             </td>
         </tr>
         </tbody>
@@ -103,6 +129,7 @@ $(function(){
 
 function fboardform_submit(f)
 {
+	<?php echo $this->smarteditor->get_editor_js("bo_content_head"); ?>
     if (parseInt(f.bo_count_modify.value) < 0) {
         alert("원글 수정 불가 댓글수는 0 이상 입력하셔야 합니다.");
         f.bo_count_modify.focus();
