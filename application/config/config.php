@@ -16,7 +16,7 @@
 */
 $config['site_title']	= '곰가족의 반란 CCSS';
 $config['base_url']	= '';
-
+$config['asset_url']	= 'http://svn.hivelab.co.kr/svnview/hive/ccss_markup';
 /*
 |--------------------------------------------------------------------------
 | Index File

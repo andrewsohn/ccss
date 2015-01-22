@@ -27,8 +27,7 @@ class Logout extends CI_Controller {
 				
 			$this->common->goto_url($url);
 		}else{
-			echo 'sss';
-			//$this->common->alert('로그인 상태가 아닙니다.');
+			$this->common->alert('로그인 상태가 아닙니다.');
 		}
 	}
 }

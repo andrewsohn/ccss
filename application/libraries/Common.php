@@ -115,6 +115,105 @@ class Common {
     	return preg_replace("/\&([a-z0-9]{1,20}|\#[0-9]{0,3});/i", "&#038;\\1;", $str);
     }
     
+    // XSS 관련 태그 제거
+    public function clean_xss_tags($str)
+    {
+    	$str = preg_replace('#</*(?:applet|b(?:ase|gsound|link)|embed|frame(?:set)?|i(?:frame|layer)|l(?:ayer|ink)|meta|object|s(?:cript|tyle)|title|xml)[^>]*+>#i', '', $str);
+    
+    	return $str;
+    }
+    
+    // 검색어 특수문자 제거
+    public function get_search_string($stx)
+    {
+    	$stx_pattern = array();
+    	$stx_pattern[] = '#\.*/+#';
+    	$stx_pattern[] = '#\\\*#';
+    	$stx_pattern[] = '#\.{2,}#';
+    	$stx_pattern[] = '#[/\'\"%=*\#\(\)\|\+\&\!\$~\{\}\[\]`;:\?\^\,]+#';
+    
+    	$stx_replace = array();
+    	$stx_replace[] = '';
+    	$stx_replace[] = '';
+    	$stx_replace[] = '.';
+    	$stx_replace[] = '';
+    
+    	$stx = preg_replace($stx_pattern, $stx_replace, $stx);
+    
+    	return $stx;
+    }
+    
+    // 스트링값 잘라내기
+    public function cut_str($str, $len, $suffix="…")
+    {
+    	$arr_str = preg_split("//u", $str, -1, PREG_SPLIT_NO_EMPTY);
+    	$str_len = count($arr_str);
+    
+    	if ($str_len >= $len) {
+    		$slice_str = array_slice($arr_str, 0, $len);
+    		$str = join("", $slice_str);
+    
+    		return $str . ($str_len > $len ? $suffix : '');
+    	} else {
+    		$str = join("", $arr_str);
+    		return $str;
+    	}
+    }
+    
+    // 쿼리 스트링 만들기
+    public function getQSTR($data=array()){
+    	if (isset($_REQUEST['sca']))  {
+    		$data['sca'] = $this->common->clean_xss_tags(trim($_REQUEST['sca']));
+    			
+    	}
+    
+    	if (isset($_REQUEST['sfl']))  {
+    		$data['sfl'] = trim($_REQUEST['sfl']);
+    		$data['sfl'] = preg_replace("/[\<\>\'\"\%\=\(\)\s]/", "", $data['sfl']);
+    			
+    	}
+    
+    	if (isset($_REQUEST['stx']))  { // search text (검색어)
+    		$data['stx'] = $this->common->get_search_string(trim($_REQUEST['stx']));
+    			
+    	}
+    
+    	if (isset($_REQUEST['sst']))  {
+    		$data['sst'] = trim($_REQUEST['sst']);
+    		$data['sst'] = preg_replace("/[\<\>\'\"\%\=\(\)\s]/", "", $data['sst']);
+    			
+    	}
+    
+    	if (isset($_REQUEST['sod']))  { // search order (검색 오름, 내림차순)
+    		$data['sod'] = preg_match("/^(asc|desc)$/i", $_REQUEST['sod']) ? $_REQUEST['sod'] : '';
+    			
+    	}
+    
+    	if (isset($_REQUEST['sop']))  { // search operator (검색 or, and 오퍼레이터)
+    		$data['sop'] = preg_match("/^(or|and)$/i", $_REQUEST['sop']) ? $_REQUEST['sop'] : '';
+    			
+    	}
+    
+    	if (isset($_REQUEST['spt']))  { // search part (검색 파트[구간])
+    		$data['spt'] = (int)$_REQUEST['spt'];
+    			
+    	}
+    
+    	if (isset($_REQUEST['page'])) { // 리스트 페이지
+    		$data['page'] = (int)$_REQUEST['page'];
+    			
+    	}
+    
+    	return $data;
+    }
+    
+    // 데이터 array -> 쿼리스트링 만들기
+    public function getArrQstr($data=array())
+    {
+    	$qstr = implode('&amp;', array_map(function ($v, $k) { return $k . '=' . $v; }, $data, array_keys($data)));
+    	return $qstr;
+    }
+    
     public function test()
     {
     	echo 'test ok';

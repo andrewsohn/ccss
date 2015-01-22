@@ -5,6 +5,8 @@
 <meta http-equiv="imagetoolbar" content="no">
 <meta http-equiv="X-UA-Compatible" content="IE=10,chrome=1">
 <title><?php echo $title?></title>
+<link rel="stylesheet" type="text/css" href="<?php echo $this->config->item('asset_url');?>/admin/css/admin.css">
+<link rel="stylesheet" type="text/css" href="<?php echo $this->config->item('asset_url');?>/admin/css/dev.css">
 <!--[if lte IE 8]>
 <script src="http://ccss.hivelab.co.kr/test_site/js/html5.js"></script>
 <![endif]-->
@@ -19,6 +21,7 @@ var g5_sca       = "";
 var g5_editor    = "";
 var g5_cookie_domain = "";
 </script>
-<script src="http://ccss.hivelab.co.kr/ccss/js/lib/jquery-1.8.3.min.js"></script>
+<script type="text/javascript" src="<?php echo $this->config->item('asset_url');?>/admin/js/lib/jquery-1.8.3.min.js"></script>
+<script type="text/javascript" src="<?php echo $this->config->item('asset_url');?>/admin/js/app/common.js"></script>
 </head>
 <body>

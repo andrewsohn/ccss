@@ -5,7 +5,7 @@ class CsAdminMenu extends CI_Model{
 	}
 	
 	public function gets(){
-		return $this->db->query('select * from cs_admin_menu order by am_menu asc, am_code desc')->result();
+		return $this->db->query('select * from cs_admin_menu order by am_menu asc, am_code asc')->result();
 	}
 	
 	public function get($menu_id){

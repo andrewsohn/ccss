@@ -103,9 +103,11 @@ class Login extends CI_Controller {
 	function _header(){
 		$title = $this->config->item('site_title');
 		$data = array('title' => $title);
-		$this->load->view('MainHeadSub', $data);
+		$this->load->view('AdminHeadSub', $data);
+		$this->load->view('AdminHead');
 	}
 	function _footer(){
-		$this->load->view('MainTailSub');
+		$this->load->view('AdminTail');
+		$this->load->view('AdminTailSub');
 	}
 }

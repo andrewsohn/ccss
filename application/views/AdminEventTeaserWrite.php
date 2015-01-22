@@ -1,8 +1,5 @@
 <?php
 $ptitle = '이벤트/티저 관리 ';
-$frm_submit = '<div class="btn_confirm01 btn_confirm">
-    <input type="submit" value="확인" class="btn_submit" accesskey="s">
-    <a href="./board_list.php?">목록</a></div>'.PHP_EOL;
 
 if($view->et_id){
 	$ptitle .= '수정';
@@ -27,12 +24,13 @@ $et_clsmin = substr($view->et_closedate,14,2);
 <?php echo validation_errors(); ?>
 
 <?php echo form_open('admin/eventTeaserAction', 'onsubmit="return fboardform_submit(this)" method="post" enctype="multipart/form-data"'); ?>
-<input type="text" name="w" value="<?php echo $view_mode ?>">
-<input type="hidden" name="sfl" value="<?php //echo $sfl ?>">
-<input type="hidden" name="stx" value="<?php //echo $stx ?>">
-<input type="hidden" name="sst" value="<?php //echo $sst ?>">
-<input type="hidden" name="sod" value="<?php //echo $sod ?>">
-<input type="hidden" name="page" value="<?php //echo $page ?>">
+<input type="hidden" name="w" value="<?php echo $view_mode ?>">
+<input type="hidden" name="et_id" value="<?php echo $et_id ?>">
+<input type="hidden" name="sfl" value="<?php if(isset($sfl)) echo $sfl ?>">
+<input type="hidden" name="stx" value="<?php if(isset($stx)) echo $stx ?>">
+<input type="hidden" name="sst" value="<?php if(isset($sst)) echo $sst ?>">
+<input type="hidden" name="sod" value="<?php if(isset($sod)) echo $sod ?>">
+<input type="hidden" name="page" value="<?php if(isset($page)) echo $page ?>">
 
 <h2 class="h2_frm"><?php echo $ptitle?></h2>
 
@@ -120,7 +118,11 @@ $et_clsmin = substr($view->et_closedate,14,2);
     </div>
 </section>
 
-<?php echo $frm_submit; ?>
+<div class="btn_confirm01 btn_confirm">
+    <input type="submit" value="저장" class="btn_submit" accesskey="s">
+    <a href="<?php echo site_url("admin/EventTeaser").$qstr?>">목록</a>
+    <a href="<?php echo site_url("admin/EventTeaserAction").'/'.$et_id.$qstr.'&amp;w=d'?>">삭제</a>
+</div>
 
 <script>
 $(function(){
