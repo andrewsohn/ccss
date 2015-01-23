@@ -41,14 +41,19 @@ class Admin extends CI_Controller {
 
 		$this->_header($member, $this->router->fetch_method());
 		if($et_id === ''){
-			if($_REQUEST['page']){
-				$page = (int)$_REQUEST['page'];
+			if(isset($_REQUEST['page'])){
+				if($_REQUEST['page']){
+					$page = (int)$_REQUEST['page'];
+				}else{
+					$page = 1;
+				}
 				$board_list = $this->CsAdminEventTeaser->getList($page);
 				$config['cur_page'] = $page;
 			}else{
 				$board_list = $this->CsAdminEventTeaser->getList();
 				$config['cur_page'] = 1;
 			}
+			
 			$i=0;
 			while(isset($board_list[$i])){
 				$board_list[$i]->href = site_url("admin").'/'.$this->router->fetch_method().'/'.$board_list[$i]->et_id.$qstr;
@@ -70,10 +75,10 @@ class Admin extends CI_Controller {
 				$data['et_id'] = $et_id;
 				$data['view_mode'] = 'u';
 				$data['view'] = $this->CsAdminEventTeaser->get($et_id);
-				$this->load->helper(array('form', 'url'));
-				$this->load->library('form_validation');
+				
 			}
-			
+			$this->load->helper(array('form', 'url'));
+			$this->load->library('form_validation');
 			$this->load->view('AdminEventTeaserWrite', $data);
 		}
 		
@@ -91,6 +96,8 @@ class Admin extends CI_Controller {
 
 		$this->_header($member, $this->router->fetch_method());
 		if($ea_id === ''){
+			$data['etList'] = $this->CsAdminEventTeaser->getListLive();
+			
 			$board_list = $this->CsAdminEventApplicant->gets();
 			$i=0;
 			while(isset($board_list[$i])){
@@ -183,7 +190,6 @@ class Admin extends CI_Controller {
 					$data['et_opendate'] .= ' 00:00:00';
 				}
 			}
-			echo $data['et_opendate'];
 			
 			$data['et_closedate'] = '';
 			if($this->input->post('et_closedate', TRUE)){
@@ -199,11 +205,14 @@ class Admin extends CI_Controller {
 					$data['et_closedate'] .= ' 00:00:00';
 				}
 			}
-			echo $data['et_closedate'];
 			
 			$data['et_link'] = '';
 			if($this->input->post('et_link', TRUE)){
 				$data['et_link'] = trim($this->input->post('et_link', TRUE));
+			}
+			
+			if($w == ''){
+				$data['et_datetime'] = date("Y-m-d H:i:s");
 			}
 		}
 		
@@ -221,10 +230,18 @@ class Admin extends CI_Controller {
 			$this->CsAdminEventTeaser->delete($et_id);
 		}
 		
-		if($this->agent->is_referral()){
-			redirect($this->agent->referrer(), 'refresh');
-		}else{
+		if($w == 'd'){
 			redirect('admin/EventTeaser', 'refresh');
+		}else{
+			if($w == ''){
+				redirect('admin/EventTeaser/'.$et_id, 'refresh');
+			}else{
+				if($this->agent->is_referral()){
+					redirect($this->agent->referrer(), 'refresh');
+				}else{
+					redirect('admin/EventTeaser', 'refresh');
+				}
+			}
 		}
 	}
 	

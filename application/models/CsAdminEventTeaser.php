@@ -11,8 +11,12 @@ class CsAdminEventTeaser extends CI_Model{
 	public function getList($page=1){
 		$start = ($page-1)*20;
 		$end = $page*20;
-		echo 'select * from cs_event_teaser order by et_datetime desc limit '.$start.', '.$end;
 		return $this->db->query('select * from cs_event_teaser order by et_datetime desc limit '.$start.', '.$end)->result();
+	}
+	
+	public function getListLive(){
+		
+		return $this->db->query('select * from cs_event_teaser where et_mode = 1 order by et_datetime desc')->result();
 	}
 	
 	public function get($et_id){

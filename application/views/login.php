@@ -1,6 +1,6 @@
 <!-- container -->
 <div id="container">
-	<h1><img src="<?php echo $this->config->item('asset_url');?>/admin/img/logo.jpg" alt="SSCC"></h1>
+	<h1><img src="<?php echo $this->config->item('asset_url');?>/admin/img/logo2.png" alt="king"></h1>
 	<!-- [D] input 포커스 시 label display:none -->
 	<?php echo validation_errors(); ?>
 	<?php echo form_open('login/action'); ?>

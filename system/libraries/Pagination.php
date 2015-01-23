@@ -34,7 +34,7 @@ class CI_Pagination {
 	var $per_page			= 20; // Max number of items you want shown per page
 	var $num_links			=  2; // Number of "digit" links to show before/after the currently viewed page
 	var $cur_page			=  0; // The current page being viewed
-	var $use_page_numbers	= FALSE; // Use page number for segment instead of offset
+	var $use_page_numbers	= TRUE; // Use page number for segment instead of offset
 	var $first_link			= '<span class="sp"></span><span>처음</span>';
 	var $next_link			= '다음<span class="sp"></span>';
 	var $prev_link			= '<span class="sp"></span>이전';
@@ -122,7 +122,7 @@ class CI_Pagination {
 
 		// Calculate the total number of pages
 		$num_pages = ceil($this->total_rows / $this->per_page);
-
+		
 /* 		// Is there only one page? Hm... nothing more to do here then.
 		if ($num_pages == 1)
 		{
@@ -162,7 +162,6 @@ class CI_Pagination {
 				$this->cur_page = (int) $this->cur_page;
 			}
 		}
-		
 		// Set current page to 1 if using page numbers instead of offset
 		if ($this->use_page_numbers AND $this->cur_page == 0)
 		{
@@ -220,7 +219,6 @@ class CI_Pagination {
 		{
 			$this->base_url = rtrim($this->base_url, '/') .'/';
 		}
-
 		// And here we go...
 		$output = '';
 
@@ -231,9 +229,9 @@ class CI_Pagination {
 			$first_url = ($this->first_url == '') ? $this->base_url : $this->first_url;
 			$output .= $this->first_tag_open.'<a '.$this->anchor_class.'href="'.$first_url.'"  class="prev">'.$this->first_link.'</a>'.$this->first_tag_close;
 		}
-
+		
 		// Render the "previous" link
-		if  ($this->prev_link !== FALSE AND $this->cur_page != 1)
+		if  ($this->prev_link !== FALSE AND $this->cur_page > $base_page)
 		{
 			if ($this->use_page_numbers)
 			{
@@ -269,7 +267,6 @@ class CI_Pagination {
 				{
 					$i = ($loop * $this->per_page) - $this->per_page;
 				}
-
 				if ($i >= $base_page)
 				{
 					if ($this->cur_page == $loop)
@@ -296,7 +293,7 @@ class CI_Pagination {
 		}
 
 		// Render the "next" link
-		if ($this->next_link !== FALSE AND $this->cur_page != 1)
+		if ($this->next_link !== FALSE AND $this->cur_page < $num_pages)
 		{
 			if ($this->use_page_numbers)
 			{
@@ -334,16 +331,6 @@ class CI_Pagination {
 		return $output;
 	}
 }
-/*  
- 	<!-- paging -->
-	<div class="paging">
-		<a href="#" class="before"><span class="sp"></span>이전</a>
-		<a href="#" class="on">1</a><a href="#">2</a><a href="#">3</a><a href="#">4</a><a href="#">5</a><a href="#">6</a><a href="#">7</a><a href="#">8</a><a href="#">9</a><a href="#">999</a>
-		<a href="#" class="next">다음<span class="sp"></span></a>
-	</div>
-	<!-- //paging -->
-
- */
 // END Pagination Class
 
 /* End of file Pagination.php */

@@ -1,149 +1,165 @@
 <?php
-$ptitle = '이벤트/티저 관리 ';
+$ptitle = '이벤트 티져 관리 ';
 
-if($view->et_id){
+if($view_mode == 'u'){
 	$ptitle .= '수정';
+	
+	$et_opndate = substr($view->et_opendate,0,10);
+	$et_opnhr = substr($view->et_opendate,11,2);
+	$et_opnmin = substr($view->et_opendate,14,2);
+	
+	$et_clsdate = substr($view->et_closedate,0,10);
+	$et_clshr = substr($view->et_closedate,11,2);
+	$et_clsmin = substr($view->et_closedate,14,2);
 }else{
 	$ptitle .= '등록';
 }
-$ptitle .= ' 페이지';
-echo $ptitle.'<br>';
 
 require_once './application/libraries/datepicker.php';
-
-$et_opndate = substr($view->et_opendate,0,10);
-$et_opnhr = substr($view->et_opendate,11,2);
-$et_opnmin = substr($view->et_opendate,14,2);
-
-$et_clsdate = substr($view->et_closedate,0,10);
-$et_clshr = substr($view->et_closedate,11,2);
-$et_clsmin = substr($view->et_closedate,14,2);
-
-
 ?>
-<?php echo validation_errors(); ?>
-
-<?php echo form_open('admin/eventTeaserAction', 'onsubmit="return fboardform_submit(this)" method="post" enctype="multipart/form-data"'); ?>
-<input type="hidden" name="w" value="<?php echo $view_mode ?>">
-<input type="hidden" name="et_id" value="<?php echo $et_id ?>">
-<input type="hidden" name="sfl" value="<?php if(isset($sfl)) echo $sfl ?>">
-<input type="hidden" name="stx" value="<?php if(isset($stx)) echo $stx ?>">
-<input type="hidden" name="sst" value="<?php if(isset($sst)) echo $sst ?>">
-<input type="hidden" name="sod" value="<?php if(isset($sod)) echo $sod ?>">
-<input type="hidden" name="page" value="<?php if(isset($page)) echo $page ?>">
-
-<h2 class="h2_frm"><?php echo $ptitle?></h2>
-
-<section id="anc_bo_basic">
-    <div class="">
-        <table style="width: 100%;">
-        <caption>이벤트 기본 설정</caption>
-        <colgroup>
-            <col width="10%">
-            <col width="*">
-        </colgroup>
-        <tbody>
-        <tr>
-            <th scope="row"><label for="et_subject">이벤트 제목<strong class="sound_only">필수</strong></label></th>
-            <td>
-                <input type="text" name="et_subject" value="<?php echo $view->et_subject ?>" id="et_subject" required class="required" size="80" maxlength="120">
-            </td>
-        </tr>
-        <tr>
-            <th scope="row"><label for="et_mode">이벤트 상태<strong class="sound_only">필수</strong></label></th>
-            <td>
-            	<select name="et_mode" id="et_mode">
-            		<option value="">없음</option>
-            		<option value="0" <?php if($et_opnhr == '0') echo 'selected'; ?>>비활성</option>
-            		<option value="1" <?php if($et_opnhr == '1') echo 'selected'; ?>>활성</option>
-            		<option value="2" <?php if($et_opnhr == '2') echo 'selected'; ?>>대기</option>
-            		<option value="3" <?php if($et_opnhr == '3') echo 'selected'; ?>>취소</option>
-            	</select>
-            </td>
-        </tr>
-        <tr>
-            <th scope="row"><label for="et_opendate">시작일<strong class="sound_only">필수</strong></label></th>
-            <td>
-            	<input type="text" name="et_opendate" value="<?php echo $et_opndate ?>" id="et_opendate" readonly required class="opendate" size="11" maxlength="10"/>
-            	<select name="et_openhr" id="et_openhr">
-            		<option value="00" <?php if($et_opnhr == '00') echo 'selected'; ?>>00시</option>
-            		<option value="01" <?php if($et_opnhr == '01') echo 'selected'; ?>>1시</option>
-            		<option value="02" <?php if($et_opnhr == '02') echo 'selected'; ?>>2시</option>
-            		<option value="03" <?php if($et_opnhr == '03') echo 'selected'; ?>>3시</option>
-            	</select>
-            	
-            	<select name="et_openmin" id="et_openmin">
-            		<option value="00" <?php if($et_opnmin == '00') echo 'selected'; ?>>00분</option>
-            		<option value="01" <?php if($et_opnmin == '01') echo 'selected'; ?>>01분</option>
-            		<option value="02" <?php if($et_opnmin == '02') echo 'selected'; ?>>02분</option>
-            		<option value="03" <?php if($et_opnmin == '03') echo 'selected'; ?>>03분</option>
-            		<option value="23" <?php if($et_opnmin == '23') echo 'selected'; ?>>23분</option>
-            	</select>
-            </td>
-        </tr>
-        <tr>
-            <th scope="row"><label for="et_closedate">마감일<strong class="sound_only">필수</strong></label></th>
-            <td>
-            	<input type="text" name="et_closedate" value="<?php echo $et_clsdate ?>" id="et_closedate" readonly required class="opendate" size="11" maxlength="10"/>
-            	<select name="et_clshr" id="et_clshr">
-            		<option value="00" <?php if($et_clshr == '00') echo 'selected'; ?>>00시</option>
-            		<option value="01" <?php if($et_clshr == '01') echo 'selected'; ?>>1시</option>
-            		<option value="02" <?php if($et_clshr == '02') echo 'selected'; ?>>2시</option>
-            		<option value="03" <?php if($et_clshr == '03') echo 'selected'; ?>>3시</option>
-            	</select>
-            	
-            	<select name="et_clsmin" id="et_clsmin">
-            		<option value="00" <?php if($et_clsmin == '00') echo 'selected'; ?>>00분</option>
-            		<option value="01" <?php if($et_clsmin == '01') echo 'selected'; ?>>01분</option>
-            		<option value="02" <?php if($et_clsmin == '02') echo 'selected'; ?>>02분</option>
-            		<option value="03" <?php if($et_clsmin == '03') echo 'selected'; ?>>03분</option>
-            		<option value="23" <?php if($et_clsmin == '23') echo 'selected'; ?>>23분</option>
-            	</select>
-            </td>
-        </tr>
-        <tr>
-            <th scope="row"><label for="et_link">티저 유튜브 URL<strong class="sound_only">필수</strong></label></th>
-            <td>
-            	<input type="text" name="et_link" value="<?php echo $view->et_link ?>" id="et_link" required class="required" size="80" maxlength="120">
-            </td>
-        </tr>
-        <tr>
-            <th scope="row"><label for="et_content">티저 메모<strong class="sound_only">필수</strong></label></th>
-            <td>
-				<?php echo $this->smarteditor->editor_html("et_content", $this->common->get_text($view->et_content, 0)); ?>
-            </td>
-        </tr>
-        </tbody>
-        </table>
-    </div>
-</section>
-
-<div class="btn_confirm01 btn_confirm">
-    <input type="submit" value="저장" class="btn_submit" accesskey="s">
-    <a href="<?php echo site_url("admin/EventTeaser").$qstr?>">목록</a>
-    <a href="<?php echo site_url("admin/EventTeaserAction").'/'.$et_id.$qstr.'&amp;w=d'?>">삭제</a>
+<!-- container -->
+<div id="container">
+	<h2><?php echo $ptitle?></h2>
+	<!-- 수정 -->
+	<div class="tb_left">
+	<?php echo validation_errors(); ?>
+	<?php echo form_open('admin/eventTeaserAction', 'onsubmit="return fboardform_submit(this)" method="post" enctype="multipart/form-data"'); ?>
+	<input type="hidden" name="w" value="<?php echo $view_mode ?>">
+	<input type="hidden" name="et_id" value="<?php if(isset($et_id)) echo $et_id ?>">
+	<input type="hidden" name="sfl" value="<?php if(isset($sfl)) echo $sfl ?>">
+	<input type="hidden" name="stx" value="<?php if(isset($stx)) echo $stx ?>">
+	<input type="hidden" name="sst" value="<?php if(isset($sst)) echo $sst ?>">
+	<input type="hidden" name="sod" value="<?php if(isset($sod)) echo $sod ?>">
+	<input type="hidden" name="page" value="<?php if(isset($page)) echo $page ?>">
+		<table>
+		<caption><span>이벤트 티저 수정</span></caption>
+		<colgroup><col style="width:150px"><col></colgroup>
+		<tbody>
+		<tr>
+			<th scope="row">
+				<div class="th"><em>*</em><label for="et_subject">제목</label></div>
+			</th>
+			<td>
+				<div class="td"><input type="text" name="et_subject" value="<?php if($view_mode) echo $view->et_subject ?>" id="et_subject" required class="inp_txt" size="80" maxlength="120"></div>
+			</td>
+		</tr>
+		<tr>
+			<th scope="row">
+				<div class="th"><em>*</em><label for="et_link">URL</label></div>
+			</th>
+			<td>
+				<div class="td">
+				<input type="text" name="et_link" value="<?php if($view_mode) echo $view->et_link ?>" id="et_link" required class="inp_txt" size="80" maxlength="120">
+				</div>
+			</td>
+		</tr>
+		<tr>
+			<th scope="row">
+				<div class="th"><em>*</em><label for="et_opendate">시작일</label></div>
+			</th>
+			<td>
+				<div class="td">
+					<input type="text" name="et_opendate" value="<?php if($view_mode) echo $et_opndate ?>" id="et_opendate" readonly required class="opendate inp_txt v2" size="11" maxlength="10"/>
+	            	<select name="et_openhr" id="et_openhr" title="시작 시각">
+	            		<?php echo $this->common->printHrs($et_opnhr);?>
+	            	</select>
+	            	
+	            	<select name="et_openmin" id="et_openmin" title="시작 분">
+	            		<?php echo $this->common->printMin($et_opnmin);?>
+	            	</select>
+				</div>
+			</td>
+		</tr>
+		<tr>
+			<th scope="row">
+				<div class="th"><em>*</em><label for="et_closedate">마감일</label></div>
+			</th>
+			<td>
+				<div class="td">
+					<input type="text" name="et_closedate" value="<?php if($view_mode) echo $et_clsdate ?>" id="et_closedate" readonly required class="opendate inp_txt v2" size="11" maxlength="10"/>
+	            	<select name="et_clshr" id="et_clshr" title="마감 시각">
+	            		<?php echo $this->common->printHrs($et_clshr);?>
+	            	</select>
+	            	<select name="et_clsmin" id="et_clsmin" title="마감 분">
+	            		<?php echo $this->common->printMin($et_clsmin);?>
+	            	</select>
+				</div>
+			</td>
+		</tr>
+		<tr>
+			<th scope="row">
+				<div class="th"><em>*</em><label for="et_mode">상태</label></div>
+			</th>
+			<td>
+				<div class="td">
+					<select name="et_mode" id="et_mode">
+	            		<option value="">없음</option>
+	            		<option value="0">비활성</option>
+	            		<option value="1">활성</option>
+	            		<option value="2">대기</option>
+	            		<option value="3">취소</option>
+	            	</select>
+				</div>
+			</td>
+		</tr>
+		<tr>
+			<th scope="row">
+				<div class="th"><em>*</em><label for="et_content">메모</label></div>
+			</th>
+			<td>
+				<div class="td">
+					<?php 
+					$et_content = '';
+					if($view_mode) $et_content = $view->et_content;
+					echo $this->smarteditor->editor_html("et_content", $this->common->get_text($et_content, 0)); ?>
+				</div>
+			</td>
+		</tr>
+		</tbody>
+		</table>
+	</div>
+		
+	<!-- //수정 -->
+	<div class="btn_group">
+		<button type="submit" class="btn_o"><strong>확인</strong></button>
+		<?php if($view_mode){?>
+		<a href="<?php echo site_url("admin/EventTeaserAction").'/'.$et_id.$qstr.'&amp;w=d'?>" class="btn_d" onclick="del(this.href); return false;"><strong>삭제</strong></a>
+		<?php }?>
+		<a href="<?php echo site_url("admin/EventTeaser").$qstr?>" class="btn_g">취소</a>
+	</div>
+	<!-- //수정 -->
 </div>
+<!-- //container -->
 
 <script>
 $(function(){
 	$(".opendate").datepicker({ changeMonth: true, changeYear: true, dateFormat: "yy-mm-dd", showButtonPanel: true });
 });
 
+//삭제 검사 확인
+function del(href)
+{
+    if(confirm("한번 삭제한 자료는 복구할 방법이 없습니다.\n\n정말 삭제하시겠습니까?")) {
+        var iev = -1;
+        if (navigator.appName == 'Microsoft Internet Explorer') {
+            var ua = navigator.userAgent;
+            var re = new RegExp("MSIE ([0-9]{1,}[\.0-9]{0,})");
+            if (re.exec(ua) != null)
+                iev = parseFloat(RegExp.$1);
+        }
+
+        // IE6 이하에서 한글깨짐 방지
+        if (iev != -1 && iev < 7) {
+            document.location.href = encodeURI(href);
+        } else {
+            document.location.href = href;
+        }
+    }
+}
+
 function fboardform_submit(f)
 {
-	<?php echo $this->smarteditor->get_editor_js("bo_content_head"); ?>
-    if (parseInt(f.bo_count_modify.value) < 0) {
-        alert("원글 수정 불가 댓글수는 0 이상 입력하셔야 합니다.");
-        f.bo_count_modify.focus();
-        return false;
-    }
-
-    if (parseInt(f.bo_count_delete.value) < 1) {
-        alert("원글 삭제 불가 댓글수는 1 이상 입력하셔야 합니다.");
-        f.bo_count_delete.focus();
-        return false;
-    }
-
+	<?php echo $this->smarteditor->get_editor_js("et_content"); ?>
     return true;
 }
 </script>

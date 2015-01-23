@@ -214,6 +214,46 @@ class Common {
     	return $qstr;
     }
     
+    // 시간 HR 옵션
+    public function printHrs($selected='')
+    {
+    	$str = '';
+    	for($i=0; $i<24; $i++){
+    		if($i<10){
+    			$num = '0'.$i;
+    		}else{
+    			$num = $i;
+    		}
+    		
+    		$slt = '';
+    		if($selected == $num){
+    			$slt = ' selected';
+    		}
+    		$str .= '<option value="'.$num.'"'.$slt.'>'.$num.'시</option>';
+    	}
+    	return $str;
+    }
+    
+    // 분 MIN 옵션
+    public function printMin($selected='')
+    {
+    	$str = '';
+    	for($i=0; $i<60; $i++){
+    		if($i<10){
+    			$num = '0'.$i;
+    		}else{
+    			$num = $i;
+    		}
+    		
+    		$slt = '';
+    		if($selected == $num){
+    			$slt = ' selected';
+    		}
+    		$str .= '<option value="'.$num.'"'.$slt.'>'.$num.'분</option>';
+    	}
+    	return $str;
+    }
+    
     public function test()
     {
     	echo 'test ok';

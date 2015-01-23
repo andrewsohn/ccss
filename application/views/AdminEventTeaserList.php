@@ -1,4 +1,4 @@
-<?php $colspan = 5; ?>
+<?php $colspan = 5;?>
 <!-- container -->
 <div id="container">
 	<h2>이벤트 티져 관리</h2>
@@ -54,5 +54,8 @@
 	</div>
 	<!-- //table -->
 	<?php echo $this->pagination->create_links();?>
+	<div class="btn_group">
+		<a href="<?php echo site_url("admin/EventTeaser").'/new'.$qstr;?>" class="btn_o"><strong>신규이벤트 추가</strong></a>
+	</div>
 </div>
 <!-- //container -->
