@@ -22,10 +22,10 @@
 			$bg = 'bg'.($i%2);
 		?>
 		<tr>
-			<td><?php echo $blist[$i]->et_id?></td>
+			<td><?php echo $blist[$i]->idx?></td>
 			<td class="al">
 				<a href="<?php echo $blist[$i]->href ?>">
-                    <?php echo $blist[$i]->et_subject ?>
+                    <?php echo $blist[$i]->name ?>
                 </a>
                 <?php
                 if (isset($blist[$i]->icon_new)) echo $blist[$i]->icon_new;
@@ -36,12 +36,12 @@
                 ?>
 			</td>
 			<td class="al">
-				<a href="<?php echo $blist[$i]->et_link?>"><?php echo $blist[$i]->et_link?></a>
+				<a href="<?php echo $blist[$i]->videoUrl?>"><?php echo $blist[$i]->videoUrl?></a>
 			</td>
-			<td><?php echo $blist[$i]->et_opendate ?></td>
+			<td><?php echo $blist[$i]->startDt ?></td>
 			<td>
 				<a href="<?php echo $blist[$i]->href ?>">수정</a>
-	        	<a href="<?php echo site_url("admin/EventTeaserAction").'/'.$blist[$i]->et_id.$qstr.'&amp;w=d';?>" onclick="return delete_confirm();">삭제</a>
+	        	<a href="<?php echo site_url("admin/EventTeaserAction").'/'.$blist[$i]->idx.$qstr.'&amp;w=d';?>" onclick="return delete_confirm();">삭제</a>
 			</td>
 		</tr>
 		<?php 

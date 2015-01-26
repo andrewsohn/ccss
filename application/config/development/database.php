@@ -48,10 +48,13 @@
 $active_group = 'default';
 $active_record = TRUE;
 
+//$db['default']['hostname'] = '175.119.227.196';
 $db['default']['hostname'] = 'localhost';
+//$db['default']['username'] = 'cteaser';
 $db['default']['username'] = 'root';
+//$db['default']['password'] = 'g#bpFV8*]*2{48*6!<RvPuwhH';
 $db['default']['password'] = '1234';
-$db['default']['database'] = 'bearfamily';
+$db['default']['database'] = 'bearfamily_new';
 $db['default']['dbdriver'] = 'mysql';
 $db['default']['dbprefix'] = '';
 $db['default']['pconnect'] = TRUE;

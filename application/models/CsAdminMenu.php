@@ -5,10 +5,10 @@ class CsAdminMenu extends CI_Model{
 	}
 	
 	public function gets(){
-		return $this->db->query('select * from cs_admin_menu order by am_menu asc, am_code asc')->result();
+		return $this->db->query('select * from AdminMenu order by am_menu asc, am_code asc')->result();
 	}
 	
 	public function get($menu_id){
-		return $this->db->get_where('cs_admin_menu', array('am_id'=>$menu_id))->row();
+		return $this->db->get_where('AdminMenu', array('am_id'=>$menu_id))->row();
 	}
 }

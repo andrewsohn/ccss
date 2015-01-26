@@ -5,27 +5,31 @@ class CsAdminEventTeaser extends CI_Model{
 	}
 	
 	public function gets(){
-		return $this->db->query('select * from cs_event_teaser order by et_datetime desc')->result();
+		return $this->db->query('select * from Events order by datetime desc')->result();
 	}
 	
 	public function getList($page=1){
 		$start = ($page-1)*20;
 		$end = $page*20;
-		return $this->db->query('select * from cs_event_teaser order by et_datetime desc limit '.$start.', '.$end)->result();
+		return $this->db->query('select * from Events order by datetime desc limit '.$start.', '.$end)->result();
 	}
 	
 	public function getListLive(){
 		
-		return $this->db->query('select * from cs_event_teaser where et_mode = 1 order by et_datetime desc')->result();
+		return $this->db->query('select * from Events where status = 1 order by datetime desc')->result();
 	}
 	
 	public function get($et_id){
-		return $this->db->get_where('cs_event_teaser', array('et_id'=>$et_id))->row();
+		return $this->db->get_where('Events', array('idx'=>$et_id))->row();
+	}
+	
+	public function getLastLive(){
+		return $this->db->query('select * from Events where status = 1 order by datetime desc')->first_row();
 	}
 	
 	public function insert($data){
 		$this->db->trans_start();
-		$this->db->insert('cs_event_teaser', $data);
+		$this->db->insert('Events', $data);
 		$et_id = $this->db->insert_id();
 		$this->db->trans_complete();
 		
@@ -34,18 +38,18 @@ class CsAdminEventTeaser extends CI_Model{
 	
 	public function update($data, $et_id){
 		if(!$et_id) return;
-		$this->db->where('et_id', $et_id);
-		$this->db->update('cs_event_teaser', $data);
+		$this->db->where('idx', $et_id);
+		$this->db->update('Events', $data);
 	}
 	
 	public function delete($et_id){
 		if(!$et_id) return;
-		$this->db->delete('cs_event_teaser', array('et_id' => $et_id));
+		$this->db->delete('Events', array('idx' => $et_id));
 		
 	}
 	
 	public function totalRows(){
-		$query = $this->db->query('SELECT * FROM cs_event_teaser order by et_datetime desc');
+		$query = $this->db->query('SELECT * FROM Events order by datetime desc');
 		return $query->num_rows();
 	}
 }

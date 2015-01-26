@@ -4,13 +4,13 @@ $ptitle = '이벤트 티져 관리 ';
 if($view_mode == 'u'){
 	$ptitle .= '수정';
 	
-	$et_opndate = substr($view->et_opendate,0,10);
-	$et_opnhr = substr($view->et_opendate,11,2);
-	$et_opnmin = substr($view->et_opendate,14,2);
+	$et_opndate = substr($view->startDt,0,10);
+	$et_opnhr = substr($view->startDt,11,2);
+	$et_opnmin = substr($view->startDt,14,2);
 	
-	$et_clsdate = substr($view->et_closedate,0,10);
-	$et_clshr = substr($view->et_closedate,11,2);
-	$et_clsmin = substr($view->et_closedate,14,2);
+	$et_clsdate = substr($view->endDt,0,10);
+	$et_clshr = substr($view->endDt,11,2);
+	$et_clsmin = substr($view->endDt,14,2);
 }else{
 	$ptitle .= '등록';
 }
@@ -25,7 +25,7 @@ require_once './application/libraries/datepicker.php';
 	<?php echo validation_errors(); ?>
 	<?php echo form_open('admin/eventTeaserAction', 'onsubmit="return fboardform_submit(this)" method="post" enctype="multipart/form-data"'); ?>
 	<input type="hidden" name="w" value="<?php echo $view_mode ?>">
-	<input type="hidden" name="et_id" value="<?php if(isset($et_id)) echo $et_id ?>">
+	<input type="hidden" name="idx" value="<?php if(isset($idx)) echo $idx ?>">
 	<input type="hidden" name="sfl" value="<?php if(isset($sfl)) echo $sfl ?>">
 	<input type="hidden" name="stx" value="<?php if(isset($stx)) echo $stx ?>">
 	<input type="hidden" name="sst" value="<?php if(isset($sst)) echo $sst ?>">
@@ -37,19 +37,19 @@ require_once './application/libraries/datepicker.php';
 		<tbody>
 		<tr>
 			<th scope="row">
-				<div class="th"><em>*</em><label for="et_subject">제목</label></div>
+				<div class="th"><em>*</em><label for="name">제목</label></div>
 			</th>
 			<td>
-				<div class="td"><input type="text" name="et_subject" value="<?php if($view_mode) echo $view->et_subject ?>" id="et_subject" required class="inp_txt" size="80" maxlength="120"></div>
+				<div class="td"><input type="text" name="name" value="<?php if($view_mode) echo $view->name ?>" id="name" required class="inp_txt" size="80" maxlength="120"></div>
 			</td>
 		</tr>
 		<tr>
 			<th scope="row">
-				<div class="th"><em>*</em><label for="et_link">URL</label></div>
+				<div class="th"><em>*</em><label for="videoUrl">URL</label></div>
 			</th>
 			<td>
 				<div class="td">
-				<input type="text" name="et_link" value="<?php if($view_mode) echo $view->et_link ?>" id="et_link" required class="inp_txt" size="80" maxlength="120">
+				<input type="text" name="videoUrl" value="<?php if($view_mode) echo $view->videoUrl ?>" id="videoUrl" required class="inp_txt" size="80" maxlength="120">
 				</div>
 			</td>
 		</tr>
@@ -88,30 +88,27 @@ require_once './application/libraries/datepicker.php';
 		</tr>
 		<tr>
 			<th scope="row">
-				<div class="th"><em>*</em><label for="et_mode">상태</label></div>
+				<div class="th"><em>*</em><label for="status">상태</label></div>
 			</th>
 			<td>
 				<div class="td">
-					<select name="et_mode" id="et_mode">
+					<select name="status" id="status">
 	            		<option value="">없음</option>
-	            		<option value="0">비활성</option>
-	            		<option value="1">활성</option>
-	            		<option value="2">대기</option>
-	            		<option value="3">취소</option>
+	            		<?php echo $this->common->getOptByCode(2);?>
 	            	</select>
 				</div>
 			</td>
 		</tr>
 		<tr>
 			<th scope="row">
-				<div class="th"><em>*</em><label for="et_content">메모</label></div>
+				<div class="th"><em>*</em><label for="content">메모</label></div>
 			</th>
 			<td>
 				<div class="td">
 					<?php 
-					$et_content = '';
-					if($view_mode) $et_content = $view->et_content;
-					echo $this->smarteditor->editor_html("et_content", $this->common->get_text($et_content, 0)); ?>
+					$content = '';
+					if($view_mode) $content = $view->content;
+					echo $this->smarteditor->editor_html("content", $this->common->get_text($content, 0)); ?>
 				</div>
 			</td>
 		</tr>
@@ -123,7 +120,7 @@ require_once './application/libraries/datepicker.php';
 	<div class="btn_group">
 		<button type="submit" class="btn_o"><strong>확인</strong></button>
 		<?php if($view_mode){?>
-		<a href="<?php echo site_url("admin/EventTeaserAction").'/'.$et_id.$qstr.'&amp;w=d'?>" class="btn_d" onclick="del(this.href); return false;"><strong>삭제</strong></a>
+		<a href="<?php echo site_url("admin/EventTeaserAction").'/'.$idx.$qstr.'&amp;w=d'?>" class="btn_d" onclick="del(this.href); return false;"><strong>삭제</strong></a>
 		<?php }?>
 		<a href="<?php echo site_url("admin/EventTeaser").$qstr?>" class="btn_g">취소</a>
 	</div>
@@ -159,7 +156,7 @@ function del(href)
 
 function fboardform_submit(f)
 {
-	<?php echo $this->smarteditor->get_editor_js("et_content"); ?>
+	<?php echo $this->smarteditor->get_editor_js("content"); ?>
     return true;
 }
 </script>

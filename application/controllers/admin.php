@@ -56,7 +56,7 @@ class Admin extends CI_Controller {
 			
 			$i=0;
 			while(isset($board_list[$i])){
-				$board_list[$i]->href = site_url("admin").'/'.$this->router->fetch_method().'/'.$board_list[$i]->et_id.$qstr;
+				$board_list[$i]->href = site_url("admin").'/'.$this->router->fetch_method().'/'.$board_list[$i]->idx.$qstr;
 				$i++;
 			}
 			
@@ -72,7 +72,7 @@ class Admin extends CI_Controller {
 		}else{
 			$data['view_mode'] = '';
 			if($et_id != 'new'){
-				$data['et_id'] = $et_id;
+				$data['idx'] = $et_id;
 				$data['view_mode'] = 'u';
 				$data['view'] = $this->CsAdminEventTeaser->get($et_id);
 				
@@ -97,15 +97,52 @@ class Admin extends CI_Controller {
 		$this->_header($member, $this->router->fetch_method());
 		if($ea_id === ''){
 			$data['etList'] = $this->CsAdminEventTeaser->getListLive();
+				
+			$data['et_id'] = '';
+			if(isset($_REQUEST['et_id'])){
+				$is_et_id = false;
 			
-			$board_list = $this->CsAdminEventApplicant->gets();
-			$i=0;
+				$data['et_id'] = (int)$_REQUEST['et_id'];
+				for($i=0; $i<count($data['etList']); $i++){
+					if($data['et_id'] == $data['etList'][$i]->idx){
+						$is_et_id = true;
+					}
+						
+				}
+			
+				if(!$is_et_id){
+					$this->common->alert('카테고리가 존재하지 않습니다.');
+				}
+			}
+			
+			if(isset($_REQUEST['page'])){
+				if($_REQUEST['page']){
+					$page = (int)$_REQUEST['page'];
+				}else{
+					$page = 1;
+				}
+				$board_list = $this->CsAdminEventApplicant->getList($data['et_id'], $page);
+				$config['cur_page'] = $page;
+			}else{
+				$board_list = $this->CsAdminEventApplicant->getList($data['et_id']);
+				$config['cur_page'] = 1;
+			}
+			
+			
+			/* $i=0;
 			while(isset($board_list[$i])){
 				$board_list[$i]->href = site_url("admin").'/'.$this->router->fetch_method().'/'.$board_list[$i]->ea_id;
 				$i++;
-			}
+			} */
 			
 			$data['blist'] = $board_list;
+			
+			$config['base_url'] = site_url('admin/EventApplicant');
+			$config['total_rows'] = $this->CsAdminEventApplicant->totalRows();
+			$config['per_page'] = 20;
+				
+			$this->pagination->initialize($config);
+			
 			$this->load->view('AdminEventApplyList', $data);
 		}else{
 			$data['view_mode'] = '';
@@ -120,9 +157,82 @@ class Admin extends CI_Controller {
 		$this->_footer();
 	}
 	
-	public function eventTeaserAction($et_id=''){
+	public function PreReserveHistory(){
 		$this->_loginCheck();
 		
+		$data = array();
+		
+		$mb_id = $this->session->userdata('ss_mb_id');
+		$member = $this->common->get_member($mb_id);
+		$data['member'] = $member;
+
+		$this->_header($member, $this->router->fetch_method());
+		if($ea_id === ''){
+			$data['etList'] = $this->CsAdminEventTeaser->getListLive();
+				
+			$data['et_id'] = '';
+			if(isset($_REQUEST['et_id'])){
+				$is_et_id = false;
+			
+				$data['et_id'] = (int)$_REQUEST['et_id'];
+				for($i=0; $i<count($data['etList']); $i++){
+					if($data['et_id'] == $data['etList'][$i]->et_id){
+						$is_et_id = true;
+					}
+						
+				}
+			
+				if(!$is_et_id){
+					$this->common->alert('카테고리가 존재하지 않습니다.');
+				}
+			}
+			
+			if(isset($_REQUEST['page'])){
+				if($_REQUEST['page']){
+					$page = (int)$_REQUEST['page'];
+				}else{
+					$page = 1;
+				}
+				$board_list = $this->CsAdminEventApplicant->getList($data['et_id'], $page);
+				$config['cur_page'] = $page;
+			}else{
+				$board_list = $this->CsAdminEventApplicant->getList($data['et_id']);
+				$config['cur_page'] = 1;
+			}
+			
+			
+			/* $i=0;
+			while(isset($board_list[$i])){
+				$board_list[$i]->href = site_url("admin").'/'.$this->router->fetch_method().'/'.$board_list[$i]->ea_id;
+				$i++;
+			} */
+			
+			$data['blist'] = $board_list;
+			
+			$config['base_url'] = site_url('admin/EventApplicant');
+			$config['total_rows'] = $this->CsAdminEventApplicant->totalRows();
+			$config['per_page'] = 20;
+				
+			$this->pagination->initialize($config);
+			
+			$this->load->view('AdminEventApplyList', $data);
+		}else{
+			$data['view_mode'] = '';
+			if($ea_id != 'new'){
+				$data['view_mode'] = 'u';
+				$data['view'] = $this->CsAdminEventApplicant->get($ea_id);
+			}
+			
+			$this->load->view('AdminEventApplyWrite', $data);
+		}
+		
+		$this->_footer();
+	}
+	
+	public function eventTeaserAction($idx=''){
+		$this->_loginCheck();
+		
+		$w = '';
 		if($this->input->post('w', TRUE)){
 			$w = $this->input->post('w', TRUE);
 		}else if($this->input->get('w', TRUE)){
@@ -139,80 +249,80 @@ class Admin extends CI_Controller {
 		$msg = array();
 		
 		if($w == 'u'){
-			$et_id = '';
-			if($this->input->post('et_id', TRUE)){
-				$et_id = trim($this->input->post('et_id', TRUE));
+			$idx = '';
+			if($this->input->post('idx', TRUE)){
+				$idx = trim($this->input->post('idx', TRUE));
 			}else{
 				$msg[] = '죄송합니다. 저장오류입니다.';
 			}
 		}
 		
 		if($w == 'd'){
-			if(!$et_id){
+			if(!$idx){
 				$msg[] = '죄송합니다. 저장오류입니다.';
 			}
 		}
 		
 		if($w == '' || $w == 'u'){
-			$data['et_subject'] = '';
-			if($this->input->post('et_subject', TRUE)){
-				$data['et_subject'] = trim($this->input->post('et_subject', TRUE));
+			$data['name'] = '';
+			if($this->input->post('name', TRUE)){
+				$data['name'] = trim($this->input->post('name', TRUE));
 			}else{
 				$msg[] = '<strong>이벤트 제목</strong>을 입력하세요.';
 			}
 			
-			$data['et_content'] = '';
-			if($this->input->post('et_content', TRUE)){
-				$data['et_content'] = trim($this->input->post('et_content', TRUE));
+			$data['content'] = '';
+			if($this->input->post('content', TRUE)){
+				$data['content'] = trim($this->input->post('content', TRUE));
 			}else{
 				$msg[] = '<strong>이벤트 내용</strong>을 입력하세요.';
 			}
 			
-			$data['et_mode'] = 0;
-			if($this->input->post('et_mode', TRUE) != ''){
-				$data['et_mode'] = trim($this->input->post('et_mode', TRUE));
+			$data['status'] = 0;
+			if($this->input->post('status', TRUE) != ''){
+				$data['status'] = trim($this->input->post('status', TRUE));
 			}else{
 				$msg[] = '<strong>이벤트 상태</strong>를 입력하세요.';
 			}
 			
 			//필수 필드 Validation [end]--------------------
-			$data['et_opendate'] = '';
+			$data['startDt'] = '';
 			if($this->input->post('et_opendate', TRUE)){
-				$data['et_opendate'] = trim($this->input->post('et_opendate', TRUE));
+				$data['startDt'] = trim($this->input->post('et_opendate', TRUE));
 				if($this->input->post('et_openhr', TRUE)){
-					$data['et_opendate'] .= ' '.trim($this->input->post('et_openhr', TRUE));
+					$data['startDt'] .= ' '.trim($this->input->post('et_openhr', TRUE));
 					if($this->input->post('et_openmin', TRUE)){
-						$data['et_opendate'] .= ':'.trim($this->input->post('et_openmin', TRUE)).':00';
+						$data['startDt'] .= ':'.trim($this->input->post('et_openmin', TRUE)).':00';
 					}else{
-						$data['et_opendate'] .= ':00:00';
+						$data['startDt'] .= ':00:00';
 					}
 				}else{
-					$data['et_opendate'] .= ' 00:00:00';
+					$data['startDt'] .= ' 00:00:00';
 				}
 			}
 			
-			$data['et_closedate'] = '';
+			$data['endDt'] = '';
 			if($this->input->post('et_closedate', TRUE)){
-				$data['et_closedate'] = trim($this->input->post('et_closedate', TRUE));
+				$data['endDt'] = trim($this->input->post('et_closedate', TRUE));
 				if($this->input->post('et_closehr', TRUE)){
-					$data['et_closedate'] .= ' '.trim($this->input->post('et_closehr', TRUE));
+					$data['endDt'] .= ' '.trim($this->input->post('et_closehr', TRUE));
 					if($this->input->post('et_closemin', TRUE)){
-						$data['et_closedate'] .= ':'.trim($this->input->post('et_closemin', TRUE)).':00';
+						$data['endDt'] .= ':'.trim($this->input->post('et_closemin', TRUE)).':00';
 					}else{
-						$data['et_closedate'] .= ':00:00';
+						$data['endDt'] .= ':00:00';
 					}
 				}else{
-					$data['et_closedate'] .= ' 00:00:00';
+					$data['endDt'] .= ' 00:00:00';
 				}
 			}
 			
-			$data['et_link'] = '';
-			if($this->input->post('et_link', TRUE)){
-				$data['et_link'] = trim($this->input->post('et_link', TRUE));
+			$data['videoUrl'] = '';
+			if($this->input->post('videoUrl', TRUE)){
+				$data['videoUrl'] = trim($this->input->post('videoUrl', TRUE));
 			}
 			
 			if($w == ''){
-				$data['et_datetime'] = date("Y-m-d H:i:s");
+				$data['datetime'] = date("Y-m-d H:i:s");
 			}
 		}
 		
@@ -223,6 +333,7 @@ class Admin extends CI_Controller {
 		}
 		
 		if($w == ''){
+			$this->common->print_r2($data);
 			$et_id = $this->CsAdminEventTeaser->insert($data);
 		}else if($w == 'u'){
 			$this->CsAdminEventTeaser->update($data, $et_id);
@@ -242,6 +353,41 @@ class Admin extends CI_Controller {
 					redirect('admin/EventTeaser', 'refresh');
 				}
 			}
+		}
+	}
+	public function EventApplicantAction(){
+		$this->_loginCheck();
+		
+		if($this->input->post('w', TRUE)){
+			$w = $this->input->post('w', TRUE);
+		}else if($this->input->get('w', TRUE)){
+			$w = $this->input->get('w', TRUE);
+		}
+		
+		if(!in_array($w, array("", "u", "h"))){
+			$this->common->alert('죄송합니다. 저장오류입니다.');
+			exit;
+		}
+		
+		$data = array();
+		//필수 필드 Validation [start]--------------------
+		$msg = array();
+		$ea_id = $this->input->post('idx', TRUE);
+		
+		if($w == 'h'){
+			if(!$ea_id){
+				$msg[] = '죄송합니다. 저장오류입니다.';
+			}
+		}
+		
+		$msg = implode('<br>', $msg);
+		if ($msg) {
+			$this->common->alert($msg);
+			exit;
+		}
+		
+		if($w == 'h'){
+			echo $flag = $this->CsAdminEventApplicant->hideUpdate($ea_id);
 		}
 	}
 	

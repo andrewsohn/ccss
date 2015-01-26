@@ -5,10 +5,10 @@ class Member extends CI_Model{
 	}
 	
 	public function gets(){
-		return $this->db->query('select * from cs_member')->result();
+		return $this->db->query('select * from AdminMember')->result();
 	}
 	
 	public function get($mb_id){
-		return $this->db->get_where('cs_member', array('mb_id'=>$mb_id))->row();
+		return $this->db->get_where('AdminMember', array('mb_id'=>$mb_id))->row();
 	}
 }

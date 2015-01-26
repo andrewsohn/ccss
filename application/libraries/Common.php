@@ -73,7 +73,7 @@ class Common {
     public function get_member($mb_id, $fields='*')
     {
     	if(!$mb_id) return;
-    	$query = $this->CI->db->query(" select $fields from cs_member where mb_id = TRIM('$mb_id') ");
+    	$query = $this->CI->db->query(" select $fields from AdminMember where mb_id = TRIM('$mb_id') ");
     	return $query->row();
     }
     
@@ -252,6 +252,26 @@ class Common {
     		$str .= '<option value="'.$num.'"'.$slt.'>'.$num.'분</option>';
     	}
     	return $str;
+    }
+    
+    public function getSNSName($sns_type)
+    {
+    	if(!$sns_type) return;
+		$query = $this->CI->db->query(" select sns_name from cs_sns where sns_id = {$sns_type} ");
+		$row = $query->row();
+		return $row->sns_name;
+    }
+    
+    public function getOptByCode($gid)
+    {
+    	if(!$gid) return;
+    	$str = '';
+		$query = $this->CI->db->query(" select id, name from Codes where gid = {$gid} ");
+    	foreach ($query->result() as $row)
+		{
+			$str .= '<option value="'.$row->id.'">'.$row->name.'</option>';
+		}
+		return $str;
     }
     
     public function test()

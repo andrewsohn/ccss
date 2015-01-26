@@ -9,7 +9,7 @@ if($this->router->fetch_class() == 'login'){?>
 	<!-- header -->
 	<div id="gnb">
 		<div class="head">
-			<h1><a href="#"><img src="<?php echo $this->config->item('asset_url');?>/admin/img/logo.png" alt="sscc"></a></h1>
+			<h1><a href="<?php echo site_url("admin")?>"><img src="<?php echo $this->config->item('asset_url');?>/admin/img/logo.png" alt="sscc"></a></h1>
 			<ul>
 			<li><a href="<?php echo site_url("logout")?>">로그아웃</a></li>
 			<li><a href="<?php echo site_url()?>">사이트 바로가기</a></li>
