@@ -3,19 +3,9 @@ $ptitle = '이벤트 티져 관리 ';
 
 if($view_mode == 'u'){
 	$ptitle .= '수정';
-	
-	$et_opndate = substr($view->startDt,0,10);
-	$et_opnhr = substr($view->startDt,11,2);
-	$et_opnmin = substr($view->startDt,14,2);
-	
-	$et_clsdate = substr($view->endDt,0,10);
-	$et_clshr = substr($view->endDt,11,2);
-	$et_clsmin = substr($view->endDt,14,2);
 }else{
 	$ptitle .= '등록';
 }
-
-require_once './application/libraries/datepicker.php';
 ?>
 <!-- container -->
 <div id="container">
@@ -23,7 +13,7 @@ require_once './application/libraries/datepicker.php';
 	<!-- 수정 -->
 	<div class="tb_left">
 	<?php echo validation_errors(); ?>
-	<?php echo form_open('admin/eventTeaserAction', 'onsubmit="return fboardform_submit(this)" method="post" enctype="multipart/form-data"'); ?>
+	<?php echo form_open('admin/eventTeaserAction', 'method="post" enctype="multipart/form-data"'); ?>
 	<input type="hidden" name="w" value="<?php echo $view_mode ?>">
 	<input type="hidden" name="idx" value="<?php if(isset($idx)) echo $idx ?>">
 	<input type="hidden" name="sfl" value="<?php if(isset($sfl)) echo $sfl ?>">
@@ -37,10 +27,10 @@ require_once './application/libraries/datepicker.php';
 		<tbody>
 		<tr>
 			<th scope="row">
-				<div class="th"><em>*</em><label for="name">제목</label></div>
+				<div class="th"><em>*</em><label for="title">제목</label></div>
 			</th>
 			<td>
-				<div class="td"><input type="text" name="name" value="<?php if($view_mode) echo $view->name ?>" id="name" required class="inp_txt" size="80" maxlength="120"></div>
+				<div class="td"><input type="text" name="title" value="<?php if($view_mode) echo $view->title ?>" id="title" required class="inp_txt" size="80" maxlength="120"></div>
 			</td>
 		</tr>
 		<tr>
@@ -55,46 +45,13 @@ require_once './application/libraries/datepicker.php';
 		</tr>
 		<tr>
 			<th scope="row">
-				<div class="th"><em>*</em><label for="et_opendate">시작일</label></div>
-			</th>
-			<td>
-				<div class="td">
-					<input type="text" name="et_opendate" value="<?php if($view_mode) echo $et_opndate ?>" id="et_opendate" readonly required class="opendate inp_txt v2" size="11" maxlength="10"/>
-	            	<select name="et_openhr" id="et_openhr" title="시작 시각">
-	            		<?php echo $this->common->printHrs($et_opnhr);?>
-	            	</select>
-	            	
-	            	<select name="et_openmin" id="et_openmin" title="시작 분">
-	            		<?php echo $this->common->printMin($et_opnmin);?>
-	            	</select>
-				</div>
-			</td>
-		</tr>
-		<tr>
-			<th scope="row">
-				<div class="th"><em>*</em><label for="et_closedate">마감일</label></div>
-			</th>
-			<td>
-				<div class="td">
-					<input type="text" name="et_closedate" value="<?php if($view_mode) echo $et_clsdate ?>" id="et_closedate" readonly required class="opendate inp_txt v2" size="11" maxlength="10"/>
-	            	<select name="et_clshr" id="et_clshr" title="마감 시각">
-	            		<?php echo $this->common->printHrs($et_clshr);?>
-	            	</select>
-	            	<select name="et_clsmin" id="et_clsmin" title="마감 분">
-	            		<?php echo $this->common->printMin($et_clsmin);?>
-	            	</select>
-				</div>
-			</td>
-		</tr>
-		<tr>
-			<th scope="row">
 				<div class="th"><em>*</em><label for="status">상태</label></div>
 			</th>
 			<td>
 				<div class="td">
 					<select name="status" id="status">
 	            		<option value="">없음</option>
-	            		<?php echo $this->common->getOptByCode(2);?>
+	            		<?php echo $this->common->getOptByCode(2,$view->status);?>
 	            	</select>
 				</div>
 			</td>
@@ -108,7 +65,9 @@ require_once './application/libraries/datepicker.php';
 					<?php 
 					$content = '';
 					if($view_mode) $content = $view->content;
-					echo $this->smarteditor->editor_html("content", $this->common->get_text($content, 0)); ?>
+					?>
+					<textarea name="content" id="content" ><?php echo $content?></textarea>
+					<?php echo display_ckeditor($ckeditor); ?>
 				</div>
 			</td>
 		</tr>
@@ -129,10 +88,6 @@ require_once './application/libraries/datepicker.php';
 <!-- //container -->
 
 <script>
-$(function(){
-	$(".opendate").datepicker({ changeMonth: true, changeYear: true, dateFormat: "yy-mm-dd", showButtonPanel: true });
-});
-
 //삭제 검사 확인
 function del(href)
 {
@@ -152,11 +107,5 @@ function del(href)
             document.location.href = href;
         }
     }
-}
-
-function fboardform_submit(f)
-{
-	<?php echo $this->smarteditor->get_editor_js("content"); ?>
-    return true;
 }
 </script>

@@ -6,11 +6,13 @@ class Admin extends CI_Controller {
 		$this->load->library('common');
 		$this->load->library('user_agent');
 		$this->load->library('smarteditor');
+		$this->load->library('universaluid');
 		$this->load->library('pagination');
 		$this->load->model('CsAdminMenu');
 		$this->load->model('CsAdminEventTeaser');
 		$this->load->model('CsAdminEventApplicant');
 		$this->load->helper('url');
+		$this->load->helper('ckeditor');
 	}
 	
 	public function index(){
@@ -40,6 +42,47 @@ class Admin extends CI_Controller {
 		$data['member'] = $member;
 
 		$this->_header($member, $this->router->fetch_method());
+		
+		$data['ckeditor'] = array(
+		
+				//ID of the textarea that will be replaced
+				'id' 	=> 	'content',
+				'path'	=>	'./ckeditor',
+		
+				//Optionnal values
+				'config' => array(
+						'toolbar' 	=> 	"Full", 	//Using the Full toolbar
+						'width' 	=> 	"100%",	//Setting a custom width
+						'height' 	=> 	'400px',	//Setting a custom height
+		
+				),
+		
+				//Replacing styles from the "Styles tool"
+				'styles' => array(
+		
+						//Creating a new style named "style 1"
+						'style 1' => array (
+								'name' 		=> 	'Blue Title',
+								'element' 	=> 	'h2',
+								'styles' => array(
+										'color' 	=> 	'Blue',
+										'font-weight' 	=> 	'bold'
+								)
+						),
+		
+						//Creating a new style named "style 2"
+						'style 2' => array (
+								'name' 	=> 	'Red Title',
+								'element' 	=> 	'h2',
+								'styles' => array(
+										'color' 		=> 	'Red',
+										'font-weight' 		=> 	'bold',
+										'text-decoration'	=> 	'underline'
+								)
+						)
+				)
+		);
+		
 		if($et_id === ''){
 			if(isset($_REQUEST['page'])){
 				if($_REQUEST['page']){
@@ -264,9 +307,9 @@ class Admin extends CI_Controller {
 		}
 		
 		if($w == '' || $w == 'u'){
-			$data['name'] = '';
-			if($this->input->post('name', TRUE)){
-				$data['name'] = trim($this->input->post('name', TRUE));
+			$data['title'] = '';
+			if($this->input->post('title', TRUE)){
+				$data['title'] = trim($this->input->post('title', TRUE));
 			}else{
 				$msg[] = '<strong>이벤트 제목</strong>을 입력하세요.';
 			}
@@ -286,43 +329,13 @@ class Admin extends CI_Controller {
 			}
 			
 			//필수 필드 Validation [end]--------------------
-			$data['startDt'] = '';
-			if($this->input->post('et_opendate', TRUE)){
-				$data['startDt'] = trim($this->input->post('et_opendate', TRUE));
-				if($this->input->post('et_openhr', TRUE)){
-					$data['startDt'] .= ' '.trim($this->input->post('et_openhr', TRUE));
-					if($this->input->post('et_openmin', TRUE)){
-						$data['startDt'] .= ':'.trim($this->input->post('et_openmin', TRUE)).':00';
-					}else{
-						$data['startDt'] .= ':00:00';
-					}
-				}else{
-					$data['startDt'] .= ' 00:00:00';
-				}
-			}
-			
-			$data['endDt'] = '';
-			if($this->input->post('et_closedate', TRUE)){
-				$data['endDt'] = trim($this->input->post('et_closedate', TRUE));
-				if($this->input->post('et_closehr', TRUE)){
-					$data['endDt'] .= ' '.trim($this->input->post('et_closehr', TRUE));
-					if($this->input->post('et_closemin', TRUE)){
-						$data['endDt'] .= ':'.trim($this->input->post('et_closemin', TRUE)).':00';
-					}else{
-						$data['endDt'] .= ':00:00';
-					}
-				}else{
-					$data['endDt'] .= ' 00:00:00';
-				}
-			}
-			
 			$data['videoUrl'] = '';
 			if($this->input->post('videoUrl', TRUE)){
 				$data['videoUrl'] = trim($this->input->post('videoUrl', TRUE));
 			}
 			
 			if($w == ''){
-				$data['datetime'] = date("Y-m-d H:i:s");
+				$data['registDt'] = date("Y-m-d H:i:s");
 			}
 		}
 		
@@ -333,19 +346,20 @@ class Admin extends CI_Controller {
 		}
 		
 		if($w == ''){
+			$data['idx'] = $this->universaluid->v3();
 			$this->common->print_r2($data);
-			$et_id = $this->CsAdminEventTeaser->insert($data);
+			$idx = $this->CsAdminEventTeaser->insert($data);
 		}else if($w == 'u'){
-			$this->CsAdminEventTeaser->update($data, $et_id);
+			$this->CsAdminEventTeaser->update($data, $idx);
 		}else if($w == 'd'){
-			$this->CsAdminEventTeaser->delete($et_id);
+			$this->CsAdminEventTeaser->delete($idx);
 		}
 		
 		if($w == 'd'){
 			redirect('admin/EventTeaser', 'refresh');
 		}else{
 			if($w == ''){
-				redirect('admin/EventTeaser/'.$et_id, 'refresh');
+				redirect('admin/EventTeaser/'.$idx, 'refresh');
 			}else{
 				if($this->agent->is_referral()){
 					redirect($this->agent->referrer(), 'refresh');

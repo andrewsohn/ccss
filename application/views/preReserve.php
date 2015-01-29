@@ -1,44 +1,54 @@
+<input type="radio" name="chk_info" value="1">Facebook
+<input type="radio" name="chk_info" value="2">Twitter
+<a href="#" class="applyBtn">나 이 곰 봤어요!</a>
+<div class="popLayer" style="display: none;">
+	<form id="applyForm" action="">
+		<input type="text" name="idx" id="idx" value="">
+		<input type="text" name="name" id="name" value="">
+		<input type="text" name="appId" id="appId" value="">
+		<input type="text" name="appSecret" id="appSecret" value="">
+		<a href="#" class="close">X</a>
+	</form>
+</div>
 <?php
-	session_start();
-	
-	require './system/libraries/autoload.php';
-	
-	use Facebook\FacebookSession;
-	use Facebook\FacebookRedirectLoginHelper;
-	use Facebook\FacebookRequest;
-	use Facebook\FacebookResponse;
-	use Facebook\FacebookSDKException;
-	use Facebook\FacebookRequestException;
-	use Facebook\FacebookAuthorizationException;
-	use Facebook\GraphObject;
-	use Facebook\GraphUser;
-	
-	use Facebook\GraphSessionInfo;
-	
-	$id = '348697705319104';
-	$secret = '72acca56f341803ddada56ecefb4ad11';
-	
-	FacebookSession::setDefaultApplication($id, $secret);
-	
-	$helper = new FacebookRedirectLoginHelper('http://ccss.hivelab.co.kr/ccss/index.php/fb');
-	$session = $helper->getSessionFromRedirect();
-	
-	if(isset($session)){	
-// 		$_SESSION['token'] = $_GET['code'];
-		$_SESSION['token'] = $session->getToken();
-		$request = new FacebookRequest($session, 'GET', '/me');		
-		$response = $request->execute();	
-		$graph = $response->getGraphObject(GraphUser::className());	
-		echo "Hi " . $graph->getName();
+echo "사전예약 페이지<br>";
+echo '<h2>사전 예약 참여자</h2>';
+echo $this->common->print_r2($clist).'<br>';
 ?>
-<script>
-	setTimeout(function() {
-		window.location.href = 'http://ccss.hivelab.co.kr/ccss/index.php/fbcallback';
-	}, 500);
+<script type="text/javascript">
+$(function(){
+	var pl = $('.popLayer');
+	pl.find('.close').click(function(e){
+		e.preventDefault();
+		$('#applyForm').each(function() {  
+			this.reset();  
+		});
+		pl.hide();
+	});
+	$('.applyBtn').click(function(e){
+		e.preventDefault();
+		if(!$("input[name=chk_info]:checked").val())
+			return;
+		
+		var trg = $(this),
+		 sns = $("input[name=chk_info]:checked").val();
+		
+		$.ajax({
+			type: "POST",
+			url: '<?php echo site_url("teaser/applyAction");?>',
+			data: {
+              "w": 'new',
+              "sns": sns
+			},
+			success: function(data) {
+				pl.find('#idx').val(data['idx']);
+				pl.find('#name').val(data['name']);
+				pl.find('#appId').val(data['appId']);
+				pl.find('#appSecret').val(data['appSecret']);
+				pl.show();
+			}
+		});
+		
+	});
+});
 </script>
-<?php
-	} else {
-		$scope = array('publish_actions');
-		echo "<a href = " . $helper->getLoginUrl($scope) . ">Login With Facebook</a>";
-	}
-?>

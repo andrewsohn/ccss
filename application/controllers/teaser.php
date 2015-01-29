@@ -27,14 +27,18 @@ class Teaser extends CI_Controller {
 			$view = $this->CsAdminEventTeaser->getLastLive();
 		
 		$data['view'] = $view;
-		
-		$clist = $this->CsAdminEventApplicant->getList($view->idx);
-		$data['clist'] = $clist;
+		if(!empty($view)){
+			$clist = $this->CsAdminEventApplicant->getListMain($view->idx);
+			$data['clist'] = $clist;
+		}
+			
 		
 		$board_list = $this->CsAdminEventTeaser->getListLive();
 		
 		$data['blist'] = $board_list;
 		
+		$this->load->helper(array('form', 'url'));
+		$this->load->library('form_validation');
 		$this->load->view('teaser', $data);
 		
 		$this->_footer();
@@ -47,6 +51,18 @@ class Teaser extends CI_Controller {
 			$sns = $this->CsSns->get($idx);
 			$this->output->set_header('Content-Type: application/json; charset=utf-8');
 			echo json_encode($sns);
+		}
+	}
+	
+	public function getMoreList()
+	{
+		if($this->input->post('idx', TRUE) && $this->input->post('idx2', TRUE)){
+			$idx = $this->input->post('idx', TRUE);
+			$idx2 = $this->input->post('idx2', TRUE);
+			//echo json_encode($idx.':'.$idx2);
+			$clist = $this->CsAdminEventApplicant->getListMore($idx,$idx2);
+			$this->output->set_header('Content-Type: application/json; charset=utf-8');
+			echo json_encode($clist);
 		}
 	}
 	

@@ -41,4 +41,5 @@
 		$scope = array('publish_actions');
 		echo "<a href = " . $helper->getLoginUrl($scope) . ">Login With Facebook</a>";
 	}
+	
 ?>

@@ -25,7 +25,7 @@
 			<td><?php echo $blist[$i]->idx?></td>
 			<td class="al">
 				<a href="<?php echo $blist[$i]->href ?>">
-                    <?php echo $blist[$i]->name ?>
+                    <?php echo $blist[$i]->title ?>
                 </a>
                 <?php
                 if (isset($blist[$i]->icon_new)) echo $blist[$i]->icon_new;
@@ -38,7 +38,7 @@
 			<td class="al">
 				<a href="<?php echo $blist[$i]->videoUrl?>"><?php echo $blist[$i]->videoUrl?></a>
 			</td>
-			<td><?php echo $blist[$i]->startDt ?></td>
+			<td><?php echo ''; ?></td>
 			<td>
 				<a href="<?php echo $blist[$i]->href ?>">수정</a>
 	        	<a href="<?php echo site_url("admin/EventTeaserAction").'/'.$blist[$i]->idx.$qstr.'&amp;w=d';?>" onclick="return delete_confirm();">삭제</a>

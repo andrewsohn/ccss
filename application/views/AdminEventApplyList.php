@@ -12,7 +12,7 @@ $colspan = 7;
 			$cl = 'class="on"';
 		}
 	?>
-		<li <?php echo $cl?>><a href="<?php echo site_url("admin/EventApplicant").'?et_id='.$etList[$i]->idx?>"><?php echo $etList[$i]->name.' 참여자'?></a></li>
+		<li <?php echo $cl?>><a href="<?php echo site_url("admin/EventApplicant").'?et_id='.$etList[$i]->idx?>"><?php echo $etList[$i]->title.' 참여자'?></a></li>
 	<?php }?>
 	</ul>
 	
@@ -50,15 +50,7 @@ $colspan = 7;
 			<td class="img"><img src="http://imgnews.naver.net/image/003/2013/05/18/NISI20130518_0008193217_web_59_20130518092610.jpg" alt=""></td>
 			<td><?php echo $blist[$i]->registDt ?></td>
 			<td class="btn">
-			<a href="#" data-href="<?php echo $blist[$i]->idx; ?>" class="btn_g">
-			<?php
-			if($blist[$i]->visible == 'N'){
-				echo '보이기'; 
-			}else{
-				echo '숨기기';
-			} 
-			?>
-			</a>
+			<a href="#" data-href="<?php echo $blist[$i]->idx; ?>" class="btn_g"><?php if($blist[$i]->visible == 'N') echo '보이기'; else echo '숨기기';?></a>
 			</td>
 		</tr>
 		<?php 
@@ -90,10 +82,8 @@ $(function(){
               "idx": trg.attr('data-href')
 			},
 			success: function(data) {
-				if(data == 'N'){
-                	trg.html('숨기기');
-                }else{
-                	trg.html('보이기');
+				if(data){
+                	trg.html(data);
                 }
 			}
 		});

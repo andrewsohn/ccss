@@ -262,16 +262,141 @@ class Common {
 		return $row->sns_name;
     }
     
-    public function getOptByCode($gid)
+    public function getOptByCode($gid,$id)
     {
     	if(!$gid) return;
     	$str = '';
 		$query = $this->CI->db->query(" select id, name from Codes where gid = {$gid} ");
     	foreach ($query->result() as $row)
 		{
-			$str .= '<option value="'.$row->id.'">'.$row->name.'</option>';
+			$selected='';
+			if($row->id == $id) $selected='selected';
+			$str .= '<option value="'.$row->id.'" '.$selected.'>'.$row->name.'</option>';
 		}
 		return $str;
+    }
+    
+    public function googl_short_url($longUrl)
+    {
+    	
+    	// Get API key from : http://code.google.com/apis/console/
+    	// URL Shortener API ON
+    	$apiKey = $this->CI->config->item('cf_googl_shorturl_apikey');
+    
+    	$postData = array('longUrl' => $longUrl, 'key' => $apiKey);
+    	$jsonData = json_encode($postData);
+    
+    	$curlObj = curl_init();
+    
+    	curl_setopt($curlObj, CURLOPT_URL, 'https://www.googleapis.com/urlshortener/v1/url');
+    	curl_setopt($curlObj, CURLOPT_RETURNTRANSFER, 1);
+    	curl_setopt($curlObj, CURLOPT_SSL_VERIFYPEER, 0);
+    	curl_setopt($curlObj, CURLOPT_HEADER, 0);
+    	curl_setopt($curlObj, CURLOPT_HTTPHEADER, array('Content-type:application/json'));
+    	curl_setopt($curlObj, CURLOPT_POST, 1);
+    	curl_setopt($curlObj, CURLOPT_POSTFIELDS, $jsonData);
+    
+    	$response = curl_exec($curlObj);
+    
+    	//change the response json string to object
+    	$json = json_decode($response);
+    
+    	curl_close($curlObj);
+    
+    	return $json->id;
+    }
+    
+    // 내용을 변환
+    public function conv_content($content, $html, $filter=true)
+    {
+    	if ($html)
+    	{
+    		$source = array();
+    		$target = array();
+    
+    		$source[] = "//";
+    		$target[] = "";
+    
+    		if ($html == 2) { // 자동 줄바꿈
+    			$source[] = "/\n/";
+    			$target[] = "<br/>";
+    		}
+    
+    		// 테이블 태그의 개수를 세어 테이블이 깨지지 않도록 한다.
+    		$table_begin_count = substr_count(strtolower($content), "<table");
+    		$table_end_count = substr_count(strtolower($content), "</table");
+    		for ($i=$table_end_count; $i<$table_begin_count; $i++)
+    		{
+    		$content .= "</table>";
+    		}
+    
+    				$content = preg_replace($source, $target, $content);
+    	}
+    	else // text 이면
+    	{
+    	// & 처리 : &amp; &nbsp; 등의 코드를 정상 출력함
+    	$content = $this->html_symbol($content);
+    
+    	// 공백 처리
+    	//$content = preg_replace("/  /", "&nbsp; ", $content);
+    	$content = str_replace("  ", "&nbsp; ", $content);
+    	$content = str_replace("\n ", "\n&nbsp;", $content);
+    
+    	$content = $this->get_text($content, 1);
+    
+    	$content = $this->url_auto_link($content);
+    	}
+    
+    	return $content;
+    }
+    
+    function url_auto_link($str)
+    {
+    	$str = str_replace(array("&lt;", "&gt;", "&amp;", "&quot;", "&nbsp;"), array("\t_lt_\t", "\t_gt_\t", "&", "\"", "\t_nbsp_\t"), $str);
+    	$str = preg_replace("`(?:(?:(?:href|src)\s*=\s*(?:\"|'|)){0})((http|https|ftp|telnet|news|mms)://[^\"'\s()]+)`", "<A HREF=\"\\1\" TARGET='_blank'>\\1</A>", $str);
+    	$str = preg_replace("/(^|[\"'\s(])(www\.[^\"'\s()]+)/i", "\\1<A HREF=\"http://\\2\" TARGET='_blank'>\\2</A>", $str);
+    	$str = preg_replace("/[0-9a-z_-]+@[a-z0-9._-]{4,}/i", "<a href='mailto:\\0'>\\0</a>", $str);
+    	$str = str_replace(array("\t_nbsp_\t", "\t_lt_\t", "\t_gt_\t"), array("&nbsp;", "&lt;", "&gt;"), $str);
+    
+    	/*
+    	 // 속도 향상 031011
+    	 $str = preg_replace("/&lt;/", "\t_lt_\t", $str);
+    	 $str = preg_replace("/&gt;/", "\t_gt_\t", $str);
+    	 $str = preg_replace("/&amp;/", "&", $str);
+    	 $str = preg_replace("/&quot;/", "\"", $str);
+    	 $str = preg_replace("/&nbsp;/", "\t_nbsp_\t", $str);
+    	 $str = preg_replace("/([^(http:\/\/)]|\(|^)(www\.[^[:space:]]+)/i", "\\1<A HREF=\"http://\\2\" TARGET='{$config['cf_link_target']}'>\\2</A>", $str);
+    	 //$str = preg_replace("/([^(HREF=\"?'?)|(SRC=\"?'?)]|\(|^)((http|https|ftp|telnet|news|mms):\/\/[a-zA-Z0-9\.-]+\.[\xA1-\xFEa-zA-Z0-9\.:&#=_\?\/~\+%@;\-\|\,]+)/i", "\\1<A HREF=\"\\2\" TARGET='$config['cf_link_target']'>\\2</A>", $str);
+    	 // 100825 : () 추가
+    	 // 120315 : CHARSET 에 따라 링크시 글자 잘림 현상이 있어 수정
+    	 $str = preg_replace("/([^(HREF=\"?'?)|(SRC=\"?'?)]|\(|^)((http|https|ftp|telnet|news|mms):\/\/[a-zA-Z0-9\.-]+\.[가-힣\xA1-\xFEa-zA-Z0-9\.:&#=_\?\/~\+%@;\-\|\,\(\)]+)/i", "\\1<A HREF=\"\\2\" TARGET='{$config['cf_link_target']}'>\\2</A>", $str);
+    
+    	 // 이메일 정규표현식 수정 061004
+    	 //$str = preg_replace("/(([a-z0-9_]|\-|\.)+@([^[:space:]]*)([[:alnum:]-]))/i", "<a href='mailto:\\1'>\\1</a>", $str);
+    	 $str = preg_replace("/([0-9a-z]([-_\.]?[0-9a-z])*@[0-9a-z]([-_\.]?[0-9a-z])*\.[a-z]{2,4})/i", "<a href='mailto:\\1'>\\1</a>", $str);
+    	 $str = preg_replace("/\t_nbsp_\t/", "&nbsp;" , $str);
+    	 $str = preg_replace("/\t_lt_\t/", "&lt;", $str);
+    	 $str = preg_replace("/\t_gt_\t/", "&gt;", $str);
+    	*/
+    
+    	return $str;
+    }
+    
+    public function conv_unescape_nl($str)
+    {
+    	$search = array('\\r', '\r', '\\n', '\n');
+    	$replace = array('', '', "\n", "\n");
+    
+    	return str_replace($search, $replace, $str);
+    }
+    
+    // 파일명에서 특수문자 제거
+    public function get_safe_filename($name)
+    {
+    	$pattern = '/["\'<>=#&!%\\\\(\)\*\+\?]/';
+    	$name = preg_replace($pattern, '', $name);
+    
+    	return $name;
     }
     
     public function test()

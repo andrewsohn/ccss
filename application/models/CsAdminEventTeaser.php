@@ -5,18 +5,18 @@ class CsAdminEventTeaser extends CI_Model{
 	}
 	
 	public function gets(){
-		return $this->db->query('select * from Events order by datetime desc')->result();
+		return $this->db->query('select * from Events order by registDt desc')->result();
 	}
 	
 	public function getList($page=1){
 		$start = ($page-1)*20;
 		$end = $page*20;
-		return $this->db->query('select * from Events order by datetime desc limit '.$start.', '.$end)->result();
+		return $this->db->query('select * from Events order by registDt desc limit '.$start.', '.$end)->result();
 	}
 	
 	public function getListLive(){
 		
-		return $this->db->query('select * from Events where status = 1 order by datetime desc')->result();
+		return $this->db->query('select * from Events where status = 1 order by registDt desc')->result();
 	}
 	
 	public function get($et_id){
@@ -24,7 +24,7 @@ class CsAdminEventTeaser extends CI_Model{
 	}
 	
 	public function getLastLive(){
-		return $this->db->query('select * from Events where status = 1 order by datetime desc')->first_row();
+		return $this->db->query('select * from Events where status = 1 order by registDt desc')->first_row();
 	}
 	
 	public function insert($data){
@@ -49,7 +49,7 @@ class CsAdminEventTeaser extends CI_Model{
 	}
 	
 	public function totalRows(){
-		$query = $this->db->query('SELECT * FROM Events order by datetime desc');
+		$query = $this->db->query('SELECT * FROM Events order by registDt desc');
 		return $query->num_rows();
 	}
 }

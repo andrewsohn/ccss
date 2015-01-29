@@ -17,6 +17,8 @@ date_default_timezone_set("Asia/Seoul");
 $config['site_title']	= '곰가족의 반란 CCSS';
 $config['base_url']	= '';
 $config['asset_url']	= 'http://svn.hivelab.co.kr/svnview/hive/ccss_markup';
+$config['dir_permission']	= 0755;
+$config['file_permission']	= 0644;
 /*
 |--------------------------------------------------------------------------
 | Index File

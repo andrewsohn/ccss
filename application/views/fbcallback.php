@@ -36,8 +36,5 @@
 			echo " with message: " . $e->getMessage();
 		
 		}
-// 		$response = $request->execute();	
-// 		$graph = $response->getGraphObject(GraphUser::className());	
-// 		echo "Hi " . $graph->getName();
 	}
 ?>
