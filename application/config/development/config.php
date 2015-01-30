@@ -15,10 +15,12 @@ date_default_timezone_set("Asia/Seoul");
 |
 */
 $config['site_title']	= '개발환경: 곰가족의 반란 CCSS';
-$config['dir_permission']	= 0755;
-$config['file_permission']	= 0644;
+$config['dir_permission']	= '0755';
+$config['file_permission']	= '0644';
 $config['base_url']	= 'http://ccss.hivelab.co.kr/ccss/';
 $config['asset_url']	= 'http://svn.hivelab.co.kr/svnview/hive/ccss_markup';
+$config['image_extension']	= 'jpg|jpeg|png';
+$config['upload_size']	= '2097152';
 
 /*
 |--------------------------------------------------------------------------

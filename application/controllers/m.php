@@ -1,6 +1,6 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
-class Teaser extends CI_Controller {
+class M extends CI_Controller {
 	function __construct(){
 		parent::__construct();
 		$this->load->library('common');
@@ -11,7 +11,8 @@ class Teaser extends CI_Controller {
 		$this->load->model('CsSns');
 	}
 	
-	public function index()
+	public function index(){ redirect('m/teaser'); }
+	public function teaser()
 	{
 		$data = $this->session->all_userdata();
 		$this->_header();
@@ -28,7 +29,7 @@ class Teaser extends CI_Controller {
 		
 		$data['view'] = $view;
 		if(!empty($view)){
-			$clist = $this->CsAdminEventApplicant->getListMain($view->idx);
+			$clist = $this->CsAdminEventApplicant->getListMainMob($view->idx);
 			$data['clist'] = $clist;
 		}
 		//echo $view->idx;
@@ -40,7 +41,7 @@ class Teaser extends CI_Controller {
 		
 		$this->load->helper(array('form', 'url'));
 		$this->load->library('form_validation');
-		$this->load->view('teaser', $data);
+		$this->load->view('mteaser', $data);
 		
 		$this->_footer();
 	}
@@ -61,7 +62,7 @@ class Teaser extends CI_Controller {
 			$idx = $this->input->post('idx', TRUE);
 			$idx2 = $this->input->post('idx2', TRUE);
 			//echo json_encode($idx.':'.$idx2);
-			$clist = $this->CsAdminEventApplicant->getListMore($idx,$idx2);
+			$clist = $this->CsAdminEventApplicant->getListMoreMob($idx,$idx2);
 			$this->output->set_header('Content-Type: application/json; charset=utf-8');
 			/* */
 			$str = '';
@@ -92,12 +93,12 @@ class Teaser extends CI_Controller {
 		$title = $this->config->item('site_title');
 		$data = array('title' => $title);
 		$menu_list = $this->csMainMenu->gets();
-		$this->load->view('MainHeadSub', $data);
+		$this->load->view('MobileHeadSub', $data);
 		$data2['menu'] = $this->csMainMenu->getsLive();
-		$this->load->view('MainHead',$data2);
+		$this->load->view('MobileHead',$data2);
 	}
 	function _footer(){
-		$this->load->view('MainTail');
-		$this->load->view('MainTailSub');
+		$this->load->view('MobileTail');
+		$this->load->view('MobileTailSub');
 	}
 }

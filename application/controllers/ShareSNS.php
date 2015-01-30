@@ -7,30 +7,46 @@ class ShareSNS extends CI_Controller {
 		$this->load->helper('url');
 		$this->load->model('csMainMenu');
 		$this->load->model('CsPreApplicant');
-		$this->load->model('CsSns');
+		$this->load->model('CsAdminEventApplicant');
 	}
 	
 	public function index()
 	{
-		if(!isset($_REQUEST['cidx'])) return;
+		$flag = '';
+		
 		if($_REQUEST['cidx']){
-			$data['cidx'] = (int)$_REQUEST['cidx'];
+			$data['cidx'] = $_REQUEST['cidx'];
+			
+			$row = $this->CsAdminEventApplicant->get($data['cidx']);
+			if($row->type == 1)
+				$flag = 'fb';
+			else if($row->type == 2)
+				$flag = 'tt';
+			
+		}else if($_REQUEST['sns']){
+			$flag = $_REQUEST['sns'];
 		}
-		$this->_header();
-		$this->load->view('ShareSNS', $data);
-		$this->_footer();
+		
+		if($flag == 'fb')
+			redirect('ShareSNS/Facebook/');
+		else if($flag == 'tt')
+			redirect('ShareSNS/Twitter/');
 	}
 	public function Facebook($cidx='')
 	{
-		if(!$cidx) return;
 		$data['cidx'] = $cidx;
 		
 		$data['sns'] = '페이스북';
 		$title = urlencode(str_replace('\"', '"',$this->config->item('site_title')));
 		
-		$short_url = $this->common->googl_short_url(site_url('teaser?cidx='.$cidx));
+		$str = '';
+		if($cidx){
+			$str = '?cidx='.$cidx;
+		}
+		
+		$short_url = $this->common->googl_short_url(site_url('teaser'.$str));
 		if(!$short_url)
-			$short_url = urlencode(site_url('teaser?cidx='.$cidx));
+			$short_url = urlencode(site_url('teaser'.$str));
 		$title_url = $title.' : '.$short_url;
 		
 		
@@ -43,21 +59,21 @@ class ShareSNS extends CI_Controller {
 	}
 	public function Twitter($cidx='')
 	{
-		if(!$cidx) return;
 		$data['cidx'] = $cidx;
 		
 		$data['sns'] = '트위터';
 		$title = urlencode(str_replace('\"', '"',$this->config->item('site_title')));
 		
-		$short_url = $this->common->googl_short_url(site_url('teaser?cidx='.$cidx));
+		$str = '';
+		if($cidx){
+			$str = '?cidx='.$cidx;
+		}
+		
+		$short_url = $this->common->googl_short_url(site_url('teaser'.$str));
 		if(!$short_url)
-			$short_url = urlencode(site_url('teaser?cidx='.$cidx));
+			$short_url = urlencode(site_url('teaser'.$str));
 		$title_url = $title.' : '.$short_url;
 		
-		/* 
-		$clist = $this->CsPreApplicant->getList();
-		$data['clist'] = $clist;
-		 */
 		header("Location:http://twitter.com/home?status=".$title_url);
 	}
 	function _header(){

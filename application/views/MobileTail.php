@@ -1,6 +1,5 @@
 <!-- footer -->
 	<div id="footer">
-		<div class="img"><img src="<?php echo $this->config->item('asset_url');?>/PC/img/attention.jpg" alt=""></div>
 		<div class="blind">
 			<h1>주의 하세요!</h1>
 			<ul>

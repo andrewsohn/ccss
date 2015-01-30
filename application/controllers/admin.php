@@ -5,7 +5,6 @@ class Admin extends CI_Controller {
 		parent::__construct();
 		$this->load->library('common');
 		$this->load->library('user_agent');
-		$this->load->library('smarteditor');
 		$this->load->library('universaluid');
 		$this->load->library('pagination');
 		$this->load->model('CsAdminMenu');

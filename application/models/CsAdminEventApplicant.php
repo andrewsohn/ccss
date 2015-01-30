@@ -3,6 +3,7 @@ class CsAdminEventApplicant extends CI_Model{
 	function __construct(){
 		parent::__construct();
 		$this->load->library('universaluid');
+		$this->load->library('common');
 	}
 	
 	public function gets(){
@@ -31,9 +32,33 @@ class CsAdminEventApplicant extends CI_Model{
 		$start = ($page-1)*6;
 		$end = $page*6;
 		
-		$sql = "select a.*, b.title as event_name, c.name as code_name from EventsNotices a
+		$sql = "select a.*, b.title as event_name, c.name as code_name, d.name as userName, d.type as userSNStype, d.photoUrl 
+				from EventsNotices a
 				left join Events b on b.idx=a.eventIdx
-				left join Codes c on c.gid=3 and c.id=a.type where a.status='Y' ";
+				left join Codes c on c.gid=3 and c.id=a.type
+				left join Users d on d.id = a.userId
+				where a.status=1 ";
+		$arr = array();
+		if($et_id){
+			$sql .= 'and b.idx = ?';
+			array_push($arr,$et_id);
+		}
+		$sql .= ' order by a.registDt desc limit ? , ?';
+		array_push($arr,$start,$end);
+		
+		return $this->db->query($sql, $arr)->result();
+	}
+	
+	public function getListMainMob($et_id='', $page=1){
+		$start = ($page-1)*4;
+		$end = $page*4;
+		
+		$sql = "select a.*, b.title as event_name, c.name as code_name, d.name as userName, d.type as userSNStype, d.photoUrl 
+				from EventsNotices a
+				left join Events b on b.idx=a.eventIdx
+				left join Codes c on c.gid=3 and c.id=a.type
+				left join Users d on d.id = a.userId
+				where a.status=1 ";
 		$arr = array();
 		if($et_id){
 			$sql .= 'and b.idx = ?';
@@ -46,10 +71,12 @@ class CsAdminEventApplicant extends CI_Model{
 	}
 	
 	public function getListMore($et_id='', $idx=''){
-		$sql = "select a.*, b.title as event_name, c.name as code_name from EventsNotices a
+		$sql = "select a.*, b.title as event_name, c.name as code_name, d.name as userName, d.type as userSNStype, d.photoUrl 
+				from EventsNotices a
 				left join Events b on b.idx=a.eventIdx
-				left join Codes c on c.gid=3 and c.id=a.type where a.status='Y' 
-				and a.registDt < (select registDt from EventsNotices where idx = ?) ";
+				left join Codes c on c.gid=3 and c.id=a.type
+				left join Users d on d.id = a.userId
+				where a.status=1 and a.registDt < (select registDt from EventsNotices where idx = ?) ";
 		$arr = array();
 		array_push($arr,$idx);
 		if($et_id){
@@ -62,14 +89,34 @@ class CsAdminEventApplicant extends CI_Model{
 		return $this->db->query($sql, $arr)->result();
 	}
 	
-	public function get($ea_id){
-		if(!$ea_id) return;
-		return $this->db->get_where('EventsNotices', array('ea_id'=>$ea_id))->row();
+	public function getListMoreMob($et_id='', $idx=''){
+		$sql = "select a.*, b.title as event_name, c.name as code_name, d.name as userName, d.type as userSNStype, d.photoUrl 
+				from EventsNotices a
+				left join Events b on b.idx=a.eventIdx
+				left join Codes c on c.gid=3 and c.id=a.type
+				left join Users d on d.id = a.userId
+				where a.status=1 and a.registDt < (select registDt from EventsNotices where idx = ?) ";
+		$arr = array();
+		array_push($arr,$idx);
+		if($et_id){
+			$sql .= 'and b.idx = ?';
+			array_push($arr,$et_id);
+		}
+		$sql .= ' order by a.registDt desc limit ? , ?';
+		array_push($arr,0,4);
+		
+		return $this->db->query($sql, $arr)->result();
 	}
 	
-	public function insertApply($data){
+	public function get($ea_id){
+		if(!$ea_id) return;
+		return $this->db->get_where('EventsNotices', array('idx'=>$ea_id))->row();
+	}
+	
+	public function insertApply($data=array()){
+		if(empty($data)) return;
 		$data['idx'] = $this->universaluid->v4();
-		$data['registDt'] = date("Y-m-d H:i:s");
+		$data['photoType'] = $this->common->getIdByName('20',$data['photoType']);
 		
 		$this->db->trans_start();
 		$this->db->insert('EventsNotices', $data);
@@ -99,5 +146,11 @@ class CsAdminEventApplicant extends CI_Model{
 	public function totalRows(){
 		$query = $this->db->query('SELECT * FROM EventsNotices order by registDt desc');
 		return $query->num_rows();
+	}
+	
+	public function delete($data=array()){
+		if(empty($data)) return;
+		$idx = $data['uuid'];
+		$this->db->delete('EventsNotices', array('idx' => $idx));
 	}
 }

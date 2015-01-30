@@ -2,8 +2,10 @@
 
 class Common {
 	private $CI;
+	private $ymd;
 	
 	function __construct() {
+		$this->ymd = substr(date('Y-m-d H:i:s', time()), 0, 10);
 		$this->CI =& get_instance();
 		$this->CI->load->database();
 		$this->CI->load->library('user_agent');
@@ -275,6 +277,23 @@ class Common {
 		}
 		return $str;
     }
+   
+    public function getValueByCode($gid,$id)
+    {
+    	if(!$gid) return;
+    	$str = $this->CI->db->query(" select id, name from Codes where gid = {$gid} and id = {$id}");
+    	$row = $str->row();
+    	
+		return $row->name;
+    }
+    public function getIdByName($gid,$name)
+    {
+    	if(!$gid) return;
+    	$str = $this->CI->db->query(" select id from Codes where gid = {$gid} and name = '{$name}'");
+    	$row = $str->row();
+    	
+		return $row->id;
+    }
     
     public function googl_short_url($longUrl)
     {
@@ -349,6 +368,11 @@ class Common {
     
     	return $content;
     }
+    // 내용을 변환
+    public function conv_content2($content)
+    {
+    	return preg_replace("<br/>", "/\n/", $content);
+    }
     
     function url_auto_link($str)
     {
@@ -397,6 +421,37 @@ class Common {
     	$name = preg_replace($pattern, '', $name);
     
     	return $name;
+    }
+    
+    // 메인 시간/날짜 출력
+    public function getTime($datetime)
+    {
+    	// 당일인 경우 시간으로 표시함
+	    $datetime2 = substr($datetime,0,10);
+	    if ($datetime2 == $this->ymd)
+	        $datetime = substr($datetime,11,5);
+	    else
+	        $datetime = substr($datetime,5,5);
+	    
+	    return $datetime;
+    }
+    
+    // 메인 시간/날짜 출력
+    public function getShortenText($text)
+    {
+    	$lstr = '';
+    	if(strlen($text) > 100)
+    		$lstr = '...';
+    	return substr($this->conv_content2($text),0,95).$lstr;
+    }
+    
+    // 확장자 코드 변환 출력
+    public function getPhotoType($pt_code)
+    {
+    	$lstr = '';
+    	if(strlen($text) > 100)
+    		$lstr = '...';
+    	return substr($this->conv_content2($text),0,95).$lstr;
     }
     
     public function test()
