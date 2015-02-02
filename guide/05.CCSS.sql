@@ -232,7 +232,7 @@ ALTER TABLE Goods
 ADD PRIMARY KEY (idx);
 
 ALTER TABLE `Goods`
-MODIFY `idx` smallint(5) unsigned NOT NULL AUTO_INCREMENT COMMENT '상품 인덱스';
+MODIFY `idx` smallint unsigned NOT NULL AUTO_INCREMENT COMMENT '상품 인덱스';
 
 
 CREATE TABLE PromotionGoods
@@ -249,7 +249,7 @@ ALTER TABLE PromotionGoods
 ADD PRIMARY KEY (idx);
 
 ALTER TABLE `PromotionGoods`
-MODIFY `idx` mediumint(8) unsigned NOT NULL AUTO_INCREMENT COMMENT '경품 인덱스';
+MODIFY `idx` mediumint unsigned NOT NULL AUTO_INCREMENT COMMENT '경품 인덱스';
 
 ALTER TABLE PromotionGoods
 ADD FOREIGN KEY rf_goods_promotion_goods (goodsIdx) REFERENCES Goods (idx);
