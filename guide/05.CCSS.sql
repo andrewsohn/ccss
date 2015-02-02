@@ -128,7 +128,7 @@ CREATE TABLE EventsNotices
 	type                 SMALLINT UNSIGNED NOT NULL COMMENT '게시글 타입(FB,TWT...)',
 	subject              VARCHAR(100) COMMENT '제목',
 	content              TEXT NULL COMMENT '내용',
-	refIdx               BIGINT UNSIGNED NULL COMMENT '참조 게시글 인덱스',	
+	refIdx               VARCHAR(32) NULL COMMENT '참조 게시글 인덱스',	
 	hits                 MEDIUMINT UNSIGNED NOT NULL DEFAULT 0 COMMENT '조회수',
 	photoType		     SMALLINT UNSIGNED NOT NULL COMMENT '업로드사진 파일종류(jpg,png...)',	
 	regIP				 VARCHAR(39) NOT NULL COMMENT '등록 IPv4 or IPv6',
