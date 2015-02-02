@@ -231,6 +231,9 @@ CREATE TABLE Goods
 ALTER TABLE Goods
 ADD PRIMARY KEY (idx);
 
+ALTER TABLE `Goods`
+MODIFY `idx` smallint(5) unsigned NOT NULL AUTO_INCREMENT COMMENT '상품 인덱스';
+
 
 CREATE TABLE PromotionGoods
 (
@@ -238,12 +241,15 @@ CREATE TABLE PromotionGoods
 	goodsIdx             SMALLINT UNSIGNED NOT NULL COMMENT '상품 인덱스', 	
 	status               SMALLINT UNSIGNED NOT NULL COMMENT '상태',
 	winningRate			 SMALLINT UNSIGNED NOT NULL COMMENT '당청율',
-	limitDailyWinGoods	 SMALLINT UNSIGNED NOT NULL COMMENT '일일 당첨상품 수'
+	limitDailyWinGoods	 SMALLINT UNSIGNED NOT NULL COMMENT '일일 당첨한도',
+	amount	 SMALLINT UNSIGNED NOT NULL COMMENT '경품수량'
 ) ENGINE=InnoDB COMMENT='경품';
 
 ALTER TABLE PromotionGoods
 ADD PRIMARY KEY (idx);
 
+ALTER TABLE `PromotionGoods`
+MODIFY `idx` mediumint(8) unsigned NOT NULL AUTO_INCREMENT COMMENT '경품 인덱스';
 
 ALTER TABLE PromotionGoods
 ADD FOREIGN KEY rf_goods_promotion_goods (goodsIdx) REFERENCES Goods (idx);
