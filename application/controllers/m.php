@@ -11,7 +11,10 @@ class M extends CI_Controller {
 		$this->load->model('CsSns');
 	}
 	
-	public function index(){ redirect('m/teaser'); }
+	public function index(){
+		/* $this-
+		redirect();  */
+	}
 	public function teaser()
 	{
 		$data = $this->session->all_userdata();
@@ -41,7 +44,7 @@ class M extends CI_Controller {
 		
 		$this->load->helper(array('form', 'url'));
 		$this->load->library('form_validation');
-		$this->load->view('mteaser', $data);
+		$this->load->view('MobileTeaser', $data);
 		
 		$this->_footer();
 	}
@@ -87,6 +90,9 @@ class M extends CI_Controller {
 			
 			echo json_encode($str);
 		}
+	}
+	public function twitter(){
+		$this->load->view('MobileTwitter');
 	}
 	
 	function _header(){

@@ -22,8 +22,8 @@ class ApplicantAction extends CI_Controller {
 		$this->load->library('ftp');
 		$this->load->helper('url');
 		$this->load->helper('file');
-		$this->load->model('CsAdminEventApplicant');
-		$this->load->model('CsUser');
+		$this->load->model('csadmineventapplicant');
+		$this->load->model('csuser');
 	}
 	
 	public function index()
@@ -33,7 +33,7 @@ class ApplicantAction extends CI_Controller {
 			$w = $this->input->post('w', TRUE);
 		}
 		
-		if(!in_array($w, array("", "u"))){
+		if(!in_array($w, array("", "s"))){
 			$this->common->alert('죄송합니다. 저장오류입니다.');
 			exit;
 		}
@@ -64,6 +64,22 @@ class ApplicantAction extends CI_Controller {
 			$msg[] = '죄송합니다. 저장오류입니다.';
 		}
 		
+		$pic_path = '';
+		$data['refIdx'] = '';
+		if($w == 's'){
+			if($this->input->post('src', TRUE)){
+				$pic_path = trim($this->input->post('src', TRUE));
+			}else{
+				$msg[] = '공유한 이미지 경로가 잘 못 되었습니다.\n다시 시도하여 주십시요.';
+			}
+			
+			if($this->input->post('refIdx', TRUE)){
+				$data['refIdx'] = trim($this->input->post('refIdx', TRUE));
+			}else{
+				$msg[] = '공유한 게시글이 없습니다.\n다시 시도하여 주십시요.';
+			}
+		}
+		
 		$msg = implode('<br>', $msg);
 		if ($msg) {
 			$this->common->alert($msg);
@@ -71,8 +87,8 @@ class ApplicantAction extends CI_Controller {
 		}
 		
 		if($data['type'] == '1'){ //페이스북 코드 1
-			$id = '348697178652490';
-			$secret = '48b051b1e8230b0f1b44451055b7c921';
+			$id = $this->config->item('fb_id');
+			$secret = $this->config->item('fb_secret');
 			
 			FacebookSession::setDefaultApplication($id, $secret);
 			
@@ -98,8 +114,15 @@ class ApplicantAction extends CI_Controller {
 				$data['subject'] = '';
 				$data['registDt'] = date("Y-m-d H:i:s");
 				
-				$fname = explode('.',$_FILES['bf_file_fb']['name']);
-				$data['photoType'] = $fname[1];
+				if($w == 's'){
+					$fname = explode('.',$pic_path);
+					$data['photoType'] = $fname[count($fname)-1];
+					$filename = 'ccss_image_share.'.$data['photoType'];
+				}else{
+					$fname = explode('.',$_FILES['bf_file_fb']['name']);
+					$data['photoType'] = $fname[1];
+				}
+				
 				$data['uuid'] = $this->insertApply($data);
 				
 				if(!$data['uuid']){
@@ -107,99 +130,107 @@ class ApplicantAction extends CI_Controller {
 					exit;
 				}
 				
-				//년월일별 폴더 생성
-				$upDate = str_replace("-","",substr($data['registDt'],0,10));
-				if (!is_dir('data/event/'.$upDate)) {
-					mkdir('./data/event/' . $upDate, $this->config->item('dir_permission'), TRUE);
-					chmod('./data/event/' . $upDate, $this->config->item('dir_permission'));
-				}
-				
-				//원본 이미지 저장
-				$filename = $data['uuid'].'.'.$fname[1];
-				$config1['upload_path'] = './data/event/'.$upDate;
-				$config1['allowed_types'] = 'jpg|png';
-				$config1['file_name'] = $filename;
-				$config1['max_size']	= '2097152';
-				$config1['max_width']  = '10240';
-				$config1['max_height']  = '7680';
-				
-				$this->load->library('upload', $config1);
-				
-				if ( ! $this->upload->do_upload('bf_file_fb')){
-					$this->removeAllData($data);
-					$this->common->alert($this->upload->display_errors());
-					exit;
-				}
-				
-				//썸네일(320x240) 이미지 저장
-				$config['image_library'] = 'gd2';
-				$config['source_image']	= './data/event/'.$upDate.'/'.$filename;
-				$config['new_image']	= './data/event/'.$upDate.'/'.$data['uuid'].'.'.$fname[1];
-				$config['create_thumb'] = TRUE;
-				$config['maintain_ratio'] = TRUE;
-				$config['width']	= 320;
-				$config['height']	= 240;
-				
-				$this->load->library('image_lib', $config);
-				
-				$pic_path = $config1['upload_path'].'/'.$config1['file_name'];
-				
-				if ( ! $this->image_lib->resize())
-				{
-					$this->removeAllData($data, $pic_path);
-					$this->common->alert($this->upload->display_errors());
-					exit;
-				}
-				
-				$pic_path2 = './data/event/'.$upDate.'/'.$data['uuid'].'_thumb.'.$fname[1];
-				//CDN 스토리지 FTP 저장
-				$config = array();
-				$config['hostname'] = 'hivelab.infralab.net';
-				$config['username'] = 'King_ccss';
-				$config['password'] = 'gkdlqmfoq!@';
-				$config['debug']	= false;
-				
-				$this->ftp->connect($config);
-				
-				if(file_exists($pic_path2)){
-					$folder_path = '/data/event/'.$upDate;
-					$file_path = $folder_path.'/'.$data['uuid'].'_thumb.'.$fname[1];
-					$list = $this->ftp->list_files($folder_path);
-					//$this->common->print_r2($list).'<br>';
-				
-					if(!is_array($list)){
-						$this->ftp->mkdir($folder_path, $this->config->item('dir_permission'));
+				if($w != 's'){
+					//년월일별 폴더 생성
+					$upDate = str_replace("-","",substr($data['registDt'],0,10));
+					if (!is_dir('data/event/'.$upDate)) {
+						mkdir('./data/event/' . $upDate, $this->config->item('dir_permission'), TRUE);
+						chmod('./data/event/' . $upDate, $this->config->item('dir_permission'));
 					}
-				
-					//echo $file_path.'ddddd<br>';
-					$this->ftp->upload($pic_path2, $pic_path2, '', $this->config->item('dir_permission'));
+					
+					//원본 이미지 저장
+					$filename = $data['uuid'].'.'.$fname[1];
+					$config1['upload_path'] = './data/event/'.$upDate;
+					$config1['allowed_types'] = 'jpg|png';
+					$config1['file_name'] = $filename;
+					$config1['max_size']	= '2097152';
+					$config1['max_width']  = '10240';
+					$config1['max_height']  = '7680';
+					
+					$this->load->library('upload', $config1);
+					
+					if ( ! $this->upload->do_upload('bf_file_fb')){
+						$this->removeAllData($data);
+						$this->common->alert($this->upload->display_errors());
+						exit;
+					}
+					
+					//썸네일(320x240) 이미지 저장
+					$config['image_library'] = 'gd2';
+					$config['source_image']	= './data/event/'.$upDate.'/'.$filename;
+					$config['new_image']	= './data/event/'.$upDate.'/'.$data['uuid'].'.'.$fname[1];
+					$config['create_thumb'] = TRUE;
+					$config['maintain_ratio'] = TRUE;
+					$config['width']	= 320;
+					$config['height']	= 240;
+					
+					$this->load->library('image_lib', $config);
+					
+					$pic_path = $config1['upload_path'].'/'.$config1['file_name'];
+					
+					if ( ! $this->image_lib->resize())
+					{
+						$this->removeAllData($data, $pic_path);
+						$this->common->alert($this->upload->display_errors());
+						exit;
+					}
+					
+					$pic_path2 = './data/event/'.$upDate.'/'.$data['uuid'].'_thumb.'.$fname[1];
+					//CDN 스토리지 FTP 저장
+					$config = array();
+					$config['hostname'] = 'hivelab.infralab.net';
+					$config['username'] = 'King_ccss';
+					$config['password'] = 'gkdlqmfoq!@';
+					$config['debug']	= false;
+					
+					$this->ftp->connect($config);
+					
+					if(file_exists($pic_path2)){
+						$folder_path = '/data/event/'.$upDate;
+						$file_path = $folder_path.'/'.$data['uuid'].'_thumb.'.$fname[1];
+						$list = $this->ftp->list_files($folder_path);
+						//$this->common->print_r2($list).'<br>';
+					
+						if(!is_array($list)){
+							$this->ftp->mkdir($folder_path, $this->config->item('dir_permission'));
+						}
+					
+						//echo $file_path.'ddddd<br>';
+						$this->ftp->upload($pic_path2, $pic_path2, '', $this->config->item('dir_permission'));
+					}
+					
+					$this->ftp->close();
 				}
 				
-				$this->ftp->close();
+				$post_type = 'url';
+				if($w != 's'){
+					$post_type = 'source';
+					$pic_path = new CURLFile(realpath($pic_path), 'image/'.$fname[1], $filename);
+				}
 				
-				//페이스북 업로드
 				try {
 					$session = new FacebookSession($_SESSION['token']);
 					$response = (new FacebookRequest(
 							$session, 'POST', '/me/photos', array(
-									'source' => new CURLFile(realpath($pic_path), 'image/'.$fname[1], $filename),
+									$post_type => $pic_path,
 									'message' => trim($this->input->post('bf_content', TRUE))
 							)
 					))->execute()->getGraphObject();
 							redirect('teaser#snsBtn');
 				} catch(FacebookRequestException $e) {
-				
+						
 					echo "Exception occured, code: " . $e->getCode();
 					echo " with message: " . $e->getMessage();
-				
+						
 					$this->removeAllData($data, $pic_path,$pic_path2);
 				}
+				
 			}
 		}else if($data['type'] == '2'){ //트위터 코드 2
 			$this->common->print_r2($_SESSION);
 			
-			$id = 'NIILXSwqZ65evPP4bFfGFQLmz';
-			$secret = 'd2z4sL59dDquqqWE0cY2LRMfg1CSEnQvkq5Ru97gCPQjNQQnEb';
+			$id = $this->config->item('tt_id');
+			$secret = $this->config->item('tt_secret');
 			
 			$connection = new TwitterOAuth($id,$secret, $_SESSION['oauth_token'], $_SESSION['oauth_token_secret']);
 			$credentials = $connection->getAccessToken($_SESSION["oauth_verifier"]);
@@ -212,7 +243,7 @@ class ApplicantAction extends CI_Controller {
 			$uarr['photoUrl'] = $user->profile_image_url;
 			
 			$user2 = $this->userCheck($uarr,$data['type']);
-			$this->common->print_r2($user2);
+			//$this->common->print_r2($user2);
 			if(!empty($user2)){
 				$data['userId'] = $user2->id;
 				$data['userType'] = $user2->type;
@@ -221,8 +252,14 @@ class ApplicantAction extends CI_Controller {
 				$data['subject'] = '';
 				$data['registDt'] = date("Y-m-d H:i:s");
 				
-				$fname = explode('.',$_FILES['bf_file_tw']['name']);
-				$data['photoType'] = $fname[1];
+				if($w == 's'){
+					$fname = explode('.',$pic_path);
+					$data['photoType'] = $fname[count($fname)-1];
+					$filename = 'ccss_image_share.'.$data['photoType'];
+				}else{
+					$fname = explode('.',$_FILES['bf_file_tw']['name']);
+					$data['photoType'] = $fname[1];
+				}
 				
 				$data['uuid'] = $this->insertApply($data);
 				
@@ -231,90 +268,101 @@ class ApplicantAction extends CI_Controller {
 					exit;
 				}
 				
-				$upDate = str_replace("-","",substr($data['registDt'],0,10));
-				if (!is_dir('data/event/'.$upDate)) {
-					mkdir('./data/event/' . $upDate, $this->config->item('dir_permission'), TRUE);
-					chmod('./data/event/' . $upDate, $this->config->item('dir_permission'));
-				}
-				
-				//원본 이미지 저장
-				$filename = $data['uuid'].'.'.$fname[1];
-				$config['upload_path'] = './data/event/'.$upDate;
-				$config['allowed_types'] = 'jpg|png';
-				$config['file_name'] = $filename;
-				$config['max_size']	= '2097152';
-				$config['max_width']  = '10240';
-				$config['max_height']  = '7680';
-				
-				$this->load->library('upload', $config);
-				
-				if ( ! $this->upload->do_upload('bf_file_tw')){
-					$this->removeAllData($data);
-					$this->common->alert($this->upload->display_errors());
-					exit;
-				}
-				
-				$upPath = $config['upload_path'];
-				$fileName = $config['file_name'];
-				
-				//썸네일(320x240) 이미지 저장
-				$config['image_library'] = 'gd2';
-				$config['source_image']	= './data/event/'.$upDate.'/'.$filename;
-				$config['new_image']	= './data/event/'.$upDate.'/'.$data['uuid'].'.'.$fname[1];
-				$config['create_thumb'] = TRUE;
-				$config['maintain_ratio'] = TRUE;
-				$config['width']	= 320;
-				$config['height']	= 240;
-				
-				$this->load->library('image_lib', $config);
-				
-				$pic_path = $config1['upload_path'].'/'.$config1['file_name'];
-				
-				if ( ! $this->image_lib->resize())
-				{
-					$this->removeAllData($data, $pic_path);
-					$this->common->alert($this->upload->display_errors());
-					exit;
-				}
-				
-				$pic_path2 = './data/event/'.$upDate.'/'.$data['uuid'].'_thumb.'.$fname[1];
-				//CDN 스토리지 FTP 저장
-				$config = array();
-				$config['hostname'] = 'hivelab.infralab.net';
-				$config['username'] = 'King_ccss';
-				$config['password'] = 'gkdlqmfoq!@';
-				$config['debug']	= false;
-				
-				$this->ftp->connect($config);
-				
-				if(file_exists($pic_path2)){
-					$folder_path = '/data/event/'.$upDate;
-					$file_path = $folder_path.'/'.$data['uuid'].'_thumb.'.$fname[1];
-					$list = $this->ftp->list_files($folder_path);
-					//$this->common->print_r2($list).'<br>';
-				
-					if(!is_array($list)){
-						$this->ftp->mkdir($folder_path, $this->config->item('dir_permission'));
+				if($w != 's'){
+					$upDate = str_replace("-","",substr($data['registDt'],0,10));
+					if (!is_dir('data/event/'.$upDate)) {
+						mkdir('./data/event/' . $upDate, $this->config->item('dir_permission'), TRUE);
+						chmod('./data/event/' . $upDate, $this->config->item('dir_permission'));
 					}
-				
-					//echo $file_path.'ddddd<br>';
-					$this->ftp->upload($pic_path2, $pic_path2, '', $this->config->item('dir_permission'));
+					
+					//원본 이미지 저장
+					$filename = $data['uuid'].'.'.$fname[1];
+					$config['upload_path'] = './data/event/'.$upDate;
+					$config['allowed_types'] = 'jpg|png';
+					$config['file_name'] = $filename;
+					$config['max_size']	= '2097152';
+					$config['max_width']  = '10240';
+					$config['max_height']  = '7680';
+					
+					$this->load->library('upload', $config);
+					
+					if ( ! $this->upload->do_upload('bf_file_tw')){
+						$this->removeAllData($data);
+						$this->common->alert($this->upload->display_errors());
+						exit;
+					}
+					
+					$upPath = $config['upload_path'];
+					$fileName = $config['file_name'];
+					
+					//썸네일(320x240) 이미지 저장
+					$config['image_library'] = 'gd2';
+					$config['source_image']	= './data/event/'.$upDate.'/'.$filename;
+					$config['new_image']	= './data/event/'.$upDate.'/'.$data['uuid'].'.'.$fname[1];
+					$config['create_thumb'] = TRUE;
+					$config['maintain_ratio'] = TRUE;
+					$config['width']	= 320;
+					$config['height']	= 240;
+					
+					$this->load->library('image_lib', $config);
+					
+					$pic_path = $config1['upload_path'].'/'.$config1['file_name'];
+					
+					if ( ! $this->image_lib->resize())
+					{
+						$this->removeAllData($data, $pic_path);
+						$this->common->alert($this->upload->display_errors());
+						exit;
+					}
+					
+					$pic_path2 = './data/event/'.$upDate.'/'.$data['uuid'].'_thumb.'.$fname[1];
+					//CDN 스토리지 FTP 저장
+					$config = array();
+					$config['hostname'] = 'hivelab.infralab.net';
+					$config['username'] = 'King_ccss';
+					$config['password'] = 'gkdlqmfoq!@';
+					$config['debug']	= false;
+					
+					$this->ftp->connect($config);
+					
+					if(file_exists($pic_path2)){
+						$folder_path = '/data/event/'.$upDate;
+						$file_path = $folder_path.'/'.$data['uuid'].'_thumb.'.$fname[1];
+						$list = $this->ftp->list_files($folder_path);
+						//$this->common->print_r2($list).'<br>';
+					
+						if(!is_array($list)){
+							$this->ftp->mkdir($folder_path, $this->config->item('dir_permission'));
+						}
+					
+						//echo $file_path.'ddddd<br>';
+						$this->ftp->upload($pic_path2, $pic_path2, '', $this->config->item('dir_permission'));
+					}
+					
+					$this->ftp->close();
 				}
 				
-				$this->ftp->close();
-				
-				$pic_path = $upPath.'/'.$fileName;
-				
-				$this->common->print_r2($data);
-				
-				$image = file_get_contents($pic_path);
-				$params = array(
-						'media[]'  => $image,
-						'status'  => trim($this->input->post('bf_content', TRUE))
-				);
-				
-				$response =$connection->post('statuses/update_with_media', $params, true);
-				redirect('teaser#snsBtn');
+				if($w != 's'){
+					$pic_path = $upPath.'/'.$fileName;
+					
+					$image = file_get_contents($pic_path);
+					$params = array(
+							'media[]'  => $image,
+							'status'  => trim($this->input->post('bf_content', TRUE))
+					);
+					
+					$response =$connection->post('statuses/update_with_media', $params, true);
+					redirect('teaser#snsBtn');
+				}else{
+					$image = file_get_contents($pic_path);
+					$params = array(
+							'media[]'  => $image,
+							'status'  => trim($this->input->post('bf_content', TRUE))
+					);
+					
+					$response =$connection->post('statuses/update_with_media', $params, true);
+					redirect('teaser#snsBtn');
+				}
 			}
 		}
 	}
@@ -322,7 +370,7 @@ class ApplicantAction extends CI_Controller {
 	function removeAllData($data=array(),$pic_path='', $pic_path2=''){
 		if(empty($data)) return;
 	
-		$this->CsAdminEventApplicant->delete($data);
+		$this->csadmineventapplicant->delete($data);
 	
 		if(!isset($pic_path)) return;
 		delete_files($pic_path);
@@ -340,7 +388,7 @@ class ApplicantAction extends CI_Controller {
 		}
 		
 		$user_arr['type'] = $type;
-		$user = $this->CsUser->checkNSave($user_arr);
+		$user = $this->csuser->checkNSave($user_arr);
 		
 		return $user;
 	}
@@ -350,7 +398,7 @@ class ApplicantAction extends CI_Controller {
 			$this->common->alert('잘못된 회원정보입니다. 다시 시도하여 주십시요.');
 			exit;
 		}
-		return $this->CsAdminEventApplicant->insertApply($data);
+		return $this->csadmineventapplicant->insertApply($data);
 	}
 	
 	function uploadIMG($data=array(), $files=array()){

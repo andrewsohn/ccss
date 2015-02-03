@@ -1,5 +1,4 @@
 <?php
-$upload_max_filesize = '2MB';
 session_start();
 
 require './system/libraries/autoload.php';
@@ -17,8 +16,8 @@ use Facebook\GraphUser;
 
 use Facebook\GraphSessionInfo;
 
-$id = '348697178652490';
-$secret = '48b051b1e8230b0f1b44451055b7c921';
+$id = $this->config->item('fb_id');
+$secret = $this->config->item('fb_secret');
 
 FacebookSession::setDefaultApplication($id, $secret);
 
@@ -36,7 +35,7 @@ if(isset($session)){
 }
 
 $twa = '<a href="'.site_url('twitter').'">나 이 곰 봤어요! 트위터에 올리기</a>';
-if(isset($_SESSION['oauth_token']) && isset($_REQUEST['oauth_verifier'])){
+if(isset($_SESSION['oauth_token']) && isset($_GET['oauth_verifier'])){
 	$_SESSION["oauth_verifier"] = $_GET["oauth_verifier"];
 	$twa = '<a href="#" data-type="2" class="applyBtn">나 이 곰 봤어요! 트위터에 올리기</a>';
 }
@@ -92,10 +91,10 @@ if(isset($_SESSION['oauth_token']) && isset($_REQUEST['oauth_verifier'])){
 			//$share_href = '';
 			if($clist[$i]->type == 1){
 				$ahref = 'https://www.facebook.com/app_scoped_user_id/'.$clist[$i]->userId.'/';
-				//$share_href = site_url('fbShare');
+				//$share_href = $fbahref;
 			}else if($clist[$i]->type == 2){
 				$ahref = 'https://twitter.com/intent/user?user_id='.$clist[$i]->userId;
-				//$share_href = site_url('ttShare');
+				//$share_href = site_url('twitter');
 			}
 		?>
 		<li>
@@ -107,7 +106,7 @@ if(isset($_SESSION['oauth_token']) && isset($_REQUEST['oauth_verifier'])){
 					<p><?php echo $this->common->getShortenText($clist[$i]->content); ?></p>
 				</div>
 			</a>
-			<button data-href="<?php //echo $share_href?>" data-idx="<?php echo $clist[$i]->idx ?>" class="<?php if($clist[$i]->type == 1) echo 'btn_fb'; else echo 'btn_tt';?>"><span><?php if($clist[$i]->type == 1) echo '페이스북'; else echo '트위터';?> 공유</span></button>
+			<button data-idx="<?php echo $clist[$i]->idx ?>" class="<?php if($clist[$i]->type == 1) echo 'btn_fb'; else echo 'btn_tt';?>"><span><?php if($clist[$i]->type == 1) echo '페이스북'; else echo '트위터';?> 공유</span></button>
 		</li>
 		<?php }?>
 		</ul>
@@ -130,7 +129,6 @@ if(isset($_SESSION['oauth_token']) && isset($_REQUEST['oauth_verifier'])){
 	<input type="hidden" name="w" value="">
 	<input type="hidden" name="et_id" id="et_id" value="<?php echo $view->idx?>">
 	<input type="hidden" name="snsId" id="snsId" value="">
-	<input type="hidden" name="name" id="name" value="">
 		<h1>페이스북에 인증샷 올리기</h1>
 		<h2>곰가족에게 하고싶은 말을 적어보세요</h2>
 		<textarea name="bf_content" cols="10" rows="5"></textarea>
@@ -154,7 +152,6 @@ if(isset($_SESSION['oauth_token']) && isset($_REQUEST['oauth_verifier'])){
 	<input type="hidden" name="w" value="">
 	<input type="hidden" name="et_id" id="et_id" value="<?php echo $view->idx?>">
 	<input type="hidden" name="snsId" id="snsId" value="">
-	<input type="hidden" name="name" id="name" value="">
 		<h1>트위터에 인증샷 올리기</h1>
 		<h2>곰가족에게 하고싶은 말을 적어보세요</h2>
 		<textarea name="bf_content" id="bf_content" cols="10" rows="5"></textarea>
@@ -172,6 +169,55 @@ if(isset($_SESSION['oauth_token']) && isset($_REQUEST['oauth_verifier'])){
 	</form>
 	</div>
 	<!-- //트위터 인증샷 -->
+	<!-- 페이스북 공유하기 -->
+	<div class="ly_sns share_fb" style="display:none">
+	<?php echo validation_errors(); ?>
+	<?php echo form_open('applicantAction', 'method="post" enctype="multipart/form-data" autocomplete="off"'); ?>
+	<input type="hidden" name="w" value="s">
+	<input type="hidden" name="et_id" id="et_id" value="<?php echo $view->idx?>">
+	<input type="hidden" name="snsId" id="snsId" value="">
+	<input type="text" name="src" id="src" value="">
+	<input type="text" name="refIdx" id="refIdx" value="">
+		<h1>페이스북에 공유하기</h1>
+		<h2>곰가족에게 하고싶은 말을 적어보세요</h2>
+		<div class="inp_share">
+			<div class="thumb">
+				<img src="<?php echo $this->config->item('asset_url');?>/PC/img/@thumb/thumb.jpg" style="height:100%" alt="">
+			</div>
+			<textarea name="bf_content" cols="10" rows="5"></textarea>
+		</div>
+		<div class="btn_group">
+			<button type="submit" class="btn_share">공유</button>
+			<button type="button" class="btn_cancel">취소</button>
+		</div>
+	</form>
+	</div>
+	<!-- //페이스북 공유하기 -->
+	<!-- 트위터 공유하기 -->
+	<div class="ly_sns share_tt" style="display:none">
+	<?php echo validation_errors(); ?>
+	<?php echo form_open('applicantAction', 'method="post" enctype="multipart/form-data" autocomplete="off"'); ?>
+	<input type="hidden" name="w" value="s">
+	<input type="hidden" name="et_id" id="et_id" value="<?php echo $view->idx?>">
+	<input type="hidden" name="snsId" id="snsId" value="">
+	<input type="text" name="src" id="src" value="">
+	<input type="text" name="refIdx" id="refIdx" value="">
+		<h1>트위터에 공유하기</h1>
+		<h2>곰가족에게 하고싶은 말을 적어보세요</h2>
+		<div class="inp_share">
+			<div class="thumb">
+				<img src="<?php echo $this->config->item('asset_url');?>/PC/img/@thumb/thumb.jpg" style="height:100%" alt="">
+			</div>
+			<textarea name="bf_content" cols="10" rows="5"></textarea>
+			<span class="count">140/140</span>
+		</div>
+		<div class="btn_group">
+			<button type="submit" class="btn_share">공유</button>
+			<button type="button" class="btn_cancel">취소</button>
+		</div>
+	</form>
+	</div>
+	<!-- //트위터 공유하기 -->
 	<!-- //[D] layer -->
 </div>
 <!-- //container -->
@@ -211,7 +257,8 @@ openShare = function(a){
 }
 
 $(function(){
-	var cont = $('#container'), mv = cont.find('.mv'),
+	var cont = $('#container'),
+	mv = cont.find('.mv'),
 	pl = $('.ly_sns'),
 	elem = pl.eq(1).find('.count'),
 	dimm = cont.find('.dimmed');
@@ -307,18 +354,43 @@ $(function(){
 		 sns = $(this).attr('data-type');
 		if(sns == '1'){
 			pl.eq(0).find('#snsId').val(1);
-			pl.eq(0).find('#name').val('Facebook');
 			pl.eq(0).find('#et_id').val('<?php echo $view->idx?>');
 			pl.eq(0).show();
 		}else if(sns == '2'){
 			pl.eq(1).find('#snsId').val(2);
-			pl.eq(1).find('#name').val('Twitter');
 			pl.eq(1).find('#et_id').val('<?php echo $view->idx?>');
 			pl.eq(1).show();
 		}
 		dimm.show();
 	});
-
+	
+	cont.find('.btn_tt, .btn_fb').click(function(e){
+		e.preventDefault();
+		if($(this).attr('class') == 'btn_fb'){
+			<?php if(isset($session)){?>
+			pl.eq(2).find('#snsId').val(1);
+			pl.eq(2).find('#et_id').val('<?php echo $view->idx?>');
+			pl.eq(2).find('#refIdx').val($(this).attr('data-idx'));
+			pl.eq(2).find('#src').val($(this).closest('li').find('img:first').attr('src'));
+			pl.eq(2).find('.thumb > img').attr('src',$(this).closest('li').find('img:first').attr('src'));
+			pl.eq(2).show();
+			<?php }else{?>
+			location.replace('<?php echo $fbahref ?>');
+			<?php }?>
+		}else if($(this).attr('class') == 'btn_tt'){
+			<?php if(isset($_SESSION['oauth_token']) && isset($_REQUEST['oauth_verifier'])){?>
+			pl.eq(3).find('#snsId').val(2);
+			pl.eq(3).find('#et_id').val('<?php echo $view->idx?>');
+			pl.eq(3).find('#refIdx').val($(this).attr('data-idx'));
+			pl.eq(3).find('#src').val($(this).closest('li').find('img:first').attr('src'));
+			pl.eq(3).find('.thumb > img').attr('src',$(this).closest('li').find('img:first').attr('src'));
+			pl.eq(3).show();
+			<?php }else{?>
+			location.replace('<?php echo site_url('twitter') ?>');
+			<?php }?>
+		}
+	});
+	
 	/* $(document).ajaxSend(function(event, request, settings) {
 	  $('#loading-indicator').show();
 	});

@@ -1,5 +1,5 @@
 <?php
-$colspan = 7;
+$colspan = 8;
 ?>
 <!-- container -->
 <div id="container">
@@ -36,21 +36,43 @@ $colspan = 7;
 		<tbody>
 		<?php 
 		for($i=0; $i<count($blist); $i++){
+			$img_path = $this->config->item('asset_url').'/PC/img/@thumb/thumb.jpg';
+			$ahref = $blist[$i]->content;
+			$sh_yn = ' / 공유';
+			if($blist[$i]->refIdx == ''){
+				$filename = $blist[$i]->idx.'_thumb.'.$this->common->getValueByCode('20',$blist[$i]->photoType);
+				$filepath = "http://2j5xlt4h84.ecn.cdn.infralab.net/data/event/".str_replace("-","",substr($blist[$i]->registDt,0,10)).'/'.$filename;
+				
+				$imgarr = getimagesize($filepath);
+				
+				if(is_array($imgarr)){
+					$img_path = $filepath;
+				}
+				
+				$ahref = '<a href="'; 
+				if($blist[$i]->type == 1){
+					$ahref .= 'https://www.facebook.com/app_scoped_user_id/'.$blist[$i]->userId.'/';
+				}else if($blist[$i]->type == 2){
+					$ahref .= 'https://twitter.com/intent/user?user_id='.$blist[$i]->userId;
+				}
+				$ahref .= '" target="_blank" class="eps">'.$blist[$i]->content.'</a>';
+				$sh_yn = ' / 업로드';
+			}
 		?>
 		<tr>
 			<td><?php echo $blist[$i]->idx?></td>
 			<td><?php echo $blist[$i]->event_name?></td>
-			<td class="al"><?php echo $blist[$i]->userIdx?></td>
-			<td><?php echo $blist[$i]->type?></td>
+			<td class="al"><?php echo $blist[$i]->userId?></td>
+			<td><?php echo $this->common->getValueByCode(3,$blist[$i]->type).$sh_yn;?></td>
 			<td class="al">
-			<a href="#" class="eps"><?php echo $blist[$i]->content ?></a>
                 <?php
+                echo $ahref;
                 if (isset($blist[$i]->icon_new)) echo $blist[$i]->icon_new;
                 ?></td>
-			<td class="img"><img src="http://imgnews.naver.net/image/003/2013/05/18/NISI20130518_0008193217_web_59_20130518092610.jpg" alt=""></td>
+			<td class="img"><img src="<?php echo $img_path?>" alt=""></td>
 			<td><?php echo $blist[$i]->registDt ?></td>
 			<td class="btn">
-			<a href="#" data-href="<?php echo $blist[$i]->idx; ?>" class="btn_g"><?php if($blist[$i]->visible == 'N') echo '보이기'; else echo '숨기기';?></a>
+			<a href="#" data-href="<?php echo $blist[$i]->idx; ?>" class="btn_g"><?php if($blist[$i]->status == 1) echo '숨기기'; else echo '보이기';?></a>
 			</td>
 		</tr>
 		<?php 

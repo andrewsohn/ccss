@@ -4,7 +4,10 @@ require './system/libraries/src/Twitter/TwitterOAuth.php';
 
 $_SESSION["oauth_verifier"] = $_GET["oauth_verifier"];
 
-$connection = new TwitterOAuth('NIILXSwqZ65evPP4bFfGFQLmz','d2z4sL59dDquqqWE0cY2LRMfg1CSEnQvkq5Ru97gCPQjNQQnEb', $_SESSION['oauth_token'], $_SESSION['oauth_token_secret']);
+$id = $this->config->item('tt_id');
+$secret = $this->config->item('tt_secret');
+
+$connection = new TwitterOAuth($id,$secret, $_SESSION['oauth_token'], $_SESSION['oauth_token_secret']);
 $credentials = $connection->getAccessToken($_GET["oauth_verifier"]);
 
 $image = file_get_contents('./test2.png');

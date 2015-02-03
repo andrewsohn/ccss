@@ -12,7 +12,7 @@
 			<th scope="col">고유번호</th>
 	        <th scope="col">제목</a></th>
 	        <th scope="col">URL</th>
-	        <th scope="col">오픈일(mm/dd)</th>
+	        <th scope="col">상태</th>
 	        <th scope="col">기능</th>
 		</tr>
 		</thead>
@@ -38,7 +38,7 @@
 			<td class="al">
 				<a href="<?php echo $blist[$i]->videoUrl?>"><?php echo $blist[$i]->videoUrl?></a>
 			</td>
-			<td><?php echo ''; ?></td>
+			<td><?php echo $this->common->getValueByCode(2,$blist[$i]->status);?></td>
 			<td>
 				<a href="<?php echo $blist[$i]->href ?>">수정</a>
 	        	<a href="<?php echo site_url("admin/EventTeaserAction").'/'.$blist[$i]->idx.$qstr.'&amp;w=d';?>" onclick="return delete_confirm();">삭제</a>

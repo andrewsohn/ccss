@@ -11,6 +11,13 @@
 <script src="http://ccss.hivelab.co.kr/test_site/js/html5.js"></script>
 <![endif]-->
 <script>
+openMainShare = function(a){
+	 var href = "<?php echo site_url('ShareSNS').'?sns='?>"+$(a).attr('class')
+	 ,new_win = window.open(href, 'win_main_share', 'left=100,top=100,width=600,height=580,scrollbars=0');
+	new_win.focus();
+	return false;
+}
+
 //자바스크립트에서 사용하는 전역변수 선언
 var g5_url       = "http://ccss.hivelab.co.kr/ccss";
 var g5_is_member = "";

@@ -17,8 +17,8 @@ use Facebook\GraphUser;
 
 use Facebook\GraphSessionInfo;
 
-$id = '348697178652490';
-$secret = '48b051b1e8230b0f1b44451055b7c921';
+$id = $this->config->item('fb_id');
+$secret = $this->config->item('fb_secret');
 
 FacebookSession::setDefaultApplication($id, $secret);
 
@@ -35,7 +35,8 @@ if(isset($session)){
 	$fba = '<a href="'.$fbahref.'">나 이 곰 봤어요! 페이스북에 올리기</a>';
 }
 
-$twa = '<a href="'.site_url('twitter?device=m').'">나 이 곰 봤어요! 트위터에 올리기</a>';
+$twahref= site_url('m/twitter');
+$twa = '<a href="'.$twahref.'">나 이 곰 봤어요! 트위터에 올리기</a>';
 if(isset($_SESSION['oauth_token']) && isset($_REQUEST['oauth_verifier'])){
 	$_SESSION["oauth_verifier"] = $_GET["oauth_verifier"];
 	$twa = '<a href="#" data-type="2" class="applyBtn">나 이 곰 봤어요! 트위터에 올리기</a>';
@@ -72,7 +73,7 @@ if(isset($_SESSION['oauth_token']) && isset($_REQUEST['oauth_verifier'])){
 				<li>상품권 1000명</li>
 				</ul> 
 			</div>
-			<ul class="sns">
+			<ul id="snsBtn" class="sns">
 			<li><?php echo $fba?></li>
 			<li><?php echo $twa?></li>
 			</ul>
@@ -91,7 +92,6 @@ if(isset($_SESSION['oauth_token']) && isset($_REQUEST['oauth_verifier'])){
 				
 				$ahref = '#';
 				if($clist[$i]->type == 1){
-					//$ahref = 'https://www.facebook.com/profile.php?id='.$clist[$i]->userId;
 					$ahref = 'https://www.facebook.com/app_scoped_user_id/'.$clist[$i]->userId.'/';
 				}else if($clist[$i]->type == 2){
 					$ahref = 'https://twitter.com/intent/user?user_id='.$clist[$i]->userId;
@@ -106,7 +106,7 @@ if(isset($_SESSION['oauth_token']) && isset($_REQUEST['oauth_verifier'])){
 						<p><?php echo $this->common->getShortenText($clist[$i]->content); ?></p>
 					</div>
 				</a>
-				<button onclick="openShare(this);" data-idx="<?php echo $clist[$i]->idx ?>" class="<?php if($clist[$i]->type == 1) echo 'btn_fb'; else echo 'btn_tt';?>"><span><?php if($clist[$i]->type == 1) echo '페이스북'; else echo '트위터';?> 공유</span></button>
+				<button data-idx="<?php echo $clist[$i]->idx ?>" class="<?php if($clist[$i]->type == 1) echo 'btn_fb'; else echo 'btn_tt';?>"><span><?php if($clist[$i]->type == 1) echo '페이스북'; else echo '트위터';?> 공유</span></button>
 			</li>
 			<?php }?>
 			</ul>
@@ -128,7 +128,6 @@ if(isset($_SESSION['oauth_token']) && isset($_REQUEST['oauth_verifier'])){
 	<input type="hidden" name="w" value="">
 	<input type="hidden" name="et_id" id="et_id" value="<?php echo $view->idx?>">
 	<input type="hidden" name="snsId" id="snsId" value="">
-	<input type="hidden" name="name" id="name" value="">
 			<h1>페이스북에 인증샷 올리기</h1>
 			<h2>곰가족에게 하고싶은 말을 적어보세요</h2>
 			<textarea name="bf_content" cols="10" rows="5">앗!! 그 곰이 아닌가?</textarea>
@@ -152,7 +151,6 @@ if(isset($_SESSION['oauth_token']) && isset($_REQUEST['oauth_verifier'])){
 	<input type="hidden" name="w" value="">
 	<input type="hidden" name="et_id" id="et_id" value="<?php echo $view->idx?>">
 	<input type="hidden" name="snsId" id="snsId" value="">
-	<input type="hidden" name="name" id="name" value="">
 			<h1>트위터에 인증샷 올리기</h1>
 			<h2>곰가족에게 하고싶은 말을 적어보세요</h2>
 			<textarea name="bf_content" id="bf_content" cols="10" rows="5">시리자의 알렉시스 치프라스는 이번 총선에서 13석을 차지한 그리스독립당의 파노스 캄메노스 당수를 만났다. 이어 득표율 4위인 포타미의 스타브로스 테오도라키스 당수와도 회동해 연정 구성을 협의하기로 했다.</textarea>
@@ -170,6 +168,55 @@ if(isset($_SESSION['oauth_token']) && isset($_REQUEST['oauth_verifier'])){
 			</form>
 		</div>
 		<!-- //트위터 인증샷 -->
+		<!-- 페이스북 공유하기 -->
+		<div class="ly_sns share_fb" style="display:none">
+		<?php echo validation_errors(); ?>
+	<?php echo form_open('mApplicantAction', 'method="post" enctype="multipart/form-data" autocomplete="off"'); ?>
+	<input type="hidden" name="w" value="s">
+	<input type="hidden" name="et_id" id="et_id" value="<?php echo $view->idx?>">
+	<input type="hidden" name="snsId" id="snsId" value="">
+	<input type="text" name="src" id="src" value="">
+	<input type="text" name="refIdx" id="refIdx" value="">
+			<h1>페이스북에 공유하기</h1>
+			<h2>곰가족에게 하고싶은 말을 적어보세요</h2>
+			<div class="inp_share">
+				<div class="thumb">
+					<img src="<?php echo $this->config->item('asset_url');?>/M/img/@thumb/thumb.jpg" style="height:100%" alt="">
+				</div>
+				<textarea name="bf_content" id="bf_content" cols="10" rows="5"></textarea>
+			</div>
+			<div class="btn_group">
+				<button type="submit" class="btn_share">공유</button>
+				<button type="button" class="btn_cancel">취소</button>
+			</div>
+		</form>
+		</div>
+		<!-- //페이스북 공유하기 -->
+		<!-- 트위터 공유하기 -->
+		<div class="ly_sns share_tt" style="display:none">
+		<?php echo validation_errors(); ?>
+	<?php echo form_open('mApplicantAction', 'method="post" enctype="multipart/form-data" autocomplete="off"'); ?>
+	<input type="hidden" name="w" value="s">
+	<input type="hidden" name="et_id" id="et_id" value="<?php echo $view->idx?>">
+	<input type="hidden" name="snsId" id="snsId" value="">
+	<input type="text" name="src" id="src" value="">
+	<input type="text" name="refIdx" id="refIdx" value="">
+			<h1>트위터에 공유하기</h1>
+			<h2>곰가족에게 하고싶은 말을 적어보세요</h2>
+			<div class="inp_share">
+				<div class="thumb">
+					<img src="<?php echo $this->config->item('asset_url');?>/M/img/@thumb/thumb.jpg" style="height:100%" alt="">
+				</div>
+				<textarea name="bf_content" id="bf_content" cols="10" rows="5"></textarea>
+				<span class="count">140/140</span>
+			</div>
+			<div class="btn_group">
+				<button type="submit" class="btn_share">공유</button>
+				<button type="button" class="btn_cancel">취소</button>
+			</div>
+		</form>
+		</div>
+		<!-- //트위터 공유하기 -->
 		<!-- //[D] layer -->
 	</div>
 	<!-- //container -->
@@ -198,13 +245,6 @@ if(isset($_SESSION['oauth_token']) && isset($_REQUEST['oauth_verifier'])){
 openMainShare = function(a){
 	 var href = "<?php echo site_url('ShareSNS').'?sns='?>"+$(a).attr('class')
 	 ,new_win = window.open(href, 'win_main_share', 'left=100,top=100,width=600,height=580,scrollbars=0');
-	new_win.focus();
-	return false;
-}
-
-openShare = function(a){
-	 var href = "<?php echo site_url('ShareSNS').'?cidx='?>"+$(a).attr('data-idx')
-	 ,new_win = window.open(href, 'win_share', 'left=100,top=100,width=600,height=580,scrollbars=0');
 	new_win.focus();
 	return false;
 }
@@ -283,18 +323,42 @@ $(function(){
 		 sns = $(this).attr('data-type');
 		if(sns == '1'){
 			pl.eq(0).find('#snsId').val(1);
-			pl.eq(0).find('#name').val('Facebook');
 			pl.eq(0).find('#et_id').val('<?php echo $view->idx?>');
 			pl.eq(0).show();
 		}else if(sns == '2'){
 			pl.eq(1).find('#snsId').val(2);
-			pl.eq(1).find('#name').val('Twitter');
 			pl.eq(1).find('#et_id').val('<?php echo $view->idx?>');
 			pl.eq(1).show();
 		}
 		dimm.show();
 	});
 
+	cont.find('.btn_tt, .btn_fb').click(function(e){
+		e.preventDefault();
+		if($(this).attr('class') == 'btn_fb'){
+			<?php if(isset($session)){?>
+			pl.eq(2).find('#snsId').val(1);
+			pl.eq(2).find('#et_id').val('<?php echo $view->idx?>');
+			pl.eq(2).find('#refIdx').val($(this).attr('data-idx'));
+			pl.eq(2).find('#src').val($(this).closest('li').find('img:first').attr('src'));
+			pl.eq(2).find('.thumb > img').attr('src',$(this).closest('li').find('img:first').attr('src'));
+			pl.eq(2).show();
+			<?php }else{?>
+			location.replace('<?php echo $fbahref ?>');
+			<?php }?>
+		}else if($(this).attr('class') == 'btn_tt'){
+			<?php if(isset($_SESSION['oauth_token']) && isset($_REQUEST['oauth_verifier'])){?>
+			pl.eq(3).find('#snsId').val(2);
+			pl.eq(3).find('#et_id').val('<?php echo $view->idx?>');
+			pl.eq(3).find('#refIdx').val($(this).attr('data-idx'));
+			pl.eq(3).find('#src').val($(this).closest('li').find('img:first').attr('src'));
+			pl.eq(3).find('.thumb > img').attr('src',$(this).closest('li').find('img:first').attr('src'));
+			pl.eq(3).show();
+			<?php }else{?>
+			location.replace('<?php echo $twahref ?>');
+			<?php }?>
+		}
+	});
 	/* $(document).ajaxSend(function(event, request, settings) {
 	  $('#loading-indicator').show();
 	});

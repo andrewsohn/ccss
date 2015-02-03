@@ -7,7 +7,14 @@ $secret = $this->config->item('tt_secret');
 
 $connection = new TwitterOAuth($id,$secret);
 
-$request_token = $connection->getRequestToken(site_url('teaser'));
+$target = 'preReserve';
+if(isset($_REQUEST['device'])){
+	if($_REQUEST['device']){
+		$target = $_REQUEST['device'].'/'.$target;
+	}
+}
+
+$request_token = $connection->getRequestToken(site_url($target));
 
 $_SESSION['oauth_token'] = $token = $request_token['oauth_token'];
 $_SESSION['oauth_token_secret'] = $request_token['oauth_token_secret'];

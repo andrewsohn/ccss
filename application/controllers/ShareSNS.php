@@ -5,8 +5,6 @@ class ShareSNS extends CI_Controller {
 		parent::__construct();
 		$this->load->library('common');
 		$this->load->helper('url');
-		$this->load->model('csMainMenu');
-		$this->load->model('CsPreApplicant');
 		$this->load->model('CsAdminEventApplicant');
 	}
 	
@@ -49,13 +47,7 @@ class ShareSNS extends CI_Controller {
 			$short_url = urlencode(site_url('teaser'.$str));
 		$title_url = $title.' : '.$short_url;
 		
-		
-		/* 
-		$clist = $this->CsPreApplicant->getList();
-		$data['clist'] = $clist;
-		 */
 		header("Location:http://www.facebook.com/sharer/sharer.php?s=100&u=".$short_url."&p=".$title);
-		
 	}
 	public function Twitter($cidx='')
 	{

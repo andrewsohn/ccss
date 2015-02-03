@@ -7,9 +7,11 @@ class Admin extends CI_Controller {
 		$this->load->library('user_agent');
 		$this->load->library('universaluid');
 		$this->load->library('pagination');
-		$this->load->model('CsAdminMenu');
+		$this->load->model('cs_admin_menu');
 		$this->load->model('CsAdminEventTeaser');
 		$this->load->model('CsAdminEventApplicant');
+		$this->load->model('cs_promotion_goods');
+		$this->load->model('cs_prereserve_applicant');
 		$this->load->helper('url');
 		$this->load->helper('ckeditor');
 	}
@@ -46,7 +48,7 @@ class Admin extends CI_Controller {
 		
 				//ID of the textarea that will be replaced
 				'id' 	=> 	'content',
-				'path'	=>	'./ckeditor',
+				'path'	=>	'assets/ckeditor',
 		
 				//Optionnal values
 				'config' => array(
@@ -199,9 +201,8 @@ class Admin extends CI_Controller {
 		$this->_footer();
 	}
 	
-	public function PreReserveHistory(){
+	public function PreReserveOffer(){
 		$this->_loginCheck();
-		
 		$data = array();
 		
 		$mb_id = $this->session->userdata('ss_mb_id');
@@ -209,64 +210,51 @@ class Admin extends CI_Controller {
 		$data['member'] = $member;
 
 		$this->_header($member, $this->router->fetch_method());
-		if($ea_id === ''){
-			$data['etList'] = $this->CsAdminEventTeaser->getListLive();
-				
-			$data['et_id'] = '';
-			if(isset($_REQUEST['et_id'])){
-				$is_et_id = false;
-			
-				$data['et_id'] = (int)$_REQUEST['et_id'];
-				for($i=0; $i<count($data['etList']); $i++){
-					if($data['et_id'] == $data['etList'][$i]->et_id){
-						$is_et_id = true;
-					}
-						
-				}
-			
-				if(!$is_et_id){
-					$this->common->alert('카테고리가 존재하지 않습니다.');
-				}
-			}
-			
-			if(isset($_REQUEST['page'])){
-				if($_REQUEST['page']){
-					$page = (int)$_REQUEST['page'];
-				}else{
-					$page = 1;
-				}
-				$board_list = $this->CsAdminEventApplicant->getList($data['et_id'], $page);
-				$config['cur_page'] = $page;
+		
+		$board_list = $this->cs_promotion_goods->getList();
+		//$this->common->print_r2($board_list);
+		$data['blist'] = $board_list;
+		
+		$this->load->helper(array('form', 'url'));
+		$this->load->library('form_validation');
+		
+		$this->load->view('AdminPROffer', $data);
+		
+		$this->_footer();
+	}
+	
+	public function PreReserveApplicant(){
+		$this->_loginCheck();
+		$data = array();
+		
+		$mb_id = $this->session->userdata('ss_mb_id');
+		$member = $this->common->get_member($mb_id);
+		$data['member'] = $member;
+
+		$this->_header($member, $this->router->fetch_method());
+		
+		if(isset($_REQUEST['page'])){
+			if($_REQUEST['page']){
+				$page = (int)$_REQUEST['page'];
 			}else{
-				$board_list = $this->CsAdminEventApplicant->getList($data['et_id']);
-				$config['cur_page'] = 1;
+				$page = 1;
 			}
-			
-			
-			/* $i=0;
-			while(isset($board_list[$i])){
-				$board_list[$i]->href = site_url("admin").'/'.$this->router->fetch_method().'/'.$board_list[$i]->ea_id;
-				$i++;
-			} */
-			
-			$data['blist'] = $board_list;
-			
-			$config['base_url'] = site_url('admin/EventApplicant');
-			$config['total_rows'] = $this->CsAdminEventApplicant->totalRows();
-			$config['per_page'] = 20;
-				
-			$this->pagination->initialize($config);
-			
-			$this->load->view('AdminEventApplyList', $data);
+			$board_list = $this->cs_prereserve_applicant->getList($page);
+			$config['cur_page'] = $page;
 		}else{
-			$data['view_mode'] = '';
-			if($ea_id != 'new'){
-				$data['view_mode'] = 'u';
-				$data['view'] = $this->CsAdminEventApplicant->get($ea_id);
-			}
-			
-			$this->load->view('AdminEventApplyWrite', $data);
+			$board_list = $this->cs_prereserve_applicant->getList();
+			$config['cur_page'] = 1;
 		}
+		
+		$data['blist'] = $board_list;
+		
+		$config['base_url'] = site_url('admin/PreReserveApplicant');
+		$config['total_rows'] = $this->cs_prereserve_applicant->totalRows();
+		$config['per_page'] = 20;
+			
+		$this->pagination->initialize($config);
+		
+		$this->load->view('AdminPRApplyList', $data);
 		
 		$this->_footer();
 	}
@@ -404,6 +392,68 @@ class Admin extends CI_Controller {
 		}
 	}
 	
+	public function PROfferAction(){
+		$this->_loginCheck();
+		
+		if($this->input->post('w', TRUE)){
+			$w = $this->input->post('w', TRUE);
+		}else if($this->input->get('w', TRUE)){
+			$w = $this->input->get('w', TRUE);
+		}
+		
+		if(!in_array($w, array("", "u"))){
+			$this->common->alert('죄송합니다. 저장오류입니다.');
+			exit;
+		}
+		
+		$data = array();
+		//필수 필드 Validation [start]--------------------
+		$msg = array();
+		
+		$idxs = $this->cs_promotion_goods->getListId();
+		
+		$data['winningRate'] = array();
+		if($this->input->post('winningRate', TRUE)){
+			$data['winningRate'] = $this->input->post('winningRate', TRUE);
+		}else{
+			$msg[] = '<strong>당첨율</strong>을 입력하세요.';
+		}
+			
+		$data['limitDailyWinGoods'] = array();
+		if($this->input->post('limitDailyWinGoods', TRUE)){
+			$data['limitDailyWinGoods'] = $this->input->post('limitDailyWinGoods', TRUE);
+		}else{
+			$msg[] = '<strong>일일 당첨 한도</strong>를 입력하세요.';
+		}
+			
+		$data['amount'] = array();
+		if($this->input->post('amount', TRUE)){
+			$data['amount'] = $this->input->post('amount', TRUE);
+		}else{
+			$msg[] = '<strong>경품 수량</strong>을 입력하세요.';
+		}
+		
+		$msg = implode('<br>', $msg);
+		if ($msg) {
+			$this->common->alert($msg);
+			exit;
+		}
+		
+		for($i=0; $i<count($idxs); $i++){
+			$single_data = array();
+			$single_data['winningRate'] = $data['winningRate'][$i];
+			$single_data['limitDailyWinGoods'] = $data['limitDailyWinGoods'][$i];
+			$single_data['amount'] = $data['amount'][$i];
+				
+			$this->cs_promotion_goods->update($idxs[$i]->idx, $single_data);
+		}
+		
+		
+		//$this->common->print_r2($data);
+		$this->common->alert('저장되었습니다.');
+		
+	}
+	
 	function current_full_url()
 	{
 		$CI =& get_instance();
@@ -423,7 +473,7 @@ class Admin extends CI_Controller {
 		$data['title'] = $title;
 
 		$this->load->view('AdminHeadSub', array('title'=>$title));
-		$menu_list = $this->CsAdminMenu->gets();
+		$menu_list = $this->cs_admin_menu->gets();
 		//$this->common->print_r2($menu_list);
 		$data['mlist'] = $menu_list;
 		

@@ -13,8 +13,8 @@
 	
 	use Facebook\GraphSessionInfo;
 	
-	$id = '803684733038476';
-	$secret = 'b843be21c28b20c652dde478bc7c93ed';
+	$id = $this->config->item('fb_id');
+	$secret = $this->config->item('fb_secret');
 	
 	FacebookSession::setDefaultApplication($id, $secret);
 	

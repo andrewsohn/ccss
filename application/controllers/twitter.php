@@ -11,4 +11,9 @@ class Twitter extends CI_Controller {
 	{
 		$this->load->view('twitter');
 	}
+	
+	public function preReserve()
+	{
+		$this->load->view('twitterPR');
+	}
 }

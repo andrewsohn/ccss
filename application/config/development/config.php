@@ -15,12 +15,18 @@ date_default_timezone_set("Asia/Seoul");
 |
 */
 $config['site_title']	= '개발환경: 곰가족의 반란 CCSS';
+$config['base_url']	= 'http://ccss.hivelab.co.kr/ccss/';
+//$config['base_url']	= 'http://www.candycrushsoda.co.kr/';
+//$config['mbase_url']	= 'http://m.candycrushsoda.co.kr/';
+$config['asset_url']	= 'http://svn.hivelab.co.kr/svnview/hive/ccss_markup';
 $config['dir_permission']	= '0755';
 $config['file_permission']	= '0644';
-$config['base_url']	= 'http://ccss.hivelab.co.kr/ccss/';
-$config['asset_url']	= 'http://svn.hivelab.co.kr/svnview/hive/ccss_markup';
 $config['image_extension']	= 'jpg|jpeg|png';
-$config['upload_size']	= '2097152';
+$config['upload_size']	= 2097152;
+$config['fb_id'] = '348697178652490';
+$config['fb_secret'] = '48b051b1e8230b0f1b44451055b7c921';
+$config['tt_id'] = 'NIILXSwqZ65evPP4bFfGFQLmz';
+$config['tt_secret'] = 'd2z4sL59dDquqqWE0cY2LRMfg1CSEnQvkq5Ru97gCPQjNQQnEb';
 
 /*
 |--------------------------------------------------------------------------

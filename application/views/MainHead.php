@@ -25,9 +25,10 @@
 	}?>
 	<li class="go">
 		<ul>
-		<li><a href="#" class="fb _construct"><span>공식 페이스북</span></a></li>
-		<li><a href="#" class="tt _construct"><span>공식 트위터</span></a></li>
+		<li><a href="#" onclick="openMainShare(this);" class="fb"><span>공식 페이스북</span></a></li>
+		<li><a href="#" onclick="openMainShare(this);" class="tt"><span>공식 트위터</span></a></li>
 		</ul>
 	</li>
 	</ul>
 	<!-- //gnb -->
+	

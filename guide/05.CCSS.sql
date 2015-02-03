@@ -268,22 +268,25 @@ ADD PRIMARY KEY (dt, prmGoodsIdx);
 
 CREATE TABLE Reservations
 (
+	idx					 MEDIUMINT UNSIGNED NOT NULL COMMENT '사전예약 인덱스',
 	mobileNum			 VARCHAR(12) NOT NULL COMMENT '사용자 인덱스', 
 	userId 				 VARCHAR(25) NULL COMMENT '회원 아이디',
 	userType             SMALLINT UNSIGNED NOT NULL COMMENT '회원가입 종류',		
 	charIdx 			 SMALLINT UNSIGNED NOT NULL COMMENT '캐릭터 종류',
 	status               SMALLINT UNSIGNED NOT NULL COMMENT '상태',
 	type                 SMALLINT UNSIGNED NOT NULL COMMENT '게시글 타입(FB,TWT...)',
-	subject              VARCHAR(100) NULL COMMENT '제목',
 	content              TEXT NULL COMMENT '내용',
-	prmGoodsIdx          MEDIUMINT UNSIGNED NOT NULL COMMENT '경품 인덱스',   
+	prmGoodsIdx          MEDIUMINT UNSIGNED NULL COMMENT '경품 인덱스',   
 	regIP				 VARCHAR(39) NOT NULL COMMENT '등록 IPv4 or IPv6',
 	registDt             DATETIME NULL COMMENT '등록일'
 ) ENGINE=InnoDB COMMENT='사전예약';
 
 
 ALTER TABLE Reservations
-ADD PRIMARY KEY (mobileNum);
+ADD PRIMARY KEY (idx);
+
+ALTER TABLE `Reservations`
+MODIFY `idx` mediumint unsigned NOT NULL AUTO_INCREMENT COMMENT '사전예약 인덱스';
 
 CREATE UNIQUE INDEX reservations_01 ON Reservations
 (

@@ -37,7 +37,7 @@ class CsAdminEventApplicant extends CI_Model{
 				left join Events b on b.idx=a.eventIdx
 				left join Codes c on c.gid=3 and c.id=a.type
 				left join Users d on d.id = a.userId
-				where a.status=1 ";
+				where a.status=1 and a.refIdx IS NULL OR a.refIdx = '' ";
 		$arr = array();
 		if($et_id){
 			$sql .= 'and b.idx = ?';
@@ -58,7 +58,7 @@ class CsAdminEventApplicant extends CI_Model{
 				left join Events b on b.idx=a.eventIdx
 				left join Codes c on c.gid=3 and c.id=a.type
 				left join Users d on d.id = a.userId
-				where a.status=1 ";
+				where a.status=1 and a.refIdx IS NULL OR a.refIdx = '' ";
 		$arr = array();
 		if($et_id){
 			$sql .= 'and b.idx = ?';
@@ -76,7 +76,7 @@ class CsAdminEventApplicant extends CI_Model{
 				left join Events b on b.idx=a.eventIdx
 				left join Codes c on c.gid=3 and c.id=a.type
 				left join Users d on d.id = a.userId
-				where a.status=1 and a.registDt < (select registDt from EventsNotices where idx = ?) ";
+				where a.status=1 and a.refIdx IS NULL OR a.refIdx = '' and a.registDt < (select registDt from EventsNotices where idx = ?) ";
 		$arr = array();
 		array_push($arr,$idx);
 		if($et_id){
@@ -95,7 +95,7 @@ class CsAdminEventApplicant extends CI_Model{
 				left join Events b on b.idx=a.eventIdx
 				left join Codes c on c.gid=3 and c.id=a.type
 				left join Users d on d.id = a.userId
-				where a.status=1 and a.registDt < (select registDt from EventsNotices where idx = ?) ";
+				where a.status=1 and a.refIdx IS NULL OR a.refIdx = '' and a.registDt < (select registDt from EventsNotices where idx = ?) ";
 		$arr = array();
 		array_push($arr,$idx);
 		if($et_id){
