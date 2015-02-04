@@ -7,7 +7,7 @@ class M extends CI_Controller {
 		$this->load->helper('url');
 		$this->load->model('csMainMenu');
 		$this->load->model('CsAdminEventTeaser');
-		$this->load->model('CsAdminEventApplicant');
+		$this->load->model('csadmineventapplicant');
 		$this->load->model('CsSns');
 	}
 	
@@ -32,7 +32,7 @@ class M extends CI_Controller {
 		
 		$data['view'] = $view;
 		if(!empty($view)){
-			$clist = $this->CsAdminEventApplicant->getListMainMob($view->idx);
+			$clist = $this->csadmineventapplicant->getListMainMob($view->idx);
 			$data['clist'] = $clist;
 		}
 		//echo $view->idx;
@@ -65,14 +65,31 @@ class M extends CI_Controller {
 			$idx = $this->input->post('idx', TRUE);
 			$idx2 = $this->input->post('idx2', TRUE);
 			//echo json_encode($idx.':'.$idx2);
-			$clist = $this->CsAdminEventApplicant->getListMoreMob($idx,$idx2);
-			$this->output->set_header('Content-Type: application/json; charset=utf-8');
-			/* */
+			$clist = $this->csadmineventapplicant->getListMoreMob($idx,$idx2);
+			//$this->output->set_header('Content-Type: application/json; charset=utf-8');
+			
 			$str = '';
 			for($i=0; $i<count($clist); $i++){
 				$str .= '<li>';
-				$str .= '<a href="https://www.facebook.com/profile.php?id='.$clist[$i]->userId.'">';
-				$str .= '<span class="tmb"><img src="'.$this->config->item('asset_url').'/PC/img/@thumb/thumb.jpg" style="height:100%" alt=""></span>';
+				
+				$img_path = $this->config->item('asset_url').'/PC/img/@thumb/thumb.jpg';
+				$filename = $clist[$i]->idx.'_thumb.'.$this->common->getValueByCode('20',$clist[$i]->photoType);
+				$filepath = "http://2j5xlt4h84.ecn.cdn.infralab.net/data/event/".str_replace("-","",substr($clist[$i]->registDt,0,10)).'/'.$filename;
+					
+				$imgarr = getimagesize($filepath);
+					
+				if(is_array($imgarr)){
+					$img_path = $filepath;
+				}
+				
+				$ahref = '#';
+				if($clist[$i]->type == 1){
+					$ahref = 'https://www.facebook.com/app_scoped_user_id/'.$clist[$i]->userId.'/';
+				}else if($clist[$i]->type == 2){
+					$ahref = 'https://twitter.com/intent/user?user_id='.$clist[$i]->userId;
+				}
+				$str .= '<a href="'.$ahref.'" target="_blank">';
+				$str .= '<span class="tmb"><img src="'.$img_path.'" style="height:100%" alt=""></span>';
 				$str .= '<div class="txt">';
 				$str .= '<span class="tmb"><img src="'.$clist[$i]->photoUrl.'" style="width:100%" alt="'.$clist[$i]->userName.'프로필사진"></span>';
 				$str .= '<em>'.$clist[$i]->userName.'</em>'.$this->common->getTime($clist[$i]->registDt);
@@ -88,7 +105,7 @@ class M extends CI_Controller {
 					$str .= '|||'.$clist[$i]->idx;
 			}
 			
-			echo json_encode($str);
+			echo $str;
 		}
 	}
 	public function twitter(){

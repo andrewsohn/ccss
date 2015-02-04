@@ -3,7 +3,7 @@ $colspan = 6;
 ?>
 <!-- container -->
 <div id="container">
-	<h2>사전 예약 글관리</h2>
+	<h2>사전 예약 참여자 관리</h2>
 	
 	<!-- table -->
 	<div class="tb_wrap">
@@ -23,16 +23,6 @@ $colspan = 6;
 		<tbody>
 		<?php 
 		for($i=0; $i<count($blist); $i++){
-			$img_path = $this->config->item('asset_url').'/PC/img/@thumb/thumb.jpg';
-			$filename = $blist[$i]->idx.'_thumb.'.$this->common->getValueByCode('20',$blist[$i]->photoType);
-			$filepath = "http://2j5xlt4h84.ecn.cdn.infralab.net/data/event/".str_replace("-","",substr($blist[$i]->registDt,0,10)).'/'.$filename;
-				
-			$imgarr = getimagesize($filepath);
-				
-			if(is_array($imgarr)){
-				$img_path = $filepath;
-			}
-				
 			$ahref = '#';
 			//$share_href = '';
 			if($blist[$i]->type == 1){

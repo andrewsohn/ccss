@@ -130,12 +130,12 @@ if(isset($_SESSION['oauth_token']) && isset($_REQUEST['oauth_verifier'])){
 	<input type="hidden" name="snsId" id="snsId" value="">
 			<h1>페이스북에 인증샷 올리기</h1>
 			<h2>곰가족에게 하고싶은 말을 적어보세요</h2>
-			<textarea name="bf_content" cols="10" rows="5">앗!! 그 곰이 아닌가?</textarea>
+			<textarea name="bf_content" cols="10" rows="5"></textarea>
 			<h2>사진을 첨부하세요</h2>
 			<div class="upload">
-				<input type="file" name="bf_file_fb">
-				<!-- <input type="text" value="" readonly>
-				<button type="button" class="btn_file">찾아보기</button> --><!-- [D] type: file -->
+				<input type="file" name="bf_file_fb" class="_file" style="display:none">
+				<input type="text" class="_path" value="" readonly>
+				<button type="button" class="btn_file _find">찾아보기</button>
 			</div>
 			<div class="btn_group">
 				<button type="submit" class="btn_regist">등록</button>
@@ -153,13 +153,13 @@ if(isset($_SESSION['oauth_token']) && isset($_REQUEST['oauth_verifier'])){
 	<input type="hidden" name="snsId" id="snsId" value="">
 			<h1>트위터에 인증샷 올리기</h1>
 			<h2>곰가족에게 하고싶은 말을 적어보세요</h2>
-			<textarea name="bf_content" id="bf_content" cols="10" rows="5">시리자의 알렉시스 치프라스는 이번 총선에서 13석을 차지한 그리스독립당의 파노스 캄메노스 당수를 만났다. 이어 득표율 4위인 포타미의 스타브로스 테오도라키스 당수와도 회동해 연정 구성을 협의하기로 했다.</textarea>
+			<textarea name="bf_content" id="bf_content" cols="10" rows="5"></textarea>
 			<span class="count">140/140</span>
 			<h2>사진을 첨부하세요</h2>
 			<div class="upload">
-				<input type="file" name="bf_file_tw">
-				<!-- <input type="text" value="G:\PSD_ETC\ccss\150127_티저\\workspace" readonly>
-				<button type="button" class="btn_file">찾아보기</button> --><!-- [D] type: file -->
+				<input type="file" name="bf_file_tw" class="_file" style="display:none">
+				<input type="text" class="_path" value="" readonly>
+				<button type="button" class="btn_file _find">찾아보기</button>
 			</div>
 			<div class="btn_group">
 				<button type="submit" class="btn_regist">등록</button>
@@ -175,15 +175,15 @@ if(isset($_SESSION['oauth_token']) && isset($_REQUEST['oauth_verifier'])){
 	<input type="hidden" name="w" value="s">
 	<input type="hidden" name="et_id" id="et_id" value="<?php echo $view->idx?>">
 	<input type="hidden" name="snsId" id="snsId" value="">
-	<input type="text" name="src" id="src" value="">
-	<input type="text" name="refIdx" id="refIdx" value="">
+	<input type="hidden" name="src" id="src" value="">
+	<input type="hidden" name="refIdx" id="refIdx" value="">
 			<h1>페이스북에 공유하기</h1>
 			<h2>곰가족에게 하고싶은 말을 적어보세요</h2>
 			<div class="inp_share">
 				<div class="thumb">
 					<img src="<?php echo $this->config->item('asset_url');?>/M/img/@thumb/thumb.jpg" style="height:100%" alt="">
 				</div>
-				<textarea name="bf_content" id="bf_content" cols="10" rows="5"></textarea>
+				<textarea name="bf_content" cols="10" rows="5"></textarea>
 			</div>
 			<div class="btn_group">
 				<button type="submit" class="btn_share">공유</button>
@@ -199,8 +199,8 @@ if(isset($_SESSION['oauth_token']) && isset($_REQUEST['oauth_verifier'])){
 	<input type="hidden" name="w" value="s">
 	<input type="hidden" name="et_id" id="et_id" value="<?php echo $view->idx?>">
 	<input type="hidden" name="snsId" id="snsId" value="">
-	<input type="text" name="src" id="src" value="">
-	<input type="text" name="refIdx" id="refIdx" value="">
+	<input type="hidden" name="src" id="src" value="">
+	<input type="hidden" name="refIdx" id="refIdx" value="">
 			<h1>트위터에 공유하기</h1>
 			<h2>곰가족에게 하고싶은 말을 적어보세요</h2>
 			<div class="inp_share">
@@ -225,8 +225,10 @@ if(isset($_SESSION['oauth_token']) && isset($_REQUEST['oauth_verifier'])){
 (function($) {
     $.fn.extend( {
         limiter: function(limit, elem) {
-            $(this).on("keyup focus", function() {
-                setCount(this, elem);
+        	$(this).on("keyup focus", function() {
+                if($(this).next('span').hasClass('count')){
+                	setCount(this, $(this).next('span'));   
+                }
             });
             function setCount(src, elem) {
                 var chars = src.value.length;
@@ -237,7 +239,10 @@ if(isset($_SESSION['oauth_token']) && isset($_REQUEST['oauth_verifier'])){
                 snum = limit - chars
                 elem.html( snum + '/140');
             }
-            setCount($(this)[0], elem);
+
+            if($(this).next('span').hasClass('count')){
+            	setCount($(this)[0], $(this).next('span'));
+        	}
         }
     });
 })(jQuery);
@@ -252,10 +257,9 @@ openMainShare = function(a){
 $(function(){
 	var cont = $('#container'), mv = cont.find('.mv'),
 	pl = $('.ly_sns'),
-	elem = pl.eq(1).find('.count'),
 	dimm = cont.find('.dimmed');
 	
-	pl.eq(1).find('#bf_content').limiter(140, elem);
+	pl.find('#bf_content').limiter(140);
 	
 	pl.find('.btn_cancel').click(function(e){
 		e.preventDefault();

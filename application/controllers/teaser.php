@@ -60,8 +60,7 @@ class Teaser extends CI_Controller {
 			$idx2 = $this->input->post('idx2', TRUE);
 			//echo json_encode($idx.':'.$idx2);
 			$clist = $this->csadmineventapplicant->getListMore($idx,$idx2);
-			$this->output->set_header('Content-Type: application/json; charset=utf-8');
-			/* */
+			//$this->output->set_header('Content-Type: application/json; charset=utf-8');
 			$str = '';
 			for($i=0; $i<count($clist); $i++){
 				$str .= '<li>';
@@ -99,7 +98,7 @@ class Teaser extends CI_Controller {
 					$str .= '|||'.$clist[$i]->idx;
 			}
 			
-			echo json_encode($str);
+			echo $str;
 		}
 	}
 	

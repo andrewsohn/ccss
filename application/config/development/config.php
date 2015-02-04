@@ -27,6 +27,11 @@ $config['fb_id'] = '348697178652490';
 $config['fb_secret'] = '48b051b1e8230b0f1b44451055b7c921';
 $config['tt_id'] = 'NIILXSwqZ65evPP4bFfGFQLmz';
 $config['tt_secret'] = 'd2z4sL59dDquqqWE0cY2LRMfg1CSEnQvkq5Ru97gCPQjNQQnEb';
+$config['js_version'] = '1.11.2';
+$config['css_version'] = '';
+$config['opendate_candyshop'] = '2015-03-06';
+
+$config['encryption_key'] = "8aUH59wZ5T9BHjNGwwVldkrUzU94w6H7";
 
 /*
 |--------------------------------------------------------------------------

@@ -216,6 +216,7 @@ class ApplicantAction extends CI_Controller {
 									'message' => trim($this->input->post('bf_content', TRUE))
 							)
 					))->execute()->getGraphObject();
+							$this->session->set_flashdata('apply_complete','teaser');
 							redirect('teaser#snsBtn');
 				} catch(FacebookRequestException $e) {
 						
@@ -352,6 +353,7 @@ class ApplicantAction extends CI_Controller {
 					);
 					
 					$response =$connection->post('statuses/update_with_media', $params, true);
+					$this->session->set_flashdata('apply_complete','teaser');
 					redirect('teaser#snsBtn');
 				}else{
 					$image = file_get_contents($pic_path);
@@ -361,9 +363,28 @@ class ApplicantAction extends CI_Controller {
 					);
 					
 					$response =$connection->post('statuses/update_with_media', $params, true);
+					$this->session->set_flashdata('apply_complete','teaser');
 					redirect('teaser#snsBtn');
 				}
 			}
+		}
+	}
+	
+	public function pre(){
+		if($this->input->post('sns', TRUE) == 'fb'){
+			$id = $this->config->item('fb_id');
+			$secret = $this->config->item('fb_secret');
+			
+			FacebookSession::setDefaultApplication($id, $secret);
+			
+			$helper = new FacebookRedirectLoginHelper(site_url('teaser'));
+			$session = $helper->getSessionFromRedirect();
+			
+			$scope = array('publish_actions');
+			$fbahref = $helper->getLoginUrl($scope);
+			redirect($fbahref);
+		}else if($this->input->post('sns', TRUE) == 'tt'){
+			echo 'tt';
 		}
 	}
 	

@@ -1,4 +1,4 @@
-<script type="text/javascript" src="<?php echo $this->config->item('asset_url');?>/admin/js/app/admin.js"></script>
+<script type="text/javascript" src="<?php echo $this->config->item('asset_url');?>/PC/js/app/admin.js"></script>
 <?php
 if($this->router->fetch_class() == 'login'){?>
 <!-- wrap -->

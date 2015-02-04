@@ -21,7 +21,7 @@ var g5_sca       = "";
 var g5_editor    = "";
 var g5_cookie_domain = "";
 </script>
-<script type="text/javascript" src="<?php echo $this->config->item('asset_url');?>/admin/js/lib/jquery-1.8.3.min.js"></script>
-<script type="text/javascript" src="<?php echo $this->config->item('asset_url');?>/admin/js/app/common.js"></script>
+<script type="text/javascript" src="<?php echo $this->config->item('asset_url');?>/PC/js/libs/jquery.min.js?v=<?php echo $this->config->item('js_version')?>"></script>
+<script type="text/javascript" src="<?php echo $this->config->item('asset_url');?>/PC/js/app/common.js"></script>
 </head>
 <body>

@@ -39,8 +39,6 @@ if(isset($_SESSION['oauth_token']) && isset($_GET['oauth_verifier'])){
 	$_SESSION["oauth_verifier"] = $_GET["oauth_verifier"];
 	$twa = '<a href="#" data-type="2" class="applyBtn">나 이 곰 봤어요! 트위터에 올리기</a>';
 }
-
-//$this->common->print_r2($_SESSION);
 ?>
 <!-- container -->
 <div id="container">
@@ -134,9 +132,9 @@ if(isset($_SESSION['oauth_token']) && isset($_GET['oauth_verifier'])){
 		<textarea name="bf_content" cols="10" rows="5"></textarea>
 		<h2>사진을 첨부하세요</h2>
 		<div class="upload">
-			<input type="file" name="bf_file_fb">
-			<!-- <input type="text" value="" readonly>
-			<button type="button" class="btn_file">찾아보기</button> --><!-- [D] type: file -->
+			<input type="file" name="bf_file_fb" class="_file" style="display:none">
+			<input type="text" class="_path" value="" readonly>
+			<button type="button" class="btn_file _find">찾아보기</button>
 		</div>
 		<div class="btn_group">
 			<button type="submit" class="btn_regist">등록</button>
@@ -158,9 +156,9 @@ if(isset($_SESSION['oauth_token']) && isset($_GET['oauth_verifier'])){
 		<span class="count">140/140</span>
 		<h2>사진을 첨부하세요</h2>
 		<div class="upload">
-			<input type="file" name="bf_file_tw">
-			<!-- <input type="text" value="G:\PSD\ccss\150127_티저\\workspace" readonly> -->
-			<!-- <button type="button" class="btn_file">찾아보기</button> --><!-- [D] type: file -->
+			<input type="file" name="bf_file_tw" class="_file" style="display:none">
+			<input type="text" class="_path" value="" readonly>
+			<button type="button" class="btn_file _find">찾아보기</button>
 		</div>
 		<div class="btn_group">
 			<button type="submit" class="btn_regist">등록</button>
@@ -176,8 +174,8 @@ if(isset($_SESSION['oauth_token']) && isset($_GET['oauth_verifier'])){
 	<input type="hidden" name="w" value="s">
 	<input type="hidden" name="et_id" id="et_id" value="<?php echo $view->idx?>">
 	<input type="hidden" name="snsId" id="snsId" value="">
-	<input type="text" name="src" id="src" value="">
-	<input type="text" name="refIdx" id="refIdx" value="">
+	<input type="hidden" name="src" id="src" value="">
+	<input type="hidden" name="refIdx" id="refIdx" value="">
 		<h1>페이스북에 공유하기</h1>
 		<h2>곰가족에게 하고싶은 말을 적어보세요</h2>
 		<div class="inp_share">
@@ -200,15 +198,15 @@ if(isset($_SESSION['oauth_token']) && isset($_GET['oauth_verifier'])){
 	<input type="hidden" name="w" value="s">
 	<input type="hidden" name="et_id" id="et_id" value="<?php echo $view->idx?>">
 	<input type="hidden" name="snsId" id="snsId" value="">
-	<input type="text" name="src" id="src" value="">
-	<input type="text" name="refIdx" id="refIdx" value="">
+	<input type="hidden" name="src" id="src" value="">
+	<input type="hidden" name="refIdx" id="refIdx" value="">
 		<h1>트위터에 공유하기</h1>
 		<h2>곰가족에게 하고싶은 말을 적어보세요</h2>
 		<div class="inp_share">
 			<div class="thumb">
 				<img src="<?php echo $this->config->item('asset_url');?>/PC/img/@thumb/thumb.jpg" style="height:100%" alt="">
 			</div>
-			<textarea name="bf_content" cols="10" rows="5"></textarea>
+			<textarea name="bf_content" id="bf_content" cols="10" rows="5"></textarea>
 			<span class="count">140/140</span>
 		</div>
 		<div class="btn_group">
@@ -218,6 +216,14 @@ if(isset($_SESSION['oauth_token']) && isset($_GET['oauth_verifier'])){
 	</form>
 	</div>
 	<!-- //트위터 공유하기 -->
+	<!-- 참여완료 -->
+	<div class="ly_complete" style="display:none">
+		<h1>참여완료</h1>
+		<h2>참여해주셔서 감사합니다.</h2>
+		<p>당첨 결과는 추첨을 통해 3월 5일 블로그에 게제될 예정입니다.<br>당첨 결과를 꼭 확인해주세요.</p>
+		<button type="button" class="btn_comfirm">확인</button>
+	</div>
+	<!-- //참여완료 -->
 	<!-- //[D] layer -->
 </div>
 <!-- //container -->
@@ -231,9 +237,11 @@ var player;
 
 (function($) {
     $.fn.extend( {
-        limiter: function(limit, elem) {
+        limiter: function(limit) {
             $(this).on("keyup focus", function() {
-                setCount(this, elem);
+                if($(this).next('span').hasClass('count')){
+                	setCount(this, $(this).next('span'));   
+                }
             });
             function setCount(src, elem) {
                 var chars = src.value.length;
@@ -244,26 +252,21 @@ var player;
                 snum = limit - chars
                 elem.html( snum + '/140');
             }
-            setCount($(this)[0], elem);
+
+            if($(this).next('span').hasClass('count')){
+            	setCount($(this)[0], $(this).next('span'));
+        	}
         }
     });
 })(jQuery);
-
-openShare = function(a){
-	 var href = "<?php echo site_url('ShareSNS').'?cidx='?>"+$(a).attr('data-idx')
-	 ,new_win = window.open(href, 'win_share', 'left=100,top=100,width=600,height=580,scrollbars=0');
-	new_win.focus();
-	return false;
-}
 
 $(function(){
 	var cont = $('#container'),
 	mv = cont.find('.mv'),
 	pl = $('.ly_sns'),
-	elem = pl.eq(1).find('.count'),
 	dimm = cont.find('.dimmed');
-	
-	pl.eq(1).find('#bf_content').limiter(140, elem);
+
+	pl.find('#bf_content').limiter(140);
 	
 	pl.find('.btn_cancel').click(function(e){
 		e.preventDefault();
@@ -274,6 +277,10 @@ $(function(){
 		dimm.hide();
 	});
 
+	<?php if($this->session->flashdata('apply_complete') == 'teaser'){?>
+	dimm.show();
+	$('.ly_complete').show();
+	<?php }?>
 	//유튜브 영상
 	mv.find('.play').click(function(e) {
     	e.preventDefault();
@@ -389,6 +396,12 @@ $(function(){
 			location.replace('<?php echo site_url('twitter') ?>');
 			<?php }?>
 		}
+	});
+	
+	$('.btn_comfirm').click(function(e){
+		e.preventDefault();
+		dimm.hide();
+		$('.ly_complete').hide();
 	});
 	
 	/* $(document).ajaxSend(function(event, request, settings) {

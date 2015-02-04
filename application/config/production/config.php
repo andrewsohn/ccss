@@ -28,6 +28,8 @@ $config['fb_id'] = '802677239805892';
 $config['fb_secret'] = 'c0451dc58138d7d706ee910a04ff2aa7';
 $config['tt_id'] = '9JgR7C3Hd365xCeNuQMyROlaB';
 $config['tt_secret'] = 'Q5j0gkfGCQclJdDd19vKbkwfWWwQLByUurmB5ernVNpyVhRkoy';
+$config['js_version'] = '1.11.2';
+$config['css_version'] = '';
 /*
 |--------------------------------------------------------------------------
 | Index File

@@ -1,12 +1,12 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
-
 class PreReserve extends CI_Controller {
 	function __construct(){
 		parent::__construct();
 		$this->load->library('common');
+		$this->load->library('encrypt');
 		$this->load->helper('url');
 		$this->load->model('csMainMenu');
-		$this->load->model('CsPreReserveApplicant');
+		$this->load->model('cs_prereserve_applicant');
 		$this->load->model('CsSns');
 	}
 	
@@ -15,22 +15,39 @@ class PreReserve extends CI_Controller {
 		$data = $this->session->all_userdata();
 		$this->_header();
 		
-		
-		//$clist = $this->CsPreReserveApplicant->getListMain($vmode,$idx);
-		//$data['clist'] = $clist;
-		
-		/* $data['sidx'] = '';
-		if($clist[0]->idx)
-			$data['sidx'] = $clist[0]->idx;  */
-		
 		$this->load->helper(array('form', 'url'));
 		$this->load->library('form_validation');
+		
+		$data['client_num'] = $this->cs_prereserve_applicant->getLiveRows();
 		
 		$this->load->view('preReserve', $data);
 		
 		$this->_footer();
 	}
-	public function pRAction(){
+	public function getEncrypted()
+	{
+		$arr = array();
+		$arr['name'] = '';
+		if($this->input->post('name', TRUE)){
+			$arr['name'] = $this->encrypt->encode(trim($this->input->post('name', TRUE)));
+		}
+		$arr['phNum1'] = '';
+		if($this->input->post('phNum1', TRUE)){
+			$arr['phNum1'] = $this->encrypt->encode(trim($this->input->post('phNum1', TRUE)));
+		}
+		$arr['phNum2'] = '';
+		if($this->input->post('phNum2', TRUE)){
+			$arr['phNum2'] = $this->encrypt->encode(trim($this->input->post('phNum2', TRUE)));
+		}
+		$arr['phNum3'] = '';
+		if($this->input->post('phNum3', TRUE)){
+			$arr['phNum3'] = $this->encrypt->encode(trim($this->input->post('phNum3', TRUE)));
+		}
+	
+		echo json_encode($arr);
+	}
+	
+	public function pRListAction(){
 		$mode = '';
 		if($this->input->post('mode', TRUE)){
 			$mode = $this->input->post('mode', TRUE);
@@ -47,11 +64,11 @@ class PreReserve extends CI_Controller {
 		}
 		
 		if($mode == 'last'){
-			$cnt = (int)$this->CsPreReserveApplicant->totalRows();
+			$cnt = (int)$this->cs_prereserve_applicant->totalRows();
 			$num = ($cnt-5)%$data['size'];
-			$clist = $this->CsPreReserveApplicant->getListMainLast($num);
+			$clist = $this->cs_prereserve_applicant->getListMainLast($num);
 		}else{
-			$clist = $this->CsPreReserveApplicant->getListMain($data);
+			$clist = $this->cs_prereserve_applicant->getListMain($data);
 		}
 		
 		$this->output->set_header('Content-Type: application/json; charset=utf-8');

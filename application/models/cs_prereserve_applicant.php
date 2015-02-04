@@ -46,16 +46,13 @@ class Cs_prereserve_applicant extends CI_Model{
 		return $this->db->get_where('Reservations', array('idx'=>$ea_id))->row();
 	}
 	
-	public function insertApply($data=array()){
-		if(empty($data)) return;
-		$data['idx'] = $this->universaluid->v4();
-		$data['photoType'] = $this->common->getIdByName('20',$data['photoType']);
-		
+	public function insertApply($data){
 		$this->db->trans_start();
 		$this->db->insert('Reservations', $data);
+		$idx = $this->db->insert_id();
 		$this->db->trans_complete();
 	
-		return  $data['idx'];
+		return  $idx;
 	}
 	
 	public function hideUpdate($ea_id){
@@ -78,6 +75,11 @@ class Cs_prereserve_applicant extends CI_Model{
 	
 	public function totalRows(){
 		$query = $this->db->query('SELECT * FROM Reservations order by idx asc');
+		return $query->num_rows();
+	}
+	
+	public function getLiveRows(){
+		$query = $this->db->query('SELECT * FROM Reservations where status = 1 order by idx asc');
 		return $query->num_rows();
 	}
 	

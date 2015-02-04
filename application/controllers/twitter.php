@@ -16,4 +16,9 @@ class Twitter extends CI_Controller {
 	{
 		$this->load->view('twitterPR');
 	}
+	
+	public function close()
+	{
+		$this->load->view('twitterClose');
+	}
 }
