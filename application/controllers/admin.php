@@ -8,8 +8,8 @@ class Admin extends CI_Controller {
 		$this->load->library('universaluid');
 		$this->load->library('pagination');
 		$this->load->model('cs_admin_menu');
-		$this->load->model('CsAdminEventTeaser');
-		$this->load->model('CsAdminEventApplicant');
+		$this->load->model('cs_admin_event_teaser');
+		$this->load->model('cs_admin_event_applicant');
 		$this->load->model('cs_promotion_goods');
 		$this->load->model('cs_prereserve_applicant');
 		$this->load->helper('url');
@@ -91,10 +91,10 @@ class Admin extends CI_Controller {
 				}else{
 					$page = 1;
 				}
-				$board_list = $this->CsAdminEventTeaser->getList($page);
+				$board_list = $this->cs_admin_event_teaser->getList($page);
 				$config['cur_page'] = $page;
 			}else{
-				$board_list = $this->CsAdminEventTeaser->getList();
+				$board_list = $this->cs_admin_event_teaser->getList();
 				$config['cur_page'] = 1;
 			}
 			
@@ -107,7 +107,7 @@ class Admin extends CI_Controller {
 			$data['blist'] = $board_list;
 			
 			$config['base_url'] = site_url('admin/EventTeaser');
-			$config['total_rows'] = $this->CsAdminEventTeaser->totalRows(); 
+			$config['total_rows'] = $this->cs_admin_event_teaser->totalRows(); 
 			$config['per_page'] = 20;
 			
 			$this->pagination->initialize($config);
@@ -118,7 +118,7 @@ class Admin extends CI_Controller {
 			if($et_id != 'new'){
 				$data['idx'] = $et_id;
 				$data['view_mode'] = 'u';
-				$data['view'] = $this->CsAdminEventTeaser->get($et_id);
+				$data['view'] = $this->cs_admin_event_teaser->get($et_id);
 				
 			}
 			$this->load->helper(array('form', 'url'));
@@ -140,7 +140,7 @@ class Admin extends CI_Controller {
 
 		$this->_header($member, $this->router->fetch_method());
 		if($ea_id === ''){
-			$data['etList'] = $this->CsAdminEventTeaser->getListLive();
+			$data['etList'] = $this->cs_admin_event_teaser->getListLive();
 				
 			$data['et_id'] = '';
 			if(isset($_REQUEST['et_id'])){
@@ -165,10 +165,10 @@ class Admin extends CI_Controller {
 				}else{
 					$page = 1;
 				}
-				$board_list = $this->CsAdminEventApplicant->getList($data['et_id'], $page);
+				$board_list = $this->cs_admin_event_applicant->getList($data['et_id'], $page);
 				$config['cur_page'] = $page;
 			}else{
-				$board_list = $this->CsAdminEventApplicant->getList($data['et_id']);
+				$board_list = $this->cs_admin_event_applicant->getList($data['et_id']);
 				$config['cur_page'] = 1;
 			}
 			
@@ -182,7 +182,7 @@ class Admin extends CI_Controller {
 			$data['blist'] = $board_list;
 			
 			$config['base_url'] = site_url('admin/EventApplicant');
-			$config['total_rows'] = $this->CsAdminEventApplicant->totalRows();
+			$config['total_rows'] = $this->cs_admin_event_applicant->totalRows();
 			$config['per_page'] = 20;
 				
 			$this->pagination->initialize($config);
@@ -192,7 +192,7 @@ class Admin extends CI_Controller {
 			$data['view_mode'] = '';
 			if($ea_id != 'new'){
 				$data['view_mode'] = 'u';
-				$data['view'] = $this->CsAdminEventApplicant->get($ea_id);
+				$data['view'] = $this->cs_admin_event_applicant->get($ea_id);
 			}
 			
 			$this->load->view('AdminEventApplyWrite', $data);
@@ -335,11 +335,11 @@ class Admin extends CI_Controller {
 		if($w == ''){
 			$data['idx'] = $this->universaluid->v3();
 			$this->common->print_r2($data);
-			$idx = $this->CsAdminEventTeaser->insert($data);
+			$idx = $this->cs_admin_event_teaser->insert($data);
 		}else if($w == 'u'){
-			$this->CsAdminEventTeaser->update($data, $idx);
+			$this->cs_admin_event_teaser->update($data, $idx);
 		}else if($w == 'd'){
-			$this->CsAdminEventTeaser->delete($idx);
+			$this->cs_admin_event_teaser->delete($idx);
 		}
 		
 		if($w == 'd'){
@@ -388,7 +388,7 @@ class Admin extends CI_Controller {
 		}
 		
 		if($w == 'h'){
-			echo $flag = $this->CsAdminEventApplicant->hideUpdate($ea_id);
+			echo $flag = $this->cs_admin_event_applicant->hideUpdate($ea_id);
 		}
 	}
 	

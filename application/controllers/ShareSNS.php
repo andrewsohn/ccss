@@ -5,7 +5,7 @@ class ShareSNS extends CI_Controller {
 		parent::__construct();
 		$this->load->library('common');
 		$this->load->helper('url');
-		$this->load->model('CsAdminEventApplicant');
+		$this->load->model('cs_admin_event_applicant');
 	}
 	
 	public function index()
@@ -15,7 +15,7 @@ class ShareSNS extends CI_Controller {
 		if($_REQUEST['cidx']){
 			$data['cidx'] = $_REQUEST['cidx'];
 			
-			$row = $this->CsAdminEventApplicant->get($data['cidx']);
+			$row = $this->cs_admin_event_applicant->get($data['cidx']);
 			if($row->type == 1)
 				$flag = 'fb';
 			else if($row->type == 2)

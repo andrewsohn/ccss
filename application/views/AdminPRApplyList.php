@@ -36,7 +36,7 @@ $colspan = 6;
 		<tr>
 			<td><?php echo $blist[$i]->idx?></td>
 			<td class="al"><?php echo $blist[$i]->userId?></td>
-			<td><?php echo $this->common->getValueByCode(3,$blist[$i]->type);?></td>
+			<td><?php if($blist[$i]->type) echo $this->common->getValueByCode(3,$blist[$i]->type);?></td>
 			<td class="al"><a href="<?php echo $ahref?>" target="_blank" class="eps"><?php echo $blist[$i]->content ?></a><?php
                 if (isset($blist[$i]->icon_new)) echo $blist[$i]->icon_new;
                 ?></td>

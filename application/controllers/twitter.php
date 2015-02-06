@@ -21,4 +21,15 @@ class Twitter extends CI_Controller {
 	{
 		$this->load->view('twitterClose');
 	}
+	public function verifier()
+	{
+		session_start();
+		if(isset($_SESSION['oauth_token']) && isset($_REQUEST['oauth_verifier'])){
+			$_SESSION["oauth_verifier"] = $_GET["oauth_verifier"];
+		}
+		echo "<script>
+	        		window.close();
+	        </script>";
+		
+	}
 }

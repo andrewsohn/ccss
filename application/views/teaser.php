@@ -81,8 +81,11 @@ if(isset($_SESSION['oauth_token']) && isset($_GET['oauth_verifier'])){
 			
 			$imgarr = getimagesize($filepath);
 			
+			$wh = 'width';
 			if(is_array($imgarr)){
 				$img_path = $filepath;
+				if($imgarr[0]>$imgarr[1])
+					$wh = 'height';
 			}
 			
 			$ahref = '#';
@@ -97,7 +100,7 @@ if(isset($_SESSION['oauth_token']) && isset($_GET['oauth_verifier'])){
 		?>
 		<li>
 			<a href="<?php echo $ahref?>" target="_blank">
-				<span class="tmb"><img src="<?php echo $img_path?>" style="height:100%" alt=""></span><!-- [D] 가로, 세로 짧은 길이 기준으로 100% 사이즈 -->
+				<span class="tmb"><img src="<?php echo $img_path?>" style="<?php echo $wh?>:100%" alt=""></span><!-- [D] 가로, 세로 짧은 길이 기준으로 100% 사이즈 -->
 				<div class="txt">
 					<span class="tmb"><img src="<?php echo $clist[$i]->photoUrl ?>" style="width:100%" alt="<?php echo $clist[$i]->userName ?>프로필사진"></span><!-- [D] 가로, 세로 짧은 길이 기준으로 100% 사이즈 -->
 					<em><?php echo $clist[$i]->userName ?></em><?php echo $this->common->getTime($clist[$i]->registDt);?>

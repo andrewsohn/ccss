@@ -85,9 +85,12 @@ if(isset($_SESSION['oauth_token']) && isset($_REQUEST['oauth_verifier'])){
 				$filepath = "http://2j5xlt4h84.ecn.cdn.infralab.net/data/event/".str_replace("-","",substr($clist[$i]->registDt,0,10)).'/'.$filename;
 					
 				$imgarr = getimagesize($filepath);
-					
+				
+				$wh = 'width';
 				if(is_array($imgarr)){
 					$img_path = $filepath;
+					if($imgarr[0]>$imgarr[1])
+						$wh = 'height';
 				}
 				
 				$ahref = '#';
@@ -98,8 +101,8 @@ if(isset($_SESSION['oauth_token']) && isset($_REQUEST['oauth_verifier'])){
 				}
 			?>
 			<li>
-				<a <?php echo $ahref?>" target="_blank">
-					<span class="tmb"><img src="<?php echo $img_path?>" style="width:100%" alt=""></span><!-- [D] 가로, 세로 짧은 길이 기준으로 100% 사이즈 -->
+				<a href="<?php echo $ahref?>" target="_blank">
+					<span class="tmb"><img src="<?php echo $img_path?>" style="<?php echo $wh?>:100%" alt=""></span><!-- [D] 가로, 세로 짧은 길이 기준으로 100% 사이즈 -->
 					<div class="txt">
 						<span class="tmb"><img src="<?php echo $clist[$i]->photoUrl ?>" style="width:100%" alt="<?php echo $clist[$i]->userName ?>프로필사진"></span><!-- [D] 가로, 세로 짧은 길이 기준으로 100% 사이즈 -->
 						<em><?php echo $clist[$i]->userName ?></em><?php echo $this->common->getTime($clist[$i]->registDt);?>
@@ -217,6 +220,14 @@ if(isset($_SESSION['oauth_token']) && isset($_REQUEST['oauth_verifier'])){
 		</form>
 		</div>
 		<!-- //트위터 공유하기 -->
+		<!-- 참여완료 -->
+		<div class="ly_complete" style="display:none">
+			<h1>참여완료</h1>
+			<h2>참여해주셔서 감사합니다.</h2>
+			<p>당첨 결과는 추첨을 통해<br>3월 5일 블로그에 게제될 예정입니다.<br>당첨 결과를 꼭 확인해주세요.</p>
+			<button type="button" class="btn_comfirm">확인</button>
+		</div>
+		<!-- //참여완료 -->
 		<!-- //[D] layer -->
 	</div>
 	<!-- //container -->
@@ -292,7 +303,12 @@ $(function(){
 		dimm.hide();
 		
 	});
-    
+
+	<?php if($this->session->flashdata('apply_complete') == 'teaser'){?>
+	dimm.show();
+	$('.ly_complete').show();
+	<?php }?>
+	
 	$('.more').click(function(e){
 		e.preventDefault();
 		var $this= $(this),
@@ -362,6 +378,12 @@ $(function(){
 			location.replace('<?php echo $twahref ?>');
 			<?php }?>
 		}
+	});
+
+	$('.btn_comfirm').click(function(e){
+		e.preventDefault();
+		dimm.hide();
+		$('.ly_complete').hide();
 	});
 	/* $(document).ajaxSend(function(event, request, settings) {
 	  $('#loading-indicator').show();

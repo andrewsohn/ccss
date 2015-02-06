@@ -22,8 +22,8 @@ class ApplicantAction extends CI_Controller {
 		$this->load->library('ftp');
 		$this->load->helper('url');
 		$this->load->helper('file');
-		$this->load->model('csadmineventapplicant');
-		$this->load->model('csuser');
+		$this->load->model('cs_admin_event_applicant');
+		$this->load->model('cs_user');
 	}
 	
 	public function index()
@@ -228,7 +228,7 @@ class ApplicantAction extends CI_Controller {
 				
 			}
 		}else if($data['type'] == '2'){ //트위터 코드 2
-			$this->common->print_r2($_SESSION);
+			//$this->common->print_r2($_SESSION);
 			
 			$id = $this->config->item('tt_id');
 			$secret = $this->config->item('tt_secret');
@@ -391,7 +391,7 @@ class ApplicantAction extends CI_Controller {
 	function removeAllData($data=array(),$pic_path='', $pic_path2=''){
 		if(empty($data)) return;
 	
-		$this->csadmineventapplicant->delete($data);
+		$this->cs_admin_event_applicant->delete($data);
 	
 		if(!isset($pic_path)) return;
 		delete_files($pic_path);
@@ -409,7 +409,7 @@ class ApplicantAction extends CI_Controller {
 		}
 		
 		$user_arr['type'] = $type;
-		$user = $this->csuser->checkNSave($user_arr);
+		$user = $this->cs_user->checkNSave($user_arr);
 		
 		return $user;
 	}
@@ -419,7 +419,7 @@ class ApplicantAction extends CI_Controller {
 			$this->common->alert('잘못된 회원정보입니다. 다시 시도하여 주십시요.');
 			exit;
 		}
-		return $this->csadmineventapplicant->insertApply($data);
+		return $this->cs_admin_event_applicant->insertApply($data);
 	}
 	
 	function uploadIMG($data=array(), $files=array()){

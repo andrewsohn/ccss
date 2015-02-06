@@ -1,5 +1,5 @@
 <?php
-class CsAdminEventTeaser extends CI_Model{
+class Cs_admin_event_teaser extends CI_Model{
 	function __construct(){
 		parent::__construct();
 	}

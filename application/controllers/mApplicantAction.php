@@ -23,8 +23,8 @@ class MApplicantAction extends CI_Controller {
 		$this->load->library('ftp');
 		$this->load->helper('url');
 		$this->load->helper('file');
-		$this->load->model('csadmineventapplicant');
-		$this->load->model('csuser');
+		$this->load->model('cs_admin_event_applicant');
+		$this->load->model('cs_user');
 	}
 	
 	public function index(){
@@ -141,7 +141,7 @@ class MApplicantAction extends CI_Controller {
 					//원본 이미지 저장
 					$filename = $data['uuid'].'.'.$fname[1];
 					$config1['upload_path'] = './data/event/'.$upDate;
-					$config1['allowed_types'] = 'jpg|png';
+					$config1['allowed_types'] = 'jpg|png|jpeg';
 					$config1['file_name'] = $filename;
 					$config1['max_size']	= '2097152';
 					$config1['max_width']  = '10240';
@@ -216,6 +216,7 @@ class MApplicantAction extends CI_Controller {
 									'message' => trim($this->input->post('bf_content', TRUE))
 							)
 					))->execute()->getGraphObject();
+							$this->session->set_flashdata('apply_complete','teaser');
 							redirect('m/teaser#snsBtn');
 				} catch(FacebookRequestException $e) {
 						
@@ -278,7 +279,7 @@ class MApplicantAction extends CI_Controller {
 					//원본 이미지 저장
 					$filename = $data['uuid'].'.'.$fname[1];
 					$config['upload_path'] = './data/event/'.$upDate;
-					$config['allowed_types'] = 'jpg|png';
+					$config['allowed_types'] = 'jpg|png|jpeg';
 					$config['file_name'] = $filename;
 					$config['max_size']	= '2097152';
 					$config['max_width']  = '10240';
@@ -342,6 +343,7 @@ class MApplicantAction extends CI_Controller {
 					$this->ftp->close();
 				}
 				
+				$this->session->set_flashdata('apply_complete','teaser');
 				if($w != 's'){
 					$pic_path = $upPath.'/'.$fileName;
 					
@@ -369,7 +371,7 @@ class MApplicantAction extends CI_Controller {
 	function removeAllData($data=array(),$pic_path='', $pic_path2=''){
 		if(empty($data)) return;
 	
-		$this->csadmineventapplicant->delete($data);
+		$this->cs_admin_event_applicant->delete($data);
 	
 		if(!isset($pic_path)) return;
 		delete_files($pic_path);
@@ -387,7 +389,7 @@ class MApplicantAction extends CI_Controller {
 		}
 		
 		$user_arr['type'] = $type;
-		$user = $this->csuser->checkNSave($user_arr);
+		$user = $this->cs_user->checkNSave($user_arr);
 		
 		return $user;
 	}
@@ -397,7 +399,7 @@ class MApplicantAction extends CI_Controller {
 			$this->common->alert('잘못된 회원정보입니다. 다시 시도하여 주십시요.');
 			exit;
 		}
-		return $this->csadmineventapplicant->insertApply($data);
+		return $this->cs_admin_event_applicant->insertApply($data);
 	}
 	
 	function uploadIMG($data=array(), $files=array()){

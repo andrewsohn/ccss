@@ -5,10 +5,10 @@ class Teaser extends CI_Controller {
 		parent::__construct();
 		$this->load->library('common');
 		$this->load->helper('url');
-		$this->load->model('csmainmenu');
-		$this->load->model('csadmineventteaser');
-		$this->load->model('csadmineventapplicant');
-		$this->load->model('cssns');
+		$this->load->model('cs_main_menu');
+		$this->load->model('cs_admin_event_teaser');
+		$this->load->model('cs_admin_event_applicant');
+		$this->load->model('cs_sns');
 	}
 	
 	public function index()
@@ -19,20 +19,20 @@ class Teaser extends CI_Controller {
 		$view = '';
 		if(isset($_REQUEST['et_id'])){
 			if($_REQUEST['et_id']){
-				$view = $this->csadmineventteaser->get($_REQUEST['et_id']);
+				$view = $this->cs_admin_event_teaser->get($_REQUEST['et_id']);
 			}
 		}
 		
 		if(empty($view))
-			$view = $this->csadmineventteaser->getLastLive();
+			$view = $this->cs_admin_event_teaser->getLastLive();
 		
 		$data['view'] = $view;
 		if(!empty($view)){
-			$clist = $this->csadmineventapplicant->getListMain($view->idx);
+			$clist = $this->cs_admin_event_applicant->getListMain($view->idx);
 			$data['clist'] = $clist;
 		}
 		
-		$board_list = $this->csadmineventteaser->getListLive();
+		$board_list = $this->cs_admin_event_teaser->getListLive();
 		
 		$data['blist'] = $board_list;
 		
@@ -47,7 +47,7 @@ class Teaser extends CI_Controller {
 	{
 		if($this->input->post('sns', TRUE)){
 			$idx = $this->input->post('sns', TRUE);
-			$sns = $this->cssns->get($idx);
+			$sns = $this->cs_sns->get($idx);
 			$this->output->set_header('Content-Type: application/json; charset=utf-8');
 			echo json_encode($sns);
 		}
@@ -59,7 +59,7 @@ class Teaser extends CI_Controller {
 			$idx = $this->input->post('idx', TRUE);
 			$idx2 = $this->input->post('idx2', TRUE);
 			//echo json_encode($idx.':'.$idx2);
-			$clist = $this->csadmineventapplicant->getListMore($idx,$idx2);
+			$clist = $this->cs_admin_event_applicant->getListMore($idx,$idx2);
 			//$this->output->set_header('Content-Type: application/json; charset=utf-8');
 			$str = '';
 			for($i=0; $i<count($clist); $i++){
@@ -71,8 +71,11 @@ class Teaser extends CI_Controller {
 					
 				$imgarr = getimagesize($filepath);
 					
+				$wh = 'width';
 				if(is_array($imgarr)){
 					$img_path = $filepath;
+					if($imgarr[0]>$imgarr[1])
+						$wh = 'height';
 				}
 				
 				$ahref = '#';
@@ -82,7 +85,7 @@ class Teaser extends CI_Controller {
 					$ahref = 'https://twitter.com/intent/user?user_id='.$clist[$i]->userId;
 				}
 				$str .= '<a href="'.$ahref.'" target="_blank">';
-				$str .= '<span class="tmb"><img src="'.$img_path.'" style="height:100%" alt=""></span>';
+				$str .= '<span class="tmb"><img src="'.$img_path.'" style="'.$wh.':100%" alt=""></span>';
 				$str .= '<div class="txt">';
 				$str .= '<span class="tmb"><img src="'.$clist[$i]->photoUrl.'" style="width:100%" alt="'.$clist[$i]->userName.'프로필사진"></span>';
 				$str .= '<em>'.$clist[$i]->userName.'</em>'.$this->common->getTime($clist[$i]->registDt);
@@ -105,9 +108,9 @@ class Teaser extends CI_Controller {
 	function _header(){
 		$title = $this->config->item('site_title');
 		$data = array('title' => $title);
-		$menu_list = $this->csmainmenu->gets();
+		$menu_list = $this->cs_main_menu->gets();
 		$this->load->view('MainHeadSub', $data);
-		$data2['menu'] = $this->csmainmenu->getsLive();
+		$data2['menu'] = $this->cs_main_menu->getsLive();
 		$this->load->view('MainHead',$data2);
 	}
 	function _footer(){

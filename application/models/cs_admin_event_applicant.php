@@ -1,5 +1,5 @@
 <?php
-class Csadmineventapplicant extends CI_Model{
+class Cs_admin_event_applicant extends CI_Model{
 	function __construct(){
 		parent::__construct();
 		$this->load->library('universaluid');

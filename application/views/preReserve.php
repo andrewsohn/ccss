@@ -25,7 +25,6 @@ $helper = new FacebookRedirectLoginHelper(site_url('preReserveClose'));
 $session = $helper->getSessionFromRedirect();
 
 if(isset($session)){
-	// 		$_SESSION['token'] = $_GET['code'];
 	$_SESSION['token'] = $session->getToken();
 	$fba = '<a href="#" data-type="1" class="applyBtn">나 이 곰 봤어요! 페이스북에 올리기</a>';
 } else {
@@ -34,14 +33,11 @@ if(isset($session)){
 }
 
 $twa = '<a href="'.site_url('twitter').'">나 이 곰 봤어요! 트위터에 올리기</a>';
-if(isset($_SESSION['oauth_token']) && isset($_REQUEST['oauth_verifier'])){
-	$_SESSION["oauth_verifier"] = $_GET["oauth_verifier"];
-}
 
 $time = strtotime($this->config->item('opendate_candyshop')) - strtotime(date('Y-m-d'));
 $open_date = date('d',$time);
 
-$this->common->print_r2($_SESSION);
+//$this->common->print_r2($_SESSION);
 ?>
 <!-- container -->
 <div id="container">
@@ -55,7 +51,7 @@ $this->common->print_r2($_SESSION);
 	<div class="dday"><span class="blind">캔디샵 오픈</span><em class="num<?php echo $open_date[0];?>"><?php echo $open_date[0];?></em><em class="num<?php echo $open_date[1];?>"><?php echo $open_date[1];?></em></div>
 	
 	<!-- bg 이미지 -->
-	<div class="sec"><img src="<?php echo $this->config->item('asset_url');?>/PC/img/candyshop.jpg" alt=""></div>
+	<div class="sec on"><img src="<?php echo $this->config->item('asset_url');?>/PC/img/candyshop.jpg" alt=""></div>
 	<!-- [D] 반복 -->
 	<div class="sec" style="left:100%"><img src="<?php echo $this->config->item('asset_url');?>/PC/img/candyshop2.jpg" alt=""></div>
 	<div class="sec" style="left:200%"><img src="<?php echo $this->config->item('asset_url');?>/PC/img/candyshop3.jpg" alt=""></div>
@@ -64,33 +60,8 @@ $this->common->print_r2($_SESSION);
 	
 	<!-- [D] 줄서기 --> 
 	<div class="lineup" style="width:900px">
+		<input type="text" id="tIdx">
 		<ul>
-		<li><!-- [D] 캔디에 마우스 오버 시 말풍선 내용 보임 : li 에 .on 클래스 추가 -->
-			<a href="#"><img src="<?php echo $this->config->item('asset_url');?>/PC/img/candy1.gif" alt="캔디1"></a>
-			<!-- [D] 말풍선 내용: 3줄 말줄임 처리 -->
-			<div class="bx">
-				<strong>abcdEfghijklmnopqrstuxyz</strong>
-				ddddddddddddddddddddddddddddddddddddd3줄까지...
-				<p class="sns"><span class="fb">페이스북</span> 1시간전</p>
-				<button type="button" class="btn_x">닫기</button>
-			</div>
-			<!-- //[D] 말풍선 내용 -->
-		</li>
-		<li class="on">
-			<a href="#"><img src="<?php echo $this->config->item('asset_url');?>/PC/img/candy2.gif" alt="캔디2"></a>
-			<!-- [D] 말풍선 내용: 3줄 말줄임 처리 -->
-			<div class="bx">
-				<strong>Hivelab</strong>
-				빨리 출시해 주세요<br>현기증 난단 말이예요☆
-				<p class="sns"><span class="tt">트위터</span> 1시간전</p>
-				<button type="button" class="btn_x">닫기</button>
-			</div>
-			<!-- //[D] 말풍선 내용 -->
-		</li>
-		<li><a href="#"><img src="<?php echo $this->config->item('asset_url');?>/PC/img/candy3.gif" alt="캔디3"></a></li>
-		<li><a href="#"><img src="<?php echo $this->config->item('asset_url');?>/PC/img/candy4.gif" alt="캔디4"></a></li>
-		<li><a href="#"><img src="<?php echo $this->config->item('asset_url');?>/PC/img/candy5.gif" alt="캔디5"></a></li>
-		<li><a href="#"><img src="<?php echo $this->config->item('asset_url');?>/PC/img/candy6.gif" alt="캔디6"></a></li>
 		</ul>
 	</div>
 	<!-- //[D] 줄서기 -->
@@ -103,7 +74,7 @@ $this->common->print_r2($_SESSION);
 			for($i=0; $i<strlen($client_num); $i++){
 				$tnum = $i+1;
 				$temp = 'n'.$tnum;
-				$$temp = substr($client_num,'-'.$i);
+				$$temp = substr($client_num,'-'.$tnum,1);
 			}
 			?>
 			<!-- [D] 줄 선 인원 수 : num0 ~ num9 -->
@@ -119,11 +90,11 @@ $this->common->print_r2($_SESSION);
 			<!-- //[D] 줄 선 인원 수 -->
 		</div>
 		<!-- [D] indicator : 각 버튼 활성화 .on 클래스 추가 -->
-		<ul class="indicator">
+		<ul class="indicator" data-href="<?php echo site_url("preReserve/pRListAction");?>">
 		<li><button type="button" class="first">맨 처음</button></li>
-		<li class="on"><button type="button" class="prev">이전</button></li>
+		<li><button type="button" class="prev">이전</button></li>
 		<li><button type="button" class="my">내 위치보기</button></li>
-		<li class="on"><button type="button" class="next">다음</button></li>
+		<li><button type="button" class="next">다음</button></li>
 		<li><button type="button" class="end">맨 끝</button></li>
 		</ul>
 		<!-- //indicator -->
@@ -175,9 +146,9 @@ $this->common->print_r2($_SESSION);
 							</ul>
 						</div>
 						<span class="dash"></span>
-						<span class="txt"><input type="text" name="phNum2" title="휴대폰 중간 번호" class="_focusInput _num"></span>
+						<span class="txt"><input type="text" name="phNum2" title="휴대폰 중간 번호" class="_focusInput _num _limiter"></span>
 						<span class="dash"></span>
-						<span class="txt"><input type="text" name="phNum3" title="휴대폰 끝 번호" class="_focusInput _num"></span>
+						<span class="txt"><input type="text" name="phNum3" title="휴대폰 끝 번호" class="_focusInput _num _limiter"></span>
 					</li>
 					</ul>
 					<ul class="info">
@@ -273,21 +244,11 @@ $this->common->print_r2($_SESSION);
 <div class="dimmed pink2" style="display:none"></div>
 
 <div class="ly_alert" style="display:none">
-	<p class="name">이름을 입력해주세요</p>
+	<p class="name">이름을 입력해주세요</p><!-- [D] 클래스명과 p.html 내용 변경 스크립트적용 -->
 	<div class="btn_group">
 		<button type="button" class="btn_confirm_s">확인</button>
 	</div>
 </div>
-
-<!-- 줄서기 할래? 
-<div class="ly_alert" style="display:none">
-	<p class="addto">줄서기에 같이 참여하면 당첨확률을 높일 수 있어요! 줄서기에도 참여하시겠습니까?</p>
-	<div class="btn_group">
-		<button type="button" class="btn_yes">확인</button>
-		<button type="button" class="btn_no">아니요</button>
-	</div>
-</div>
-<!-- //줄서기 할래? -->
 <!-- //layer : alert -->
 
 <!-- layer : 당첨 확인 -->
@@ -296,7 +257,7 @@ $this->common->print_r2($_SESSION);
 		<h1 class="blind">사전예약 참여하기</h1>
 		<h2><img src="<?php echo $this->config->item('asset_url');?>/PC/img/h2_2.png" alt="당첨 결과 확인"></h2>
 		<div class="cont">
-			<img src="<?php echo $this->config->item('asset_url');?>/PC/img/gift_p1.jpg" alt="사전예약에 참여해주셔서 감사합니다. 아이패드 미니에 당첨 되셨습니다.">
+			<img src="<?php echo $this->config->item('asset_url');?>/PC/img/gift_p1.jpg" alt="사전예약에 참여해주셔서 감사합니다.">
 			<!-- 확인 btn -->
 			<div class="btn_group">
 				<button type="button" class="btn_comfirm">확인</button>
@@ -325,31 +286,86 @@ $this->common->print_r2($_SESSION);
 
 
 <script type="text/javascript">
-function doo(txt){
-	alert(txt);
-} 
+var l = $('.lineup'),
+t = $('#tIdx'),
+ul = l.find('ul'),
+rcnt = 3;
+ 
+$(window).resize(function () {
+	var ccnt = Math.ceil(($(window).width() - (l.position().left + 211))/108);
+
+	if(ccnt < 3)
+		ccnt = 3;
+	
+	if(rcnt != ccnt){
+		l.width(($(window).width()+140)/2);
+		if(rcnt > ccnt){
+			$.ajax({
+				type: "POST",
+				url: '<?php echo site_url("preReserve/pRListAction2");?>',
+				data: {
+					"idx": $('#tIdx').val(),
+					"mode": 'de'
+				},
+				success: function(data) {
+					if(data){
+						t.val(data);
+						ul.find('li:last').remove();
+					}
+				}
+			});
+		}else if(rcnt < ccnt){
+			$.ajax({
+				type: "POST",
+				url: '<?php echo site_url("preReserve/pRListAction2");?>',
+				data: {
+					"idx": t.val(),
+					"mode": 'in'
+				},
+				success: function(data) {
+					if(data){
+						res = data.split("|||");
+						for(i=0; i<res.length; i++){
+							if(i == 0){
+								ul.append(res[i]);
+							}else if(i == 1){
+								t.val(res[i]);
+							}
+						}
+						
+					}
+				}
+			});
+		}
+		
+		rcnt = ccnt;
+	}
+});
 (function($, window) {
 	$(function() {
-		var l = $('#characters'),
-		t = $('#target');
-
+		var ccnt = Math.ceil(($(window).width() - (l.position().left + 211))/108);
+		if(ccnt < 3)
+			ccnt = 3;
+		rcnt = ccnt;
+		l.width(($(window).width()+140)/2);
 		$.ajax({
 			type: "POST",
 			url: '<?php echo site_url("preReserve/pRListAction");?>',
 			data: {
 				"idx": '0',
-				"size": '5'
+				"size": ccnt
 			},
 			success: function(data) {
 				if(data){
 					res = data.split("|||");
 					for(i=0; i<res.length; i++){
 						if(i == 0){
-							l.append(res[i]);
+							ul.append(res[i]);
 						}else if(i == 1){
 							t.val(res[i]);
 						}
 					}
+					
 				}
 			}
 		});
@@ -405,9 +421,10 @@ function doo(txt){
 
 		var form     = $('#formPR'),
         al = $('.ly_alert'),
-		pr = $('.ly_prev');
-
-        form.submit(function(){ //문서의 모든 form이 submit될때
+		pr = $('.ly_prev'),
+		dimm = $('.dimmed');
+		
+        form.submit(function(){
 			if (!form.find('input[name=name]').val()){
 				al.find('p').attr('class','name').html('이름을 입력해주세요');
 				al.show();
@@ -440,6 +457,10 @@ function doo(txt){
 						"phNum3": form.find('input[name=phNum3]').val()
 					},
 					success: function(data){
+						form.find('input[name=name]').val('');
+						form.find('input[name=phNum1]').val('');
+						form.find('input[name=phNum2]').val('');
+						form.find('input[name=phNum3]').val('');
 						form.find('input[name=enc]').val(data);
 			        }
 				});
@@ -448,17 +469,50 @@ function doo(txt){
 			function secondAjax() {
 			    return $.post("<?php echo site_url('pRAction')?>", $('#formPR').serialize()).done(function(data){
 				    if(data){
-				    	pr.eq(0).find("input[type=text], textarea").val("");
+				    	var res = data.split("||"),
+				    	src = '<?php echo $this->config->item('asset_url');?>/PC/img/gift_p.jpg';
+				    	
+				    	if(res[0]){
+				    		res = res[0].split(":");
+				    		if(res[1]){
+				    			src = '<?php echo $this->config->item('asset_url');?>/PC/img/gift_p'+res[1]+'.jpg'
+					    	}
+					    }
+
+				    	form.find("input[type=text], textarea").val("");
 				    	pr.eq(0).hide();
+				    	dimm.eq(0).show();
+				    	pr.eq(1).find('.cont > img:first').attr('src',src);
 				    	pr.eq(1).show();
 					}else{
 						alert('등록오류입니다.\n다시 시도하여 주십시요.');
 					}
-				
 				});
 			}
 
-			firstAjax().success(secondAjax);
+			if(!form.find('input[name=snsKind]').val()){
+				dimm.eq(1).show();
+				al.find('p').attr('class','addto').html('줄서기에 같이 참여하면 당첨확률을 높일 수 있어요! 줄서기에도 참여하시겠습니까?');
+				al.find('.btn_group').html('<button type="button" class="btn_yes">확인</button><button type="button" class="btn_no">아니요</button>');
+				al.show();
+				
+				al.find('button').on('click',function(e){
+					e.preventDefault();
+					var ct = e.currentTarget;
+					if($(ct).attr('class') == 'btn_yes'){
+						dimm.eq(1).hide();
+						al.hide();
+						form.find('textarea[name="content"]').focus();
+						return false;
+					}else if($(ct).attr('class') == 'btn_no'){
+						dimm.eq(1).hide();
+						al.hide();
+						firstAjax().success(secondAjax);
+					}
+				});
+			}else{
+				firstAjax().success(secondAjax);				
+			}	
 
 			return false;
 	    });

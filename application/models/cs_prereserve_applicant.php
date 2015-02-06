@@ -23,12 +23,53 @@ class Cs_prereserve_applicant extends CI_Model{
 		return $this->db->query($sql, $arr)->result();
 	}
 	
+	public function getMain($idx=''){
+		if(!$idx) return;
+		$this->db->select('a.*, b.name as userName');
+		$this->db->from('Reservations a');
+		$this->db->join('Users b', 'a.userId = b.id and a.userType = b.type', 'left');
+		$this->db->where('a.status', 1);
+		$w = 'a.idx = (select min(idx) from Reservations where idx > '.$idx.' AND userId is not null )';
+		$this->db->where($w);
+		$this->db->order_by("a.registDt", "asc");
+		$this->db->limit(1);
+		return $this->db->get()->row();
+	}
+	
+	public function getPrevIdx($idx=''){
+		if(!$idx) return;
+		$this->db->select('idx');
+		$this->db->from('Reservations');
+		$this->db->where('status', 1);
+		$w = 'idx = (select max(idx) from Reservations where idx < '.$idx.' AND userId is not null )';
+		$this->db->where($w);
+		$this->db->order_by("registDt", "asc");
+		$this->db->limit(1);
+		return $this->db->get()->row()->idx;
+	}
+	
 	public function getListMain($data=array()){
-		$sql = "select * from Reservations 
-				where status = 1 and idx > ? order by idx asc limit ?";
-		
-		
-		return $this->db->query($sql, $data)->result();
+		$this->db->select('a.*, b.name as userName');
+		$this->db->from('Reservations a');
+		$this->db->join('Users b', 'a.userId = b.id and a.userType = b.type', 'left');
+		$this->db->where('a.status', 1);
+		$this->db->where('a.userId is not null');
+		$w = 'a.idx > '.$data['idx'];
+		$this->db->where($w);
+		$this->db->order_by("a.registDt", "asc");
+		$this->db->limit($data['size']);
+		return $this->db->get()->result();
+	}
+	
+	public function getListMobLive(){
+		$this->db->select('a.*, b.name as vname');
+		$this->db->from('Reservations a');
+		$this->db->join('Users b', 'a.userId = b.id and a.userType = b.type', 'left');
+		$this->db->where('a.status', 1);
+		$this->db->where('a.userId is not null');
+		$this->db->order_by("a.registDt", "desc");
+		$this->db->limit(7);
+		return $this->db->get()->result();
 	}
 	
 	public function getListMainLast($num=0){
@@ -39,6 +80,21 @@ class Cs_prereserve_applicant extends CI_Model{
 		ORDER BY idx ASC";
 		array_push($arr,$num);
 		return $this->db->query($sql, $arr)->result();
+	}
+	
+	public function getListMoreMob($idx=''){
+		if(!$idx) return;
+		$this->db->select('a.*, b.name as vname');
+		$this->db->from('Reservations a');
+		$this->db->join('Users b', 'a.userId = b.id and a.userType = b.type', 'left');
+		$this->db->where('a.status', 1);
+		$this->db->where('a.userId is not null');
+		$sql = 'a.registDt < (select registDt from Reservations where idx = '.$idx.')';
+		$this->db->where($sql);
+		$this->db->order_by("a.registDt", "desc");
+		$this->db->limit(7);
+		
+		return $this->db->get()->result();
 	}
 	
 	public function get($ea_id){
@@ -79,8 +135,12 @@ class Cs_prereserve_applicant extends CI_Model{
 	}
 	
 	public function getLiveRows(){
-		$query = $this->db->query('SELECT * FROM Reservations where status = 1 order by idx asc');
-		return $query->num_rows();
+		$this->db->select('*');
+		$this->db->from('Reservations');
+		$this->db->where('status', 1);
+		$this->db->where('userId is not null');
+		$this->db->order_by("registDt", "asc");
+		return $this->db->get()->num_rows();
 	}
 	
 	public function delete($data=array()){

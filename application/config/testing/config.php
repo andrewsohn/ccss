@@ -18,17 +18,20 @@ $config['site_title']	= '테스트환경: 곰가족의 반란 CCSS';
 $config['base_url']	= 'http://ccss.hivelab.co.kr/ccss/';
 //$config['base_url']	= 'http://www.candycrushsoda.co.kr/';
 //$config['mbase_url']	= 'http://m.candycrushsoda.co.kr/';
-$config['asset_url']	= 'http://svn.hivelab.co.kr/svnview/hive/ccss_markup';
+$config['asset_url']	= 'http://www.candycrushsoda.co.kr/assets';
 $config['dir_permission']	= '0755';
 $config['file_permission']	= '0644';
 $config['image_extension']	= 'jpg|jpeg|png';
 $config['upload_size']	= 2097152;
-$config['fb_id'] = '802677239805892';
-$config['fb_secret'] = 'c0451dc58138d7d706ee910a04ff2aa7';
-$config['tt_id'] = '9JgR7C3Hd365xCeNuQMyROlaB';
-$config['tt_secret'] = 'Q5j0gkfGCQclJdDd19vKbkwfWWwQLByUurmB5ernVNpyVhRkoy';
+$config['fb_id'] = '348697178652490';
+$config['fb_secret'] = '48b051b1e8230b0f1b44451055b7c921';
+$config['tt_id'] = 'NIILXSwqZ65evPP4bFfGFQLmz';
+$config['tt_secret'] = 'd2z4sL59dDquqqWE0cY2LRMfg1CSEnQvkq5Ru97gCPQjNQQnEb';
 $config['js_version'] = '1.11.2';
 $config['css_version'] = '';
+$config['opendate_candyshop'] = '2015-03-06';
+
+$config['encryption_key'] = "8aUH59wZ5T9BHjNGwwVldkrUzU94w6H7";
 /*
 |--------------------------------------------------------------------------
 | Index File

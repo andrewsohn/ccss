@@ -21,9 +21,9 @@ class PreReserveClose extends CI_Controller {
 		$this->load->library('common');
 		$this->load->library('encrypt');
 		$this->load->helper('url');
-		$this->load->model('csMainMenu');
+		$this->load->model('cs_main_menu');
 		$this->load->model('cs_prereserve_applicant');
-		$this->load->model('CsSns');
+		$this->load->model('cs_sns');
 	}
 	
 	public function index()

@@ -1,5 +1,5 @@
 <?php
-class Cssns extends CI_Model{
+class Cs_sns extends CI_Model{
 	function __construct(){
 		parent::__construct();
 	}

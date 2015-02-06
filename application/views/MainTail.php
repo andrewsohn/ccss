@@ -1,3 +1,4 @@
+<?php if($this->router->fetch_class() == 'teaser'){?>
 <!-- footer -->
 	<div id="footer">
 		<div class="img"><img src="<?php echo $this->config->item('asset_url');?>/PC/img/attention.jpg" alt=""></div>
@@ -18,3 +19,9 @@
 	</div>
 	<!-- //footer -->
 </div>
+<?php }else if($this->router->fetch_class() == 'preReserve'){?>
+<!-- footer -->
+	<div id="footer"><p>2015 &copy; KING.COM</p></div>
+	<!-- //footer -->
+</div>
+<?php }?>

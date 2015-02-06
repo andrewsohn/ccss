@@ -5,9 +5,9 @@ class PreReserve extends CI_Controller {
 		$this->load->library('common');
 		$this->load->library('encrypt');
 		$this->load->helper('url');
-		$this->load->model('csMainMenu');
+		$this->load->model('cs_main_menu');
 		$this->load->model('cs_prereserve_applicant');
-		$this->load->model('CsSns');
+		$this->load->model('cs_sns');
 	}
 	
 	public function index()
@@ -75,26 +75,70 @@ class PreReserve extends CI_Controller {
 		$str = '';
 		for($i=0; $i<count($clist); $i++){
 			$str .= '<li>';
-			$str .= '<dl>';
-			$str .= '<dt>'.$clist[$i]->idx.'</dt>';
-			$str .= '<dd>'.$clist[$i]->content.'</dd>';
-			$str .= '<dd>'.$clist[$i]->userId.'</dd>';
-			$str .= '<dd>'.$clist[$i]->userType.'</dd>';
-			$str .= '<dd>'.$clist[$i]->charIdx.'</dd>';
-			$str .= '</dl></li>';
+			$str .= '<a href="#"><img src="'.$this->config->item('asset_url').'/PC/img/candy'.$clist[$i]->charIdx.'.gif" alt="캔디'.$clist[$i]->charIdx.'"></a>';
+			$str .= '<div class="bx">';
+			$str .= '<strong>'.$clist[$i]->userName.'</strong>';
+			$str .= $clist[$i]->content;
+			//fb
+			$sns = '';
+			if($clist[$i]->type == 1){
+				$sns = 'fb';
+			}else if($clist[$i]->type == 2){
+				$sns = 'tt';
+			}
+			$str .= '<p class="sns"><span class="'.$sns.'">'.$this->common->getValueByCode(3,$clist[$i]->type).'</span> '.$this->common->getTime($clist[$i]->registDt).'</p>';
+			$str .= '<button type="button" class="btn_x">닫기</button>';
+			$str .= '</div></li>';
 			if($i == count($clist)-1)
 				$str .= '|||'.$clist[$i]->idx;
 		}
 		echo json_encode($str);
 		
 	}
+	public function pRListAction2(){
+		$mode = $this->input->post('mode', TRUE);
+		if(!in_array($mode, array("de", "in"))) return;
+		
+		$idx = '';
+		if($this->input->post('idx', TRUE)){
+			$idx = (int)$this->input->post('idx', TRUE);
+		}
+		
+		$this->output->set_header('Content-Type: application/json; charset=utf-8');
+		
+		if($mode == 'in'){
+			$cview = $this->cs_prereserve_applicant->getMain($idx);
+			//$this->common->print_r2($cview);
+			
+			$str = '';
+			$str .= '<li>';
+			$str .= '<a href="#"><img src="'.$this->config->item('asset_url').'/PC/img/candy'.$cview->charIdx.'.gif" alt="캔디'.$cview->charIdx.'"></a>';
+			$str .= '<div class="bx">';
+			$str .= '<strong>'.$cview->userName.'</strong>';
+			$str .= $cview->content;
+			//fb
+			$sns = '';
+			if($cview->type == 1){
+				$sns = 'fb';
+			}else if($cview->type == 2){
+				$sns = 'tt';
+			}
+			$str .= '<p class="sns"><span class="'.$sns.'">'.$this->common->getValueByCode(3,$cview->type).'</span> '.$this->common->getTime($cview->registDt).'</p>';
+			$str .= '<button type="button" class="btn_x">닫기</button>';
+			$str .= '</div></li>';
+			$str .= '|||'.$cview->idx;
+			echo json_encode($str);
+		}else{
+			echo json_encode($this->cs_prereserve_applicant->getPrevIdx($idx));
+		}
+	}
 	
 	function _header(){
 		$title = $this->config->item('site_title');
 		$data = array('title' => $title);
-		$menu_list = $this->csMainMenu->gets();
+		$menu_list = $this->cs_main_menu->gets();
 		$this->load->view('MainHeadSub', $data);
-		$data2['menu'] = $this->csMainMenu->getsLive();
+		$data2['menu'] = $this->cs_main_menu->getsLive();
 		$this->load->view('MainHead',$data2);
 	}
 	function _footer(){

@@ -15,7 +15,7 @@ use Facebook\GraphObject;
 use Facebook\GraphUser;
 use Facebook\GraphSessionInfo;
 
-class PRAction extends CI_Controller {
+class MPRAction extends CI_Controller {
 	function __construct(){
 		parent::__construct();
 		$this->load->library('common');
@@ -28,8 +28,7 @@ class PRAction extends CI_Controller {
 		$this->load->model('cs_dp_winner');
 	}
 	
-	public function index()
-	{
+	public function index(){
 		$str = '';
 		$pArr = array();
 		//필수 필드 Validation [start]--------------------
@@ -93,7 +92,7 @@ class PRAction extends CI_Controller {
 		
 		$message = '';
 		$data['content'] = '';
-		if($this->input->post('content', TRUE)){
+		if($this->input->post('content', TRUE) && isset($data['type'])){
 			$data['content'] = trim($this->input->post('content', TRUE));
 			$data['content'] = $this->common->conv_content($this->common->conv_unescape_nl($data['content']), 0);
 			$message .= $data['content'];
@@ -187,12 +186,9 @@ class PRAction extends CI_Controller {
 								'message' => $message
 						)
 				))->execute()->getGraphObject();
-						$this->session->set_flashdata('apply_complete','pre');
-							
+				$this->session->set_flashdata('apply_complete','pre');
 			} catch(FacebookRequestException $e) {
 					
-				//echo "Exception occured, code: " . $e->getCode();
-				//echo " with message: " . $e->getMessage();
 				echo '0';
 				$this->removeAllData($data, $pic_path,$pic_path2);
 			}
@@ -211,7 +207,7 @@ class PRAction extends CI_Controller {
 		}
 		echo $str;
 	}
-
+	
 	function winPrize(){
 		return $this->cs_promotion_goods->getList();
 	}
