@@ -123,6 +123,11 @@ class ApplicantAction extends CI_Controller {
 					$data['photoType'] = $fname[1];
 				}
 				
+				if(!in_array($data['photoType'], array("jpg", "png", 'jpeg'))){
+					$this->common->alert('이미지 파일은 jpg, png, jpeg만 가능합니다.');
+					exit;
+				}
+				
 				$data['uuid'] = $this->insertApply($data);
 				
 				if(!$data['uuid']){

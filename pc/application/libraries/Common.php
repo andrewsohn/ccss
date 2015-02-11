@@ -430,10 +430,21 @@ class Common {
 	    $datetime2 = substr($datetime,0,10);
 	    if ($datetime2 == $this->ymd)
 	        $datetime = substr($datetime,11,5);
-	    else
-	        $datetime = substr($datetime,5,5);
+	    else if(substr($datetime,0,4) == substr($this->ymd,0,4))
+	    	$datetime = substr($datetime,5,5);
+	    else if(substr($datetime,0,4) != substr($this->ymd,0,4))
+	        $datetime = substr($datetime,0,10);
 	    
 	    return $datetime;
+    }
+    
+    public function getTruncatText($text, $len = 100) {
+    	$lstr = $text;
+    	if(strlen($text) > $len) {
+    		$lstr = substr($lstr, 0, (0 > $len - 5 ? $len : $len - 5)) . '...';
+    	}
+    		
+    	return $this->conv_content2($lstr);
     }
     
     // 메인 시간/날짜 출력

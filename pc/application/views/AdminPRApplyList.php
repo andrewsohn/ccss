@@ -9,11 +9,12 @@ $colspan = 6;
 	<div class="tb_wrap">
 		<table>
 		<caption><span>사전예약 참여자 목록</span></caption>
-		<colgroup><col style="width:7%"><col style="width:15%"><col style="width:11%"><col><col style="width:14%"><col style="width:11%"></colgroup>
+		<colgroup><col style="width:7%"><col style="width:15%"><col style="width:11%"><col style="width:11%"><col><col style="width:14%"><col style="width:11%"></colgroup>
 		<thead>
 		<tr>
 			<th scope="col">번호</th>
-			<th scope="col">작성자 ID</th>
+			<th scope="col">작성자명</th>
+			<th scope="col">핸드폰번호</th>
 			<th scope="col">TYPE</th>
 			<th scope="col">작성내용</th>
 			<th scope="col">작성일</th>
@@ -35,7 +36,8 @@ $colspan = 6;
 		?>
 		<tr>
 			<td><?php echo $blist[$i]->idx?></td>
-			<td class="al"><?php echo $blist[$i]->userId?></td>
+			<td class="al"><?php echo $blist[$i]->userName?></td>
+			<td class="al"><?php echo $blist[$i]->mobileNum?></td>
 			<td><?php if($blist[$i]->type) echo $this->common->getValueByCode(3,$blist[$i]->type);?></td>
 			<td class="al"><a href="<?php echo $ahref?>" target="_blank" class="eps"><?php echo $blist[$i]->content ?></a><?php
                 if (isset($blist[$i]->icon_new)) echo $blist[$i]->icon_new;
@@ -61,8 +63,8 @@ $colspan = 6;
 <script>
 $(function(){
 	var at = $('.tb_wrap');
-	at.find('.btn > a').click(function(e){
-		var trg = $(this);
+	at.find('.btn_g').click(function(e){
+		var trg = $(e.target);
 		e.preventDefault();
 		$.ajax({
 			type: "POST",

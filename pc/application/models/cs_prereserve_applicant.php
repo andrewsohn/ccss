@@ -58,7 +58,71 @@ class Cs_prereserve_applicant extends CI_Model{
 		$this->db->where($w);
 		$this->db->order_by("a.registDt", "asc");
 		$this->db->limit($data['size']);
+		
 		return $this->db->get()->result();
+	}
+	
+	
+	public function getData($data=array()){
+		$this->db->select('a.*, b.name as userName');
+		$this->db->from('Reservations a');
+		$this->db->join('Users b', 'a.userId = b.id and a.userType = b.type', 'left');
+		$this->db->where('a.status', 1);
+		$this->db->where('a.userId is not null');				
+		$this->db->order_by("a.registDt", "asc");
+		$this->db->limit($data['size']);
+	
+		return $this->db->get()->result();
+	}
+	
+	public function getLineUpData($data=array()) {
+		$sql = "
+			SELECT * FROM (
+				SELECT a.idx, a.userId, b.name AS userName, a.charIdx
+				, a.type, a.registDt, a.content
+				FROM (`Reservations` a)
+				INNER JOIN `Users` b ON `a`.`userId` = `b`.`id` and a.userType = b.type
+				WHERE `a`.`status` =  1
+				AND `a`.`userId` IS NOT NULL
+				AND `a`.`idx` <= ?
+				ORDER BY a.idx DESC
+				LIMIT ?
+			) AS A 			 
+			ORDER BY idx ASC
+		";
+		
+		return $this->db->query($sql, array($data['idx'], $data['offset']))->result();
+	}
+	
+	public function getMyLocationData($data=array()) {
+		$sql = "
+			SELECT * FROM (
+				SELECT `a`.idx, a.userId, b.name AS userName, a.charIdx, a.type, a.registDt, a.content
+				, 1 as utype
+				FROM (`Reservations` a)
+				INNER JOIN `Users` b ON `a`.`userId` = `b`.`id` and a.userType = b.type
+				WHERE `a`.`status` =  1
+				AND `a`.`userId` IS NOT NULL
+				AND `a`.`idx` <= ?
+				ORDER BY a.idx DESC
+				LIMIT ?
+			) AS A 
+			UNION 
+			SELECT * FROM (
+				SELECT `a`.idx, a.userId, b.name AS userName, a.charIdx, a.type, a.registDt, a.content
+				, 2 as utype
+				FROM (`Reservations` a)
+				INNER JOIN `Users` b ON `a`.`userId` = `b`.`id` and a.userType = b.type
+				WHERE `a`.`status` =  1
+				AND `a`.`userId` IS NOT NULL
+				AND `a`.`idx` > ?
+				ORDER BY a.idx DESC
+				LIMIT ?
+			) AS A 
+			ORDER BY idx ASC				
+		";
+	
+		return $this->db->query($sql, array($data['idx'], $data['offset'], $data['idx'], $data['offset']))->result();
 	}
 	
 	public function getListMainLast($num=0){
@@ -97,6 +161,18 @@ class Cs_prereserve_applicant extends CI_Model{
 	public function get($ea_id){
 		if(!$ea_id) return;
 		return $this->db->get_where('Reservations', array('idx'=>$ea_id))->row();
+	}
+	
+	public function getLastLiveIdxByUser($user_id='', $snsType=''){
+		if(!$user_id && !$snsType) return;
+		$this->db->select('idx');
+		$this->db->from('Reservations');
+		$this->db->where('status', 1);
+		$this->db->where('userId', $user_id);
+		$this->db->where('type', $snsType);
+		$this->db->order_by("idx", "desc");
+		$this->db->limit(1);
+		return $this->db->get()->row()->idx;
 	}
 	
 	public function insertApply($data=array()){
@@ -145,5 +221,31 @@ class Cs_prereserve_applicant extends CI_Model{
 		if(empty($data)) return;
 		$idx = $data['uuid'];
 		$this->db->delete('Reservations', array('idx' => $idx));
+	}
+	
+	//true=중복, false=통과
+	public function checkNamePhone($data=array()){
+		$res = false;
+		if(empty($data)) return true;
+		
+		$this->db->where(array('userName' => $data['userName'], 'mobileNum'=> $data['mobileNum']));
+		$query = $this->db->get('Reservations');
+		if ($query->num_rows() > 0){
+			$res = true;
+		}
+		return $res;
+	}
+	
+	//true=중복, false=통과
+	public function checkPhone($data=array()){
+		$res = false;
+		if(empty($data)) return true;
+		
+		$this->db->where(array('mobileNum'=> $data['mobileNum']));
+		$query = $this->db->get('Reservations');
+		if ($query->num_rows() > 0){
+			$res = true;
+		}
+		return $res;
 	}
 }

@@ -65,8 +65,14 @@ class PRAction extends CI_Controller {
 			}
 		}
 		
-		if(strlen($data['mobileNum']) < 11){
-			echo '0';
+		if(strlen($data['mobileNum']) < 10){
+			echo '1';
+			exit;
+		}
+		
+		//참여인명, 모바일번호 검사
+		if($this->cs_prereserve_applicant->checkNamePhone($data)){
+			echo 'invalid';
 			exit;
 		}
 		
@@ -86,7 +92,7 @@ class PRAction extends CI_Controller {
 				$data['type'] = 2;
 		}
 		
-		$data['charIdx'] = '';
+		$data['charIdx'] = 1;
 		if($this->input->post('charIdx', TRUE)){
 			$data['charIdx'] = $this->input->post('charIdx', TRUE);
 		}
@@ -106,21 +112,21 @@ class PRAction extends CI_Controller {
 		if($data['type'] == 1){
 			$id = $this->config->item('fb_id');
 			$secret = $this->config->item('fb_secret');
-			
+				
 			FacebookSession::setDefaultApplication($id, $secret);
-				
+		
 			$session = new FacebookSession($_SESSION['token'] );
-				
+		
 			$request = new FacebookRequest($session, 'GET', '/me');
 			$response = $request->execute();
 			$graph = $response->getGraphObject(GraphUser::className());
-			
+				
 			$uarr['id'] = $graph->getId();
 			$uarr['name'] = $graph->getName();
 			$uarr['photoUrl'] = 'https://graph.facebook.com/'.$uarr['id'].'/picture?type=square';
-			
+				
 			$user = $this->userCheck($uarr,$data['type']);
-			
+				
 			if(!empty($user)){
 				$data['userId'] = $user->id;
 				$data['userType'] = $user->type;
@@ -128,18 +134,18 @@ class PRAction extends CI_Controller {
 		}else if($data['type'] == 2){
 			$id = $this->config->item('tt_id');
 			$secret = $this->config->item('tt_secret');
-				
+		
 			$connection = new TwitterOAuth($id,$secret, $_SESSION['oauth_token'], $_SESSION['oauth_token_secret']);
 			$credentials = $connection->getAccessToken($_SESSION["oauth_verifier"]);
 		
 			$user = $connection->get("account/verify_credentials");
-				
+		
 			$uarr['id'] = $user->id;
 			$uarr['name'] = $user->name;
 			$uarr['photoUrl'] = $user->profile_image_url;
-				
+		
 			$user2 = $this->userCheck($uarr,$data['type']);
-				
+		
 			if(!empty($user2)){
 				$data['userId'] = $user2->id;
 				$data['userType'] = $user2->type;
@@ -149,7 +155,7 @@ class PRAction extends CI_Controller {
 		$data['regIP'] = $_SERVER['REMOTE_ADDR'];
 		$data['status'] = 1;
 		$data['registDt'] = date("Y-m-d H:i:s");
-
+		
 		//당첨기능
 		$pgoods = $this->winPrize();
 		
@@ -161,6 +167,7 @@ class PRAction extends CI_Controller {
 			}
 		}
 		
+		$pArr['prmGood'] = '';
 		if($win_product){
 			$this->cs_dp_winner->insert($win_product);
 			$data['prmGoodsIdx'] = $win_product;
@@ -169,7 +176,7 @@ class PRAction extends CI_Controller {
 		
 		//reservation 테이블 저장
 		$idx = $this->cs_prereserve_applicant->insertApply($data);
-	
+		
 		if(!$idx){
 			echo '0';
 			exit;
@@ -178,7 +185,7 @@ class PRAction extends CI_Controller {
 		$pArr['idx'] = $idx;
 		
 		if($data['type'] == 1){
-			try {
+			/* try {
 				$session = new FacebookSession($_SESSION['token']);
 				$response = (new FacebookRequest(
 						$session, 'POST', '/me/feed', array(
@@ -193,15 +200,17 @@ class PRAction extends CI_Controller {
 				//echo " with message: " . $e->getMessage();
 				echo '0';
 				$this->removeAllData($data, $pic_path,$pic_path2);
-			}
+			} */
 		}else if($data['type'] == 2){
 			$params = array(
 					'status'  => $message
 			);
-				
+		
 			$response =$connection->post('statuses/update', $params, true);
 			$this->session->set_flashdata('apply_complete','pre');
 		}
+		
+		$pArr['sns'] = $data['type'];
 		
 		//오류코드:0 출력, 정상일때 인덱스 넘김
 		foreach ($pArr as $key => $value){
@@ -209,9 +218,85 @@ class PRAction extends CI_Controller {
 		}
 		echo $str;
 	}
+	
+	public function checkNamePhone()
+	{
+		$data['userName'] = '';
+		if($this->input->post('name', TRUE)){
+			$data['userName'] = trim($this->input->post('name', TRUE));
+		}
+		
+		$data['mobileNum'] = '';
+		if($this->input->post('phNum1', TRUE)){
+			$data['mobileNum'] .= trim($this->input->post('phNum1', TRUE));
+			if($this->input->post('phNum2', TRUE)){
+				$data['mobileNum'] .= trim($this->input->post('phNum2', TRUE));
+				if($this->input->post('phNum3', TRUE)){
+					$data['mobileNum'] .= trim($this->input->post('phNum3', TRUE));
+				}
+			}
+		}
+		
+		//참여인명, 모바일번호 검사
+		if(strlen($data['mobileNum']) < 10){
+			echo 1;
+			exit;
+		}
+		
+		//참여인명, 모바일번호 검사
+		/* if($this->cs_prereserve_applicant->checkNamePhone($data)){
+			echo 0;
+			exit;
+		} */
+		if($this->cs_prereserve_applicant->checkPhone($data)){
+			echo 0;
+			exit;
+		}
+		echo 2;
+	}
+	
+	public function getMyPos()
+	{		
+		$this->output->set_content_type('application/json');
+		$snsType = '';
+		$idx = '';
+		$us_id = '';
+		
+		if($this->input->post('snsType', TRUE)){
+			$snsType = $this->input->post('snsType', TRUE);
+		}
+		
+		if($snsType == 1){
+			$id = $this->config->item('fb_id');
+			$secret = $this->config->item('fb_secret');
+			
+			FacebookSession::setDefaultApplication($id, $secret);
+			
+			$session = new FacebookSession($_SESSION['token'] );
+			
+			$request = new FacebookRequest($session, 'GET', '/me');
+			$response = $request->execute();
+			$graph = $response->getGraphObject(GraphUser::className());
+			
+			$us_id = $graph->getId();
+			
+		}else if($snsType == 2){
+			$id = $this->config->item('tt_id');
+			$secret = $this->config->item('tt_secret');
+			
+			$connection = new TwitterOAuth($id,$secret, $_SESSION['oauth_token'], $_SESSION['oauth_token_secret']);
+			$credentials = $connection->getAccessToken($_SESSION["oauth_verifier"]);
+			
+			$user = $connection->get("account/verify_credentials");
+			$us_id = $user->id;
+		}
+		
+		$idx = $this->cs_prereserve_applicant->getLastLiveIdxByUser($us_id, $snsType);
+		$this->output->set_output(json_encode($idx));		
+	}
 
 	function winPrize(){
-		return $this->cs_promotion_goods->getList();
+		return $this->cs_promotion_goods->getListLive();
 	}
 	function tryWin($product=array()){
 		$win_yn = 0;

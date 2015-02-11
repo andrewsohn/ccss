@@ -1,3 +1,4 @@
+<script type="text/javascript" src="<?php echo $this->config->item('asset_url');?>/PC/js/libs/facebook_en_US.js"></script>
 <?php
 session_start();
 
@@ -117,11 +118,10 @@ $open_date = date('d',$time);
 			</ul>
 			<!-- //정보 입력 -->
 			<ul class="info">
-			<li>KING.COM INC.는 본 이벤트를 위하여 다음과 같이 고객님의 개인정보를 수집 및 이용합니다.</li>
-			<li>① 수집이용목적:이벤트 진행 및 경품 발송</li>
-			<li>② 수집항목:휴대폰 기종, 이름, 휴대폰 번호</li>
-			<li>③ 보유/이용기간:이벤트 종료일로부터 30일간</li>
-			<li>수집된 개인정보는 이벤트 상품 및 게임 설치 링크 발송 용도로만 사용되며, 이벤트 종료 후 30일 뒤 모두 파기됩니다.</li>
+			<li>KING은 본 이벤트를 위하여 다음과 같이 고객님의 개인정보를 수집 및 이용합니다.</li>
+			<li>King은 경품 발송 등 본 이벤트에 관한 업무를 (주) HS Ad에게 위탁하여 운영하고자 합니다.</li>
+			<li>개인정보의 수집 및 이용 등 처리에 관한 동의를 거부할 권리가 있습니다.</li>
+			<li>입력된 정보는 (주) HS Ad에서 수집하여 본 이벤트를 위해 King으로 전달되며,사전 예약 참여 후 개인정보 (이름/휴대폰 번호/휴대폰 기종)는 경품 발송 용도로 필요한 기간 동안(이벤트 종료 후 30일)만 이용된 후 모든 정보는 즉시 파기됩니다.</li>
 			</ul>
 			<!-- 동의 -->
 			<p class="agree">
@@ -172,7 +172,8 @@ $open_date = date('d',$time);
 				<li><a href="#" class="fb">페이스북</a></li>
 				<li><a href="#" class="tt">트위터</a></li>
 				</ul>
-				<textarea name="content" cols="30" rows="5">좌측에 SNS 계정으로 로그인하시면 응원의 메세지를 작성하실 수 있습니다.</textarea>
+				<label for="content">좌측에 SNS 계정으로 로그인하시면 응원의 메세지를 작성하실 수 있습니다.</label><!-- [D] 입력시 display: none -->
+				<textarea id="content" name="content" cols="30" rows="5" class="_focusInput"></textarea>
 			</div>
 			<!-- //응원 글 쓰기 -->
 			<button type="submit" class="btn_pp confirm"><span>즉시당첨 확인하기</span></button>
@@ -221,6 +222,11 @@ $open_date = date('d',$time);
 		$('textarea[name="content"]').focus();
 	}
 	$(function() {
+		$.ajaxSetup({ cache: false });
+		FB.init({
+	      appId: '<?php echo $this->config->item('fb_id');?>',
+	    });
+	    
 		var l = $('#characters'),
 		t = $('#target');
 
@@ -245,79 +251,29 @@ $open_date = date('d',$time);
 			}
 		});
 
-		//<,<<,내위치보기,>>,> 버튼
-		$('.btn_apply').click(function(e){
-			e.preventDefault();
-
-			var mode = $(this).attr('data-mode');
-			
-			if(mode == 'my'){
-				if($(this).attr('data-type') == 'fb'){
-					<?php if(isset($session)){?>
-					alert(1);
-					//팝업레이어 부름
-					<?php }else{?>
-					location.replace('<?php echo $fbahref ?>');
-					<?php }?>
-				}else if($(this).attr('data-type') == 'tt'){
-					<?php if(isset($_SESSION['oauth_token']) && isset($_REQUEST['oauth_verifier'])){?>
-					alert(2);
-					//팝업레이어 부름
-					<?php }else{?>
-					location.replace('<?php echo site_url('twitter/preReserve') ?>');
-					<?php }?>
-				}
-				
-			}else{
-				$.ajax({
-					type: "POST",
-					url: '<?php echo site_url("preReserve/pRListAction");?>',
-					data: {
-					  "mode": mode,
-					  "idx": t.val(),
-					  "size": '5'
-					},
-					success: function(data) {
-						alert(data);
-						if(data){
-							res = data.split("|||");
-							for(i=0; i<res.length; i++){
-								if(i == 0){
-									l.append(res[i]);
-								}else if(i == 1){
-									t.val(res[i]);
-								}
-							}
-						}
-					}
-				});
-			}
-		});
-
 		var form     = $('#formPR'),
         al = $('.ly_alert:not(.gift)'),
 		pr = $('.ly_prev'),
 		dimm = $('.dimmed');
-		form.find('select[name=phNum1]').val();
 		
         form.submit(function(){
 			if (!form.find('input[name=name]').val()){
-				al.find('p').attr('class','name').html('이름을 입력해주세요');
-				al.show();
+				al.eq(0).find('p > span').attr('class','name').html('이름을 입력해주세요');
+				al.eq(0).show();
 				dimm.show();
 				return false;
 			}
 			
 			if (!form.find('#phNum1').val() || !form.find('input[name=phNum2]').val() || !form.find('input[name=phNum3]').val()){
-				al.find('p').attr('class','phone').html('휴대폰 번호를 입력해주세요');
-				al.show();
+				al.eq(0).find('p > span').attr('class','phone').html('휴대폰 번호를 입력해주세요');
+				al.eq(0).show();
 				dimm.show();
 				return false;
 			}
 			
 			if (!form.find('input[name=agree]').is(':checked')){
-				al.find('p').attr('class','pi').html('개인정보 수집에 동의해주세요');
-				al.show();
+				al.eq(0).find('p > span').attr('class','pi').html('개인정보 수집에 동의해주세요');
+				al.eq(0).show();
 				dimm.show();
 				return false;
 			}
@@ -334,7 +290,6 @@ $open_date = date('d',$time);
 					},
 					success: function(data){
 						form.find('input[name=name]').val('');
-						form.find('input[name=phNum1]').val('');
 						form.find('input[name=phNum2]').val('');
 						form.find('input[name=phNum3]').val('');
 						form.find('input[name=enc]').val(data);
@@ -343,51 +298,213 @@ $open_date = date('d',$time);
 			}
 
 			function secondAjax() {
-			    return $.post("<?php echo site_url('mPRAction')?>", $('#formPR').serialize()).done(function(data){
-			    	if(data){
-				    	var res = data.split("||"),
-				    	src = '<?php echo $this->config->item('asset_url');?>/M/img/gift_p.jpg';
-				    	
-				    	if(res[0]){
-				    		res = res[0].split(":");
-				    		if(res[1]){
-				    			src = '<?php echo $this->config->item('asset_url');?>/M/img/gift_p'+res[1]+'.jpg'
-					    	}
-					    }
+				if(form.find('input[name=snsKind]').val() == 'fb'){
+					dimm.show();
+					al.eq(0).find('p > span').attr('class','addfb').html('해당 내용을 페이스북에 공유하셔야 이벤트 참여가 완료됩니다.');
+					al.eq(0).find('.btn_group > button').attr('class','btn_fb2').on('click',function(e){
+						e.preventDefault();
+						dimm.show();
+						FB.ui({
+					    	  method: 'feed',
+					    	  link: '<?php echo site_url('preReserve')?>',
+					    	  picture: '<?php echo $this->config->item('asset_url');?>/PC/img/fb_thum.jpg',
+					    	  description: form.find('textarea').html()
+					    	}, function(response){
+					    		if (response && !response.error_code) {
+					    			$.post("<?php echo site_url('mPRAction')?>", $('#formPR').serialize()).done(function(data){
+					    				if(data){
+									    	var res = data.split("||"),
+									    	src = '<?php echo $this->config->item('asset_url');?>/PC/img/gift_p.jpg',
+									    	alt = '사전예약에 참여해주셔서 아쉽게도 당첨되지 않으셨네요. 꽝. 사전예약 이후에도 많은 관심 부탁드립니다.';
+									    	
+									    	if(res[0]){
+									    		res = res[0].split(":");
+									    		if(res[1]){
+									    			src = '<?php echo $this->config->item('asset_url');?>/PC/img/gift_p'+res[1]+'.jpg'
 
-				    	form.find("input[type=text], textarea").val("");
-				    	$('.ly_alert:has(.gift)').find('img:first').attr('src',src);
-				    	dimm.show();
-				    	$('.ly_alert:has(.gift)').show();
+									    			switch(res[1]) {
+									    		    case 1:
+									    		    	alt = '사전예약에 참여해주셔서 감사합니다. 캔디크러쉬소다 티셔츠에 당첨되셨습니다.';
+									    		        break;
+									    		    case 2:
+									    		    	alt = '사전예약에 참여해주셔서 감사합니다. 캔디크러쉬소다 볼펜에 당첨되셨습니다.';
+									    		        break;
+									    		    case 3:
+									    		    	alt = '사전예약에 참여해주셔서 감사합니다. 캔디크러쉬소다 노트에 당첨되셨습니다.';
+									    		        break;
+									    		    case 4:
+									    		    	alt = '사전예약에 참여해주셔서 감사합니다. 캔디크러쉬소다 커플컵에 당첨되셨습니다.';
+									    		        break;
+									    		    case 5:
+									    		    	alt = '사전예약에 참여해주셔서 감사합니다. 캔디크러쉬소다 마이보틀에 당첨되셨습니다.';
+									    		        break;
+									    		    case 6:
+									    		    	alt = '사전예약에 참여해주셔서 감사합니다. 캔디크러쉬소다 에코백에 당첨되셨습니다.';
+									    		        break;
+									    		    case 7:
+									    		        alt = '사전예약에 참여해주셔서 감사합니다. 구글 기프트카드 5만원권에 당첨되셨습니다.';
+									    		        break;
+									    		    case 8:
+									    		        alt = '사전예약에 참여해주셔서 감사합니다. 구글 기프트카드 3만원권에 당첨되셨습니다.';
+									    		        break;
+									    		    case 9:
+									    		        alt = '사전예약에 참여해주셔서 감사합니다. 구글 기프트카드 1만원권에 당첨되셨습니다.';
+									    		        break;
+									    		    case 10:
+									    		        alt = '사전예약에 참여해주셔서 감사합니다. 베스킨라빈스 상품권 1만원권에 당첨되셨습니다.';
+									    		        break;
+									    		    case 11:
+									    		        alt = '사전예약에 참여해주셔서 감사합니다. 던킨 상품권 1만원권에 당첨되셨습니다.';
+									    		        break;
+									    		    case 12:
+									    		        alt = '사전예약에 참여해주셔서 감사합니다. 스타벅스 아메리카노 기프티콘에 당첨되셨습니다.';
+									    		        break;
+									    		    case 13:
+									    		        alt = '사전예약에 참여해주셔서 감사합니다. 아이패드 미니에 당첨되셨습니다.';
+									    		        break;
+									    		}
+										    	}
+										    }
+
+									    	form.find("input[name=name], input[name=phNum2], input[name=phNum3], textarea").val("");
+									    	$('.ly_alert').eq(0).find('img:first').attr('src',src);
+									    	$('.ly_alert').eq(0).find('img:first').attr('alt',alt);
+									    	dimm.show();
+									    	$('.ly_alert').eq(0).show();
+									    	
+										}else{
+											alert('등록오류입니다.\n다시 시도하여 주십시요.');
+										}
+					    				al.eq(0).find('.btn_group > button').unbind();
+									});
+				    		    } else {
+				    		      alert('페이스북 등록 중 오류가 발생하였습니다.');
+				    		    }
+						    });
+					});
+					al.eq(0).show();
+					$('.ly_prev').hide();
+				}else{
+					return $.post("<?php echo site_url('mPRAction')?>", $('#formPR').serialize()).done(function(data){
+				    	if(data){
+					    	var res = data.split("||"),
+					    	src = '<?php echo $this->config->item('asset_url');?>/M/img/gift_p.jpg',
+					    	alt = '사전예약에 참여해주셔서 아쉽게도 당첨되지 않으셨네요. 꽝. 사전예약 이후에도 많은 관심 부탁드립니다.';
+					    	
+					    	if(res[0]){
+					    		res = res[0].split(":");
+					    		if(res[1]){
+					    			src = '<?php echo $this->config->item('asset_url');?>/M/img/gift_p'+res[1]+'.jpg';
+
+					    			switch(res[1]) {
+						    		    case 1:
+						    		    	alt = '사전예약에 참여해주셔서 감사합니다. 캔디크러쉬소다 티셔츠에 당첨되셨습니다.';
+						    		        break;
+						    		    case 2:
+						    		    	alt = '사전예약에 참여해주셔서 감사합니다. 캔디크러쉬소다 볼펜에 당첨되셨습니다.';
+						    		        break;
+						    		    case 3:
+						    		    	alt = '사전예약에 참여해주셔서 감사합니다. 캔디크러쉬소다 노트에 당첨되셨습니다.';
+						    		        break;
+						    		    case 4:
+						    		    	alt = '사전예약에 참여해주셔서 감사합니다. 캔디크러쉬소다 커플컵에 당첨되셨습니다.';
+						    		        break;
+						    		    case 5:
+						    		    	alt = '사전예약에 참여해주셔서 감사합니다. 캔디크러쉬소다 마이보틀에 당첨되셨습니다.';
+						    		        break;
+						    		    case 6:
+						    		    	alt = '사전예약에 참여해주셔서 감사합니다. 캔디크러쉬소다 에코백에 당첨되셨습니다.';
+						    		        break;
+						    		    case 7:
+						    		        alt = '사전예약에 참여해주셔서 감사합니다. 구글 기프트카드 5만원권에 당첨되셨습니다.';
+						    		        break;
+						    		    case 8:
+						    		        alt = '사전예약에 참여해주셔서 감사합니다. 구글 기프트카드 3만원권에 당첨되셨습니다.';
+						    		        break;
+						    		    case 9:
+						    		        alt = '사전예약에 참여해주셔서 감사합니다. 구글 기프트카드 1만원권에 당첨되셨습니다.';
+						    		        break;
+						    		    case 10:
+						    		        alt = '사전예약에 참여해주셔서 감사합니다. 베스킨라빈스 상품권 1만원권에 당첨되셨습니다.';
+						    		        break;
+						    		    case 11:
+						    		        alt = '사전예약에 참여해주셔서 감사합니다. 던킨 상품권 1만원권에 당첨되셨습니다.';
+						    		        break;
+						    		    case 12:
+						    		        alt = '사전예약에 참여해주셔서 감사합니다. 스타벅스 아메리카노 기프티콘에 당첨되셨습니다.';
+						    		        break;
+						    		    case 13:
+						    		        alt = '사전예약에 참여해주셔서 감사합니다. 아이패드 미니에 당첨되셨습니다.';
+						    		        break;
+						    		}
+						    	}
+						    }
+
+					    	form.find("input[name=name], input[name=phNum2], input[name=phNum3], textarea").val("");
+					    	$('.ly_alert').eq(0).find('img:first').attr('src',src);
+					    	$('.ly_alert').eq(0).find('img:first').attr('alt',alt);
+					    	dimm.show();
+					    	$('.ly_alert').eq(0).show();
+						}else{
+							alert('등록오류입니다.\n다시 시도하여 주십시요.');
+						}
+					});
+					
+				}
+			}
+
+			$.ajax({
+				type: "POST",
+				url: '<?php echo site_url("mPRAction/checkNamePhone");?>',
+				data: {
+					"name": form.find('input[name=name]').val(),
+					"phNum1": form.find('select[name=phNum1]').val(),
+					"phNum2": form.find('input[name=phNum2]').val(),
+					"phNum3": form.find('input[name=phNum3]').val()
+				},
+				success: function(data){
+		        }
+			}).done(function(data){
+				dimm.show();				
+				if(data == 2){
+					if(!form.find('input[name=snsKind]').val()){
+						al.eq(0).find('p > span').attr('class','addto').html('줄서기에 같이 참여하면 당첨확률을 높일 수 있어요! 줄서기에도 참여하시겠습니까?');
+						al.eq(0).find('.btn_group').html('<button type="button" class="btn_yes">확인</button><button type="button" class="btn_no">아니요</button>');
+						al.eq(0).show();
+						
+						al.eq(0).find('button').on('click',function(e){
+							e.preventDefault();
+							var ct = e.currentTarget;
+							if($(ct).attr('class') == 'btn_yes'){
+								dimm.hide();
+								al.eq(0).hide();
+								form.find('textarea[name="content"]').focus();
+								return false;
+							}else if($(ct).attr('class') == 'btn_no'){
+								dimm.hide();
+								al.eq(0).hide();
+								firstAjax().success(secondAjax);
+							}
+						});
 					}else{
-						alert('등록오류입니다.\n다시 시도하여 주십시요.');
+						
+						firstAjax().success(secondAjax);				
 					}
-				});
-			}
-			
-			if(!form.find('input[name=snsKind]').val()){
-				dimm.show();
-				al.find('p').attr('class','addto').html('줄서기에 같이 참여하면 당첨확률을 높일 수 있어요! 줄서기에도 참여하시겠습니까?');
-				al.find('.btn_group').html('<button type="button" class="btn_yes">확인</button><button type="button" class="btn_no">아니요</button>');
-				al.show();
-				
-				al.find('button').on('click',function(e){
-					e.preventDefault();
-					var ct = e.currentTarget;
-					if($(ct).attr('class') == 'btn_yes'){
-						dimm.hide();
-						al.hide();
-						form.find('textarea[name="content"]').focus();
-						return false;
-					}else if($(ct).attr('class') == 'btn_no'){
-						dimm.hide();
-						al.hide();
-						firstAjax().success(secondAjax);
+					
+				}else{
+					if(data == 1){
+						alert('핸드폰번호는 최소 10자리 이상이어야 합니다.');
+					}else{
+						$('.ly_alert').eq(2).show();
 					}
-				});
-			}else{
-				firstAjax().success(secondAjax);				
-			}
+					
+					form.find('input[name=name]').val('');
+					form.find('input[name=phNum2]').val('');
+					form.find('input[name=phNum3]').val('');
+					form.find('textarea').html('');
+					return false;
+				}
+			});
 			
 			return false;
 	    });
@@ -400,14 +517,14 @@ $open_date = date('d',$time);
 			if(trg.hasClass('gift')){
 				location.reload();
 			}else{
-				if(trg.find('p').attr('class') == 'name'){
+				if(trg.find('span').attr('class') == 'name'){
 					form.find('input[name=name]').focus();
-				} else if(trg.find('p').attr('class') == 'phone'){
+				} else if(trg.find('span').attr('class') == 'phone'){
 					if(form.find('input[name=phNum2]').val())
 						form.find('input[name=phNum3]').focus();
 					else
 						form.find('input[name=phNum2]').focus();
-				} else if(trg.find('p').attr('class') == 'pi'){
+				} else if(trg.find('span').attr('class') == 'pi'){
 					form.find('input[name=agree]').focus();
 				}
 			}

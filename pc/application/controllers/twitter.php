@@ -32,7 +32,7 @@ class Twitter extends CI_Controller {
 			$_SESSION["oauth_verifier"] = $_GET["oauth_verifier"];
 		}
 		echo "<script>
-					window.opener.getTextFocus();
+					window.opener.getTextFocus(2);
 	        		window.close();
 	        </script>";
 		

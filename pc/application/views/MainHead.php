@@ -1,7 +1,7 @@
 <div id="wrap">
 	<!-- gnb -->
 	<ul id="gnb">
-	<li class="logo"><a href="<?php echo site_url()?>"><span>candy crush soda</span></a></li>
+	<li class="logo"><a href="<?php echo site_url('preReserve')?>"><span>candy crush soda</span></a></li>
 	<?php for($i=0; $i<count($menu); $i++){
 		$num = $i+1;
 		$str = '<li';

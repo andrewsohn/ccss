@@ -1,3 +1,4 @@
+<script type="text/javascript" src="<?php echo $this->config->item('asset_url');?>/PC/js/libs/facebook_en_US.js"></script>
 <?php
 session_start();
 
@@ -43,11 +44,12 @@ if(isset($_SESSION['oauth_token']) && isset($_REQUEST['oauth_verifier'])){
 ?>
 <!-- container -->
 	<div id="container">
+		<h1 class="blind">곰나 귀여운 녀석들이 온다!</h1>
 		<!-- movie -->
 		<div class="mv">
 			<div class="inr">
 				<div class="blind">
-					<h1>곰나 귀여운 녀석들이 온다!</h1>
+					<h2>곰나 귀여운 녀석들이 온다!</h2>
 					<p>캔디크러쉬소다와 함께 찾아온 곰가족의 좌우충돌 적응기!! 지금 영상으로 확인하세요~ 2015년 2월 12일 ~ 2015년 3월 1일</p>
 				</div>
 				<div class="mv_img"><button data-href="<?php echo $view->videoUrl?>" class="play">play</button></div>
@@ -58,11 +60,29 @@ if(isset($_SESSION['oauth_token']) && isset($_REQUEST['oauth_verifier'])){
 			</div>
 		</div>
 		<!-- //movie -->
+		<!-- 소다곰 일정 버전 -->
+		<div class="mv v2" style="display: none;">
+			<div class="inr">
+				<div class="blind">
+					<h2>곰나 귀여운 녀석들이 온다!</h2>
+					<p>캔디크러쉬소다와 함께 찾아온 곰가족의 좌우충돌 적응기!! 지금 영상으로 확인하세요~ 2015년 2월 12일 ~ 2015년 3월 1일</p>
+				</div>
+				<div class="mv_img"><button class="play">play</button></div>
+				<ul class="go">
+				<li><a href="#" class="fb">공식 페이스북</a></li>
+				<li><a href="#" class="tt">공식 트위터</a></li>
+				</ul>
+				<!-- 소다곰 일정 보기 -->
+				<a href="http://candycrushsoda.co.kr/blog/" class="btn_meet" target="_blank">여기가면 만날수 있다곰. 소다곰 일정 보기</a>
+				<!-- //소다곰 일정 보기 -->
+			</div>
+		</div>
+		<!-- 소다곰 일정 버전 -->
 		
 		<!-- 인증 -->
 		<div class="proof">
 			<div class="blind">
-				<h1>곰가족을 보셨나요? 인증샷을 올려주세요!</h1>
+				<h2>곰가족을 보셨나요? 인증샷을 올려주세요!</h2>
 				<p>길에서 곰가족을 만나셨나요? 이곳에 인증샷을 올려주세요. 추첨을 통해 다양한 선물을 드립니다.</p>
 				<ul>
 				<li>아이패드 1명</li>
@@ -107,7 +127,7 @@ if(isset($_SESSION['oauth_token']) && isset($_REQUEST['oauth_verifier'])){
 						<p><?php echo $this->common->getShortenText($clist[$i]->content); ?></p>
 					</div>
 				</a>
-				<button data-idx="<?php echo $clist[$i]->idx ?>" class="<?php if($clist[$i]->type == 1) echo 'btn_fb'; else echo 'btn_tt';?>"><span><?php if($clist[$i]->type == 1) echo '페이스북'; else echo '트위터';?> 공유</span></button>
+				<button type="button" data-idx="<?php echo $clist[$i]->idx ?>" class="<?php if($clist[$i]->type == 1) echo 'btn_fb'; else echo 'btn_tt';?>"><span><?php if($clist[$i]->type == 1) echo '페이스북'; else echo '트위터';?> 공유</span></button>
 			</li>
 			<?php }?>
 			</ul>
@@ -129,14 +149,14 @@ if(isset($_SESSION['oauth_token']) && isset($_REQUEST['oauth_verifier'])){
 	<input type="hidden" name="w" value="">
 	<input type="hidden" name="et_id" id="et_id" value="<?php echo $view->idx?>">
 	<input type="hidden" name="snsId" id="snsId" value="1">
-			<h1>페이스북에 인증샷 올리기</h1>
-			<h2>곰가족에게 하고싶은 말을 적어보세요</h2>
-			<textarea name="bf_content" cols="10" rows="5"></textarea>
-			<h2>사진을 첨부하세요</h2>
+			<h3>페이스북에 인증샷 올리기</h3>
+			<h4><label for="lb_txt_fb">소다곰에게 하고싶은 말을 적어보세요</label></h4>
+			<textarea id="lb_txt_fb" name="bf_content" cols="10" rows="5"></textarea>
+			<h4>사진을 첨부하세요</h4>
 			<div class="upload">
 				<input type="file" name="bf_file_fb" class="_file" style="display:none">
-				<input type="text" class="_path" value="" readonly>
-				<button type="button" class="btn_file _find">찾아보기</button>
+				<input type="text" class="_path" value="" readonly title="첨부된 파일 경로">
+				<button type="button" class="btn_file _find" title="첨부파일 찾기">찾아보기</button>
 			</div>
 			<div class="btn_group">
 				<button type="submit" class="btn_regist">등록</button>
@@ -152,15 +172,15 @@ if(isset($_SESSION['oauth_token']) && isset($_REQUEST['oauth_verifier'])){
 	<input type="hidden" name="w" value="">
 	<input type="hidden" name="et_id" id="et_id" value="<?php echo $view->idx?>">
 	<input type="hidden" name="snsId" id="snsId" value="2">
-			<h1>트위터에 인증샷 올리기</h1>
-			<h2>곰가족에게 하고싶은 말을 적어보세요</h2>
+			<h3>트위터에 인증샷 올리기</h3>
+			<h4><label for="bf_content">소다곰에게 하고싶은 말을 적어보세요</label></h4>
 			<textarea name="bf_content" id="bf_content" cols="10" rows="5"></textarea>
 			<span class="count">140/140</span>
 			<h2>사진을 첨부하세요</h2>
 			<div class="upload">
 				<input type="file" name="bf_file_tw" class="_file" style="display:none">
-				<input type="text" class="_path" value="" readonly>
-				<button type="button" class="btn_file _find">찾아보기</button>
+				<input type="text" class="_path" value="" readonly title="첨부된 파일 경로">
+				<button type="button" class="btn_file _find" title="첨부파일 찾기">찾아보기</button>
 			</div>
 			<div class="btn_group">
 				<button type="submit" class="btn_regist">등록</button>
@@ -178,13 +198,13 @@ if(isset($_SESSION['oauth_token']) && isset($_REQUEST['oauth_verifier'])){
 	<input type="hidden" name="snsId" id="snsId" value="1">
 	<input type="hidden" name="src" id="src" value="">
 	<input type="hidden" name="refIdx" id="refIdx" value="">
-			<h1>페이스북에 공유하기</h1>
-			<h2>곰가족에게 하고싶은 말을 적어보세요</h2>
+			<h3>페이스북에 공유하기</h3>
+			<h4><label for="lb_txt_fb2">소다곰에게 하고싶은 말을 적어보세요</label></h4>
 			<div class="inp_share">
 				<div class="thumb">
 					<img src="<?php echo $this->config->item('asset_url');?>/M/img/@thumb/thumb.jpg" style="height:100%" alt="">
 				</div>
-				<textarea name="bf_content" cols="10" rows="5"></textarea>
+				<textarea name="bf_content" id="lb_txt_fb2" cols="10" rows="5"></textarea>
 			</div>
 			<div class="btn_group">
 				<button type="submit" class="btn_share">공유</button>
@@ -202,8 +222,8 @@ if(isset($_SESSION['oauth_token']) && isset($_REQUEST['oauth_verifier'])){
 	<input type="hidden" name="snsId" id="snsId" value="2">
 	<input type="hidden" name="src" id="src" value="">
 	<input type="hidden" name="refIdx" id="refIdx" value="">
-			<h1>트위터에 공유하기</h1>
-			<h2>곰가족에게 하고싶은 말을 적어보세요</h2>
+			<h3>트위터에 공유하기</h3>
+			<h4><label for="bf_content">소다곰에게 하고싶은 말을 적어보세요</label></h4>
 			<div class="inp_share">
 				<div class="thumb">
 					<img src="<?php echo $this->config->item('asset_url');?>/M/img/@thumb/thumb.jpg" style="height:100%" alt="">
@@ -220,12 +240,20 @@ if(isset($_SESSION['oauth_token']) && isset($_REQUEST['oauth_verifier'])){
 		<!-- //트위터 공유하기 -->
 		<!-- 참여완료 -->
 		<div class="ly_complete" style="display:none">
-			<h1>참여완료</h1>
-			<h2>참여해주셔서 감사합니다.</h2>
+			<h3>참여완료</h3>
+			<h4>참여해주셔서 감사합니다.</h4>
 			<p>당첨 결과는 추첨을 통해<br>3월 5일 블로그에 게제될 예정입니다.<br>당첨 결과를 꼭 확인해주세요.</p>
 			<button type="button" class="btn_comfirm">확인</button>
 		</div>
 		<!-- //참여완료 -->
+		<!-- 업로드 완료 -->
+		<div class="ly_complete v2" style="display:none">
+			<h3>업로드 완료</h3>
+			<h4>참여해주셔서 감사합니다.</h4>
+			<p>해당 내용을 페이스북에 공유하셔야<br>이벤트 참여가 완료됩니다.</p>
+			<button type="button" class="btn_fb">확인</button>
+		</div>
+		<!-- //업로드 완료 -->
 		<!-- //[D] layer -->
 	</div>
 	<!-- //container -->
@@ -300,6 +328,10 @@ fwrite_submit = function(f){
 }
 
 $(function(){
+	$.ajaxSetup({ cache: false });
+	FB.init({
+      appId: '<?php echo $this->config->item('fb_id');?>',
+    });
 	var cont = $('#container'), mv = cont.find('.mv'),
 	pl = $('.ly_sns'),
 	dimm = cont.find('.dimmed');
@@ -340,10 +372,10 @@ $(function(){
 
 	<?php if($this->session->flashdata('apply_complete') == 'teaser'){?>
 	dimm.show();
-	$('.ly_complete').show();
 		<?php if($this->session->flashdata('apply_img')){?>
-		$('.ly_complete').find('p').html('페북을 공유해주세요');
-		$('.ly_complete').find('.btn_comfirm').attr('class','btn_shareFB').html('페이스북공유');
+		$('.ly_complete').eq(1).show();
+		<?php }else{?>
+		$('.ly_complete').eq(0).show();
 		<?php }?>
 	<?php }?>
 	
@@ -403,13 +435,8 @@ $(function(){
 	$(document).ajaxComplete(function(event, request, settings) {
 	  $('#loading-indicator').hide();
 	}); */
-	$.ajaxSetup({ cache: false });
-	  $.getScript('//connect.facebook.net/en_UK/all.js', function(){
-	    FB.init({
-	      appId: '802677239805892',
-	    });
 
-	    $(".btn_shareFB").on('click',function(e){
+	    $(".ly_complete > .btn_fb").on('click',function(e){
 		    e.preventDefault();
 		    FB.ui({
 		    	  method: 'feed',
@@ -425,7 +452,6 @@ $(function(){
 	    		    }
 			    });
 		});     
-	  });
 });
 
 </script>

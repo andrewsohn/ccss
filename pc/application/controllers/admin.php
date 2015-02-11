@@ -392,6 +392,42 @@ class Admin extends CI_Controller {
 		}
 	}
 	
+	public function PRApplicantAction(){
+		$this->_loginCheck();
+		
+		if($this->input->post('w', TRUE)){
+			$w = $this->input->post('w', TRUE);
+		}else if($this->input->get('w', TRUE)){
+			$w = $this->input->get('w', TRUE);
+		}
+		
+		if(!in_array($w, array("", "u", "h"))){
+			$this->common->alert('죄송합니다. 저장오류입니다.');
+			exit;
+		}
+		
+		$data = array();
+		//필수 필드 Validation [start]--------------------
+		$msg = array();
+		$ea_id = $this->input->post('idx', TRUE);
+		
+		if($w == 'h'){
+			if(!$ea_id){
+				$msg[] = '죄송합니다. 저장오류입니다.';
+			}
+		}
+		
+		$msg = implode('<br>', $msg);
+		if ($msg) {
+			$this->common->alert($msg);
+			exit;
+		}
+		
+		if($w == 'h'){
+			echo $flag = $this->cs_prereserve_applicant->hideUpdate($ea_id);
+		}
+	}
+	
 	public function PROfferAction(){
 		$this->_loginCheck();
 		

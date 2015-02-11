@@ -69,6 +69,8 @@ class MPRAction extends CI_Controller {
 			exit;
 		}
 		
+		//이름, 모바일번호 검사
+		
 		$data['mtype'] = '';
 		if($this->input->post('mtype', TRUE)){
 			$data['mtype'] = $this->input->post('mtype', TRUE);
@@ -85,7 +87,7 @@ class MPRAction extends CI_Controller {
 				$data['type'] = 2;
 		}
 		
-		$data['charIdx'] = '';
+		$data['charIdx'] = 1;
 		if($this->input->post('charIdx', TRUE)){
 			$data['charIdx'] = $this->input->post('charIdx', TRUE);
 		}
@@ -162,6 +164,7 @@ class MPRAction extends CI_Controller {
 			}
 		}
 		
+		$pArr['prmGood'] = '';
 		if($win_product){
 			$this->cs_dp_winner->insert($win_product);
 			$data['prmGoodsIdx'] = $win_product;
@@ -179,7 +182,7 @@ class MPRAction extends CI_Controller {
 		$pArr['idx'] = $idx;
 		
 		if($data['type'] == 1){
-			try {
+			/* try {
 				$session = new FacebookSession($_SESSION['token']);
 				$response = (new FacebookRequest(
 						$session, 'POST', '/me/feed', array(
@@ -191,7 +194,7 @@ class MPRAction extends CI_Controller {
 					
 				echo '0';
 				$this->removeAllData($data, $pic_path,$pic_path2);
-			}
+			} */
 		}else if($data['type'] == 2){
 			$params = array(
 					'status'  => $message
@@ -208,8 +211,44 @@ class MPRAction extends CI_Controller {
 		echo $str;
 	}
 	
+	public function checkNamePhone()
+	{
+		$data['userName'] = '';
+		if($this->input->post('name', TRUE)){
+			$data['userName'] = trim($this->input->post('name', TRUE));
+		}
+		
+		$data['mobileNum'] = '';
+		if($this->input->post('phNum1', TRUE)){
+			$data['mobileNum'] .= trim($this->input->post('phNum1', TRUE));
+			if($this->input->post('phNum2', TRUE)){
+				$data['mobileNum'] .= trim($this->input->post('phNum2', TRUE));
+				if($this->input->post('phNum3', TRUE)){
+					$data['mobileNum'] .= trim($this->input->post('phNum3', TRUE));
+				}
+			}
+		}
+		
+		//참여인명, 모바일번호 검사
+		if(strlen($data['mobileNum']) < 10){
+			echo 1;
+			exit;
+		}
+		
+		//참여인명, 모바일번호 검사
+		/* if($this->cs_prereserve_applicant->checkNamePhone($data)){
+			echo 0;
+			exit;
+		} */
+		if($this->cs_prereserve_applicant->checkPhone($data)){
+			echo 0;
+			exit;
+		}
+		echo 2;
+	}
+	
 	function winPrize(){
-		return $this->cs_promotion_goods->getList();
+		return $this->cs_promotion_goods->getListLive();
 	}
 	function tryWin($product=array()){
 		$win_yn = 0;

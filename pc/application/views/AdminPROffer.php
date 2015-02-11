@@ -31,9 +31,9 @@ $colspan = 7;
 		<tr>
 			<td><?php echo $blist[$i]->idx?></td>
 			<td class="al"><?php echo $blist[$i]->name?></td>
-			<td class="ar"><input type="text" name="winningRate[]" class="inp_txt inp_ar" value="<?php echo $blist[$i]->winningRate?>"> 명 중에 1명 당첨</td>
-			<td class="ar"><input type="text" name="limitDailyWinGoods[]" class="inp_txt inp_ar" value="<?php echo $blist[$i]->limitDailyWinGoods?>"> 개</td>
-			<td><input type="text" name="amount[]" class="inp_txt inp_ar" value="<?php echo $blist[$i]->amount?>"></td>
+			<td class="ar"><input type="text" name="winningRate[]" class="inp_txt inp_ar _focusInput _num _limiter" value="<?php echo $blist[$i]->winningRate?>"> 명 중에 1명 당첨</td>
+			<td class="ar"><input type="text" name="limitDailyWinGoods[]" class="inp_txt inp_ar _focusInput _num _limiter" value="<?php echo $blist[$i]->limitDailyWinGoods?>"> 개</td>
+			<td><input type="text" name="amount[]" class="inp_txt inp_ar _focusInput _num _limiter" value="<?php echo $blist[$i]->amount?>"></td>
 			<td><?php echo $blist[$i]->today_amount?></td>
 			<td><?php echo $blist[$i]->total_amount?></td>
 		</tr>

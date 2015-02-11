@@ -98,8 +98,8 @@ class PreReserve extends CI_Controller {
 	}
 		
 	function _header(){
-		$title = $this->config->item('site_title');
-		$data = array('title' => $title);
+		//$title = $this->config->item('site_title');
+		$data = array('title' => '캔디크러쉬소다 사전예약이벤트');
 		$menu_list = $this->cs_main_menu->gets();
 		$this->load->view('MobileHeadSub', $data);
 		$data2['menu'] = $this->cs_main_menu->getsLive();

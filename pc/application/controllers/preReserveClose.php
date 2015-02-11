@@ -43,7 +43,7 @@ class PreReserveClose extends CI_Controller {
 		} 
 		if (isset($_REQUEST['state']) && isset($_REQUEST['code'])) {
 	        echo "<script>
-	        		window.opener.getTextFocus();
+	        		window.opener.getTextFocus(1);
 	        		window.close();
 	        </script>";
 		} 

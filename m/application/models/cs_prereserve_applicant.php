@@ -145,4 +145,28 @@ class Cs_prereserve_applicant extends CI_Model{
 		$idx = $data['uuid'];
 		$this->db->delete('Reservations', array('idx' => $idx));
 	}
+	//true=중복, false=통과
+	public function checkNamePhone($data=array()){
+		$res = false;
+		if(empty($data)) return true;
+	
+		$this->db->where(array('userName' => $data['userName'], 'mobileNum'=> $data['mobileNum']));
+		$query = $this->db->get('Reservations');
+		if ($query->num_rows() > 0){
+			$res = true;
+		}
+		return $res;
+	}
+	//true=중복, false=통과
+	public function checkPhone($data=array()){
+		$res = false;
+		if(empty($data)) return true;
+		
+		$this->db->where(array('mobileNum'=> $data['mobileNum']));
+		$query = $this->db->get('Reservations');
+		if ($query->num_rows() > 0){
+			$res = true;
+		}
+		return $res;
+	}
 }

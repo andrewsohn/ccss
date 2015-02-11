@@ -5,6 +5,7 @@
 <meta http-equiv="imagetoolbar" content="no">
 <meta http-equiv="X-UA-Compatible" content="IE=10,chrome=1">
 <title><?php echo $title?></title>
+<link rel="shortcut icon" href="<?php echo $this->config->item('asset_url');?>/PC/img/favicons.png">
 <link rel="stylesheet" type="text/css" href="<?php echo $this->config->item('asset_url');?>/admin/css/admin.css">
 <link rel="stylesheet" type="text/css" href="<?php echo $this->config->item('asset_url');?>/admin/css/dev.css">
 <!--[if lte IE 8]>

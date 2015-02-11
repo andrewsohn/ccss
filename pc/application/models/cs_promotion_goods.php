@@ -11,17 +11,6 @@ class Cs_promotion_goods extends CI_Model{
 	}
 	
 	public function getList(){
-		/* select a.*, b.name, c.total_amount, d.amount as today_amount
-from PromotionGoods a
-left join Goods b
-on a.goodsIdx = b.idx
-left join (select prmGoodsIdx, SUM(amount) AS total_amount from DailyPrizeWinners group by prmGoodsIdx desc) c
-on a.idx = c.prmGoodsIdx
-left join DailyPrizeWinners d
-on a.idx = d.prmGoodsIdx
-and d.dt = curdate()
-where a.status = 1 and b.status = 1; */
-		
 		$this->db->select('a.*, b.name, c.total_amount, d.amount as today_amount');
 		$this->db->from('PromotionGoods a');
 		$this->db->join('Goods b', 'a.goodsIdx = b.idx', 'left');
@@ -29,6 +18,18 @@ where a.status = 1 and b.status = 1; */
 		$this->db->join('DailyPrizeWinners d', 'a.idx = d.prmGoodsIdx and d.dt = curdate()', 'left');
 		$this->db->where('a.status', 1);
 		$this->db->where('b.status', 1);
+		return $this->db->get()->result();
+	}
+	public function getListLive(){
+		$this->db->select('a.*');
+		$this->db->from('PromotionGoods a');
+		$this->db->join('Goods b', 'a.goodsIdx = b.idx', 'left');
+		$this->db->join('(select prmGoodsIdx, SUM(amount) AS total_amount from DailyPrizeWinners group by prmGoodsIdx desc) c', 'a.idx = c.prmGoodsIdx', 'left');
+		$this->db->join('DailyPrizeWinners d', 'a.idx = d.prmGoodsIdx and d.dt = curdate()', 'left');
+		$this->db->where('a.status', 1);
+		$this->db->where('b.status', 1);
+		$this->db->where('a.amount > if(c.total_amount is not null, c.total_amount, 0)');
+		$this->db->where('a.limitDailyWinGoods > if(d.amount is not null, d.amount, 0)');
 		return $this->db->get()->result();
 	}
 	

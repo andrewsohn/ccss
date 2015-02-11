@@ -48,12 +48,12 @@
 $active_group = 'default';
 $active_record = TRUE;
 
-//$db['default']['hostname'] = '172.19.121.65';
-$db['default']['hostname'] = 'localhost';
-//$db['default']['username'] = 'cteaser';
-$db['default']['username'] = 'root';
-//$db['default']['password'] = 'DU&N5v2akG^y3U_eJ%^k3=wet';
-$db['default']['password'] = '1234';
+$db['default']['hostname'] = '172.19.121.65';
+//$db['default']['hostname'] = 'localhost';
+$db['default']['username'] = 'cteaser';
+//$db['default']['username'] = 'root';
+$db['default']['password'] = 'DU&N5v2akG^y3U_eJ%^k3=wet';
+//$db['default']['password'] = '1234';
 $db['default']['database'] = 'bearfamily';
 $db['default']['dbdriver'] = 'mysql';
 $db['default']['dbprefix'] = '';

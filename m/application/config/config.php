@@ -14,9 +14,9 @@ date_default_timezone_set("Asia/Seoul");
 | path to your installation.
 |
 */
-$config['site_title']	= '곰가족의 반란 CCSS';
-$config['base_url']	= 'http://ccss.hivelab.co.kr/ccss/m';
-//$config['base_url']	= 'http://m.candycrushsoda.co.kr';
+$config['site_title']	= '곰나 귀여운 녀석들이 온다!';
+//$config['base_url']	= 'http://ccss.hivelab.co.kr/ccss/';
+$config['base_url']	= 'http://m.candycrushsoda.co.kr';
 //$config['mbase_url']	= 'http://m.candycrushsoda.co.kr/';
 $config['asset_url']	= 'http://m.candycrushsoda.co.kr/assets';
 //$config['asset_url']	= 'http://svn.hivelab.co.kr/svnview/hive/ccss_markup';
@@ -26,8 +26,8 @@ $config['image_extension']	= 'jpg|jpeg|png';
 $config['upload_size']	= 2097152;
 $config['fb_id'] = '802677239805892';
 $config['fb_secret'] = 'c0451dc58138d7d706ee910a04ff2aa7';
-$config['tt_id'] = 'NIILXSwqZ65evPP4bFfGFQLmz';
-$config['tt_secret'] = 'd2z4sL59dDquqqWE0cY2LRMfg1CSEnQvkq5Ru97gCPQjNQQnEb';
+$config['tt_id'] = '9JgR7C3Hd365xCeNuQMyROlaB';
+$config['tt_secret'] = 'Q5j0gkfGCQclJdDd19vKbkwfWWwQLByUurmB5ernVNpyVhRkoy';
 $config['js_version'] = '1.11.2';
 $config['css_version'] = '';
 $config['opendate_candyshop'] = '2015-03-06';
@@ -44,7 +44,7 @@ $config['encryption_key'] = "8aUH59wZ5T9BHjNGwwVldkrUzU94w6H7";
 | variable so that it is blank.
 |
 */
-$config['index_page'] = 'index.php/';
+$config['index_page'] = '';
 //$config['index_page'] = '';
 
 /*

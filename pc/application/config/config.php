@@ -14,9 +14,9 @@ date_default_timezone_set("Asia/Seoul");
 | path to your installation.
 |
 */
-$config['site_title']	= '곰가족의 반란 CCSS';
-$config['base_url']	= 'http://ccss.hivelab.co.kr/ccss/pc';
-//$config['base_url']	= 'http://www.candycrushsoda.co.kr/ccss';
+$config['site_title']	= '곰나 귀여운 녀석들이 온다!';
+//$config['base_url']	= 'http://ccss.hivelab.co.kr/ccss/';
+$config['base_url']	= 'http://www.candycrushsoda.co.kr/ccss';
 //$config['mbase_url']	= 'http://m.candycrushsoda.co.kr/';
 $config['asset_url']	= 'http://www.candycrushsoda.co.kr/assets';
 //$config['asset_url']	= 'http://svn.hivelab.co.kr/svnview/hive/ccss_markup';
@@ -44,7 +44,7 @@ $config['encryption_key'] = "8aUH59wZ5T9BHjNGwwVldkrUzU94w6H7";
 | variable so that it is blank.
 |
 */
-$config['index_page'] = 'index.php/';
+$config['index_page'] = '';
 //$config['index_page'] = '';
 
 /*

@@ -37,7 +37,7 @@ class Cs_admin_event_applicant extends CI_Model{
 				left join Events b on b.idx=a.eventIdx
 				left join Codes c on c.gid=3 and c.id=a.type
 				left join Users d on d.id = a.userId
-				where a.status=1 and a.refIdx IS NULL OR a.refIdx = '' ";
+				where a.status=1 and (a.refIdx IS NULL OR a.refIdx = '' )";
 		$arr = array();
 		if($et_id){
 			$sql .= 'and b.idx = ?';
@@ -58,7 +58,7 @@ class Cs_admin_event_applicant extends CI_Model{
 				left join Events b on b.idx=a.eventIdx
 				left join Codes c on c.gid=3 and c.id=a.type
 				left join Users d on d.id = a.userId
-				where a.status=1 and a.refIdx IS NULL OR a.refIdx = '' ";
+				where a.status=1 and (a.refIdx IS NULL OR a.refIdx = ''  )";
 		$arr = array();
 		if($et_id){
 			$sql .= 'and b.idx = ?';
