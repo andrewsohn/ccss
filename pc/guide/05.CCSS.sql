@@ -303,3 +303,17 @@ ADD FOREIGN KEY rf_users_reservations (userId, userType) REFERENCES Users (id, t
 
 ALTER TABLE Reservations
 ADD FOREIGN KEY rf_promotion_goods_reservations (prmGoodsIdx) REFERENCES PromotionGoods (idx);
+
+CREATE TABLE IF NOT EXISTS `Movie` (
+  `idx` mediumint(8) unsigned NOT NULL COMMENT '영상 인덱스',
+  `title` varchar(60) NOT NULL COMMENT '영상명',
+  `url` varchar(500) NOT NULL COMMENT '영상 링크',
+  `regDt` datetime NOT NULL COMMENT '영상 등록일',
+  `status` smallint(5) unsigned NOT NULL DEFAULT '1' COMMENT '상태'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='영상 갤러리';
+
+ALTER TABLE `Movie`
+  ADD PRIMARY KEY (`idx`);
+  
+  ALTER TABLE `Movie`
+  MODIFY `idx` mediumint(8) unsigned NOT NULL AUTO_INCREMENT COMMENT '영상 인덱스';
