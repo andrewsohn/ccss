@@ -309,11 +309,14 @@ CREATE TABLE IF NOT EXISTS `Movie` (
   `title` varchar(60) NOT NULL COMMENT '영상명',
   `url` varchar(500) NOT NULL COMMENT '영상 링크',
   `regDt` datetime NOT NULL COMMENT '영상 등록일',
-  `status` smallint(5) unsigned NOT NULL DEFAULT '1' COMMENT '상태'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='영상 갤러리';
+  `imgName` varchar(255) NOT NULL COMMENT '이미지명',
+  `imgSize` int(11) unsigned NOT NULL COMMENT '이미지 사이즈',
+  `imgType` smallint(5) unsigned NOT NULL COMMENT '이미지 확장자 타입',
+  `orderNum` smallint(5) unsigned NOT NULL COMMENT '영상 노출 순서'
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='영상 갤러리';
 
 ALTER TABLE `Movie`
   ADD PRIMARY KEY (`idx`);
   
-  ALTER TABLE `Movie`
+ALTER TABLE `Movie`
   MODIFY `idx` mediumint(8) unsigned NOT NULL AUTO_INCREMENT COMMENT '영상 인덱스';
