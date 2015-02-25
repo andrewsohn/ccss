@@ -222,6 +222,18 @@ INSERT INTO Codes(gid, id, name) VALUES (20, 0, 'jpg');
 INSERT INTO Codes(gid, id, name) VALUES (20, 1, 'png');
 INSERT INTO Codes(gid, id, name) VALUES (20, 2, 'jpeg');
 
+INSERT INTO Codes(gid, id, name) VALUES (0, 30, '성별');
+INSERT INTO Codes(gid, id, name) VALUES (30, 1, '남성');
+INSERT INTO Codes(gid, id, name) VALUES (30, 2, '여성');
+
+INSERT INTO Codes(gid, id, name) VALUES (0, 40, '연령대');
+INSERT INTO Codes(gid, id, name) VALUES (40, 10, '10대');
+INSERT INTO Codes(gid, id, name) VALUES (40, 20, '20대');
+INSERT INTO Codes(gid, id, name) VALUES (40, 30, '30대');
+INSERT INTO Codes(gid, id, name) VALUES (40, 40, '40대');
+INSERT INTO Codes(gid, id, name) VALUES (40, 50, '50대');
+
+
 CREATE TABLE Goods
 (
 	idx                  SMALLINT UNSIGNED NOT NULL COMMENT '상품 인덱스', 
@@ -270,7 +282,7 @@ ADD PRIMARY KEY (dt, prmGoodsIdx);
 CREATE TABLE Reservations
 (
 	idx					 MEDIUMINT UNSIGNED NOT NULL COMMENT '사전예약 인덱스',
-	mobileNum			 VARCHAR(12) NOT NULL COMMENT '사용자 인덱스', 
+	mobileNum			 VARCHAR(12) NOT NULL COMMENT '휴대폰번호', 
 	userId 				 VARCHAR(25) NULL COMMENT '회원 아이디',
 	userName			 VARCHAR(25) NULL COMMENT '회원 이름',
 	userType             SMALLINT UNSIGNED NULL COMMENT '회원가입 종류',		
@@ -320,3 +332,17 @@ ALTER TABLE `Movie`
   
 ALTER TABLE `Movie`
   MODIFY `idx` mediumint(8) unsigned NOT NULL AUTO_INCREMENT COMMENT '영상 인덱스';
+
+
+CREATE TABLE IF NOT EXISTS SweetSodaInvites
+(	
+	mobileNum			 VARCHAR(12) NOT NULL COMMENT '휴대폰번호',
+	name 				 VARCHAR(25) NOT NULL COMMENT '성명',	
+	sex              	 SMALLINT UNSIGNED NOT NULL COMMENT '성별',	
+	ageBand              SMALLINT UNSIGNED NOT NULL COMMENT '연령대',	
+	status               SMALLINT UNSIGNED NOT NULL COMMENT '상태',
+	regIP				 VARCHAR(39) NOT NULL COMMENT '등록 IPv4 or IPv6',
+	registDt             DATETIME NULL COMMENT '등록일'
+) ENGINE=InnoDB COMMENT='스윗소다 초청 신청';
+
+ALTER TABLE SweetSodaInvites ADD PRIMARY KEY (mobileNum);
