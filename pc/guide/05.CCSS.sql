@@ -231,7 +231,7 @@ INSERT INTO Codes(gid, id, name) VALUES (40, 10, '10대');
 INSERT INTO Codes(gid, id, name) VALUES (40, 20, '20대');
 INSERT INTO Codes(gid, id, name) VALUES (40, 30, '30대');
 INSERT INTO Codes(gid, id, name) VALUES (40, 40, '40대');
-INSERT INTO Codes(gid, id, name) VALUES (40, 50, '50대');
+INSERT INTO Codes(gid, id, name) VALUES (40, 50, '50대 이상');
 
 
 CREATE TABLE Goods
@@ -334,15 +334,29 @@ ALTER TABLE `Movie`
   MODIFY `idx` mediumint(8) unsigned NOT NULL AUTO_INCREMENT COMMENT '영상 인덱스';
 
 
-CREATE TABLE IF NOT EXISTS SweetSodaInvites
+CREATE TABLE IF NOT EXISTS SodaPartyApplicants
 (	
-	mobileNum			 VARCHAR(12) NOT NULL COMMENT '휴대폰번호',
+	mobileNum   	     VARCHAR(12) NOT NULL COMMENT '휴대폰번호',
 	name 				 VARCHAR(25) NOT NULL COMMENT '성명',	
 	sex              	 SMALLINT UNSIGNED NOT NULL COMMENT '성별',	
 	ageBand              SMALLINT UNSIGNED NOT NULL COMMENT '연령대',	
+	snsUserName			 VARCHAR(50) NULL COMMENT '페북 사용자명',
 	status               SMALLINT UNSIGNED NOT NULL COMMENT '상태',
 	regIP				 VARCHAR(39) NOT NULL COMMENT '등록 IPv4 or IPv6',
 	registDt             DATETIME NULL COMMENT '등록일'
 ) ENGINE=InnoDB COMMENT='스윗소다 초청 신청';
 
-ALTER TABLE SweetSodaInvites ADD PRIMARY KEY (mobileNum);
+ALTER TABLE SodaPartyApplicants ADD PRIMARY KEY (mobileNum);
+
+
+SET SQL_SAFE_UPDATES = 0;
+
+UPDATE `bearfamily`.`menu` 
+SET `me_code`='sodaparty' 
+, me_name = 'EVENT3. 스윗소다파티! 초대합니다'
+WHERE `me_id`='7';
+
+CREATE TABLE IF NOT EXISTS SecurityKeys
+(	
+	key  				VARCHAR()	
+) ENGINE=InnoDB COMMENT='RSAKey';
