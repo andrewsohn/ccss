@@ -360,3 +360,13 @@ CREATE TABLE IF NOT EXISTS SecurityKeys
 (	
 	key  				VARCHAR()	
 ) ENGINE=InnoDB COMMENT='RSAKey';
+
+CREATE TABLE IF NOT EXISTS `Game` (
+  `idx` mediumint(8) unsigned  AUTO_INCREMENT PRIMARY KEY NOT NULL COMMENT '게임 인덱스',
+  `name` varchar(25) COLLATE utf8_unicode_ci DEFAULT NULL COMMENT '게임명',
+  `g_url` varchar(300) COLLATE utf8_unicode_ci DEFAULT NULL COMMENT '구글플레이URL',
+  `a_url` varchar(300) COLLATE utf8_unicode_ci DEFAULT NULL COMMENT '앱스토어URL'
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='게임';
+
+INSERT INTO `Game` (`idx`, `name`, `g_url`, `a_url`) VALUES
+(1, '캔디크러쉬소다', NULL, NULL);
