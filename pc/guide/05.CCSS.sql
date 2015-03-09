@@ -374,9 +374,8 @@ INSERT INTO `Game` (`idx`, `name`, `g_url`, `a_url`) VALUES
 CREATE TABLE IF NOT EXISTS `ExtraEvent` (
   `idx` mediumint(8) unsigned  AUTO_INCREMENT PRIMARY KEY NOT NULL COMMENT '이벤트 인덱스',
   `title` varchar(25) COLLATE utf8_unicode_ci DEFAULT NULL COMMENT '이벤트명',
-  `url_1` varchar(300) COLLATE utf8_unicode_ci DEFAULT NULL COMMENT '이벤트 URL 1',
-  `url_2` varchar(300) COLLATE utf8_unicode_ci DEFAULT NULL COMMENT '이벤트 URL 2'
+  `url` varchar(300) COLLATE utf8_unicode_ci DEFAULT NULL COMMENT '이벤트 URL'
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='이벤트';
 
-INSERT INTO `ExtraEvent` (`idx`, `title`, `url_1`, `url_2`) VALUES
-(1, '스윗 모먼트', NULL, NULL);
+INSERT INTO `ExtraEvent` (`idx`, `title`, `url`) VALUES
+(1, '스윗 모먼트', NULL);
