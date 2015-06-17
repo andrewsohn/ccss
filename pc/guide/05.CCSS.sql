@@ -385,3 +385,6 @@ CREATE TABLE IF NOT EXISTS `EventVisitorCount` (
   `event_idx`       MEDIUMINT UNSIGNED NOT NULL COMMENT '이벤트 인덱스',
   `vc_cnt`  		MEDIUMINT UNSIGNED NOT NULL COMMENT '방문자 카운트'
 ) ENGINE=InnoDB COMMENT='이벤트 방문자수';
+
+INSERT INTO `EventVisitorCount` (`event_idx`, `vc_cnt`) VALUES
+(2, 0);
