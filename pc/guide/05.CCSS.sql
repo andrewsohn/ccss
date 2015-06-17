@@ -379,3 +379,9 @@ CREATE TABLE IF NOT EXISTS `ExtraEvent` (
 
 INSERT INTO `ExtraEvent` (`idx`, `title`, `url`) VALUES
 (1, '스윗 모먼트', NULL);
+
+CREATE TABLE IF NOT EXISTS `EventVisitorCount` (
+  `vc_id`		 	MEDIUMINT AUTO_INCREMENT PRIMARY KEY NOT NULL COMMENT '이벤트 방문자수 고유번호',
+  `event_idx`       MEDIUMINT UNSIGNED NOT NULL COMMENT '이벤트 인덱스',
+  `vc_cnt`  		MEDIUMINT UNSIGNED NOT NULL COMMENT '방문자 카운트'
+) ENGINE=InnoDB COMMENT='이벤트 방문자수';
