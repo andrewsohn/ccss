@@ -365,11 +365,17 @@ CREATE TABLE IF NOT EXISTS `Game` (
   `idx` mediumint(8) unsigned  AUTO_INCREMENT PRIMARY KEY NOT NULL COMMENT '게임 인덱스',
   `name` varchar(25) COLLATE utf8_unicode_ci DEFAULT NULL COMMENT '게임명',
   `g_url` varchar(300) COLLATE utf8_unicode_ci DEFAULT NULL COMMENT '구글플레이URL',
-  `a_url` varchar(300) COLLATE utf8_unicode_ci DEFAULT NULL COMMENT '앱스토어URL'
+  `a_url` varchar(300) COLLATE utf8_unicode_ci DEFAULT NULL COMMENT '앱스토어URL',
+  `fb_url` varchar(300) COLLATE utf8_unicode_ci DEFAULT NULL COMMENT '공식 페이스북 URL',
+  `blog_url` varchar(300) COLLATE utf8_unicode_ci DEFAULT NULL COMMENT '공식 블로그 URL'
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='게임';
 
-INSERT INTO `Game` (`idx`, `name`, `g_url`, `a_url`) VALUES
-(1, '캔디크러쉬소다', NULL, NULL);
+INSERT INTO `Game` (`idx`, `name`, `g_url`, `a_url`, `fb_url`, `blog_url`) VALUES
+(1, '캔디크러쉬소다', NULL, NULL, NULL, NULL);
+INSERT INTO `Game` (`idx`, `name`, `g_url`, `a_url`, `fb_url`, `blog_url`) VALUES
+(2, '캔디크러쉬사가', NULL, NULL, NULL, NULL);
+INSERT INTO `Game` (`idx`, `name`, `g_url`, `a_url`, `fb_url`, `blog_url`) VALUES
+(3, '팜히어로사가', NULL, NULL, NULL, NULL);
 
 CREATE TABLE IF NOT EXISTS `ExtraEvent` (
   `idx` mediumint(8) unsigned  AUTO_INCREMENT PRIMARY KEY NOT NULL COMMENT '이벤트 인덱스',
