@@ -324,7 +324,8 @@ CREATE TABLE IF NOT EXISTS `Movie` (
   `imgName` varchar(255) NOT NULL COMMENT '이미지명',
   `imgSize` int(11) unsigned NOT NULL COMMENT '이미지 사이즈',
   `imgType` smallint(5) unsigned NOT NULL COMMENT '이미지 확장자 타입',
-  `orderNum` smallint(5) unsigned NOT NULL COMMENT '영상 노출 순서'
+  `orderNum` smallint(5) unsigned NOT NULL COMMENT '영상 노출 순서',
+  `eventIdx` MEDIUMINT UNSIGNED NOT NULL COMMENT '이벤트 인덱스'
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='영상 갤러리';
 
 ALTER TABLE `Movie`
